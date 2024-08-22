@@ -1,0 +1,29 @@
+{
+    "title": "Registro de Usuario",
+    "emailLabel": "Correo electrónico:",
+    "passwordLabel": "Contraseña:",
+    "confirmPasswordLabel": "Confirmar Contraseña:",
+    "securityMessage": "Tu contraseña no se almacena como texto sin formato. En su lugar, se transforma utilizando técnicas de encriptación fuertes, lo que la hace ilegible y garantiza que se almacene de forma segura. Esto significa que, incluso si alguien obtiene acceso a los datos almacenados, no podrá ver tu contraseña real.",
+    "submitButton": "Registrar",
+    "loginTitle": "Iniciar Sesión",
+    "usernameLabel": "Nombre de Usuario:",
+    "loginButton": "Iniciar Sesión",
+    "forgotpasswordtitle": "Olvidé mi Contraseña",
+"sendResetLinkButton": "Enviar enlace de restablecimiento",
+    "pagetitle": "SlowYou™",
+  
+    "navHome": "Inicio",
+    "navFeatures": "Características",
+    "navPricing": "Precios",
+    "navFAQs": "Preguntas Frecuentes",
+    "navAbout": "Acerca de",
+   
+    "signupButton": "Regístrate",
+    "heroTitle": "Ser Sin Esfuerzo, Vivir Sin Límites.",
+    "heroSubtitle": "El Viaje Interior",
+    "heroText1": "\"Ser Sin Esfuerzo, Vivir Sin Límites\" es más que un principio; es una forma de vida. Te invita a entrar en un mundo donde cada acción está impregnada de significado y cada momento es una oportunidad para el crecimiento y la alegría. Te llama a una vida donde ya no eres un espectador, sino un participante vibrante en la danza de la creación.",
+    "heroText2": "Esta filosofía no te pide que cambies quién eres, sino que te conviertas más profundamente en lo que realmente eres: un ser de luz, amor y potencial infinito. A medida que pasas las páginas de este sitio web y de tu vida, recuerda que el camino hacia una existencia sin límites radica en la simplicidad de ser fiel a tu naturaleza. Deja que este conocimiento te guíe mientras navegas por las complejidades del mundo con gracia y aplomo, abrazando la alegría ilimitada de simplemente ser.",
+    "learnMoreButton": "Aprende Más",
+    "titlelanguage": "Elija idioma:"
+}
+  

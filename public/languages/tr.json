@@ -1,0 +1,30 @@
+{
+    "title": "Kullanıcı Kaydı",
+    "emailLabel": "E-posta:",
+    "passwordLabel": "Şifre:",
+    "confirmPasswordLabel": "Şifreyi Onayla:",
+    "securityMessage": "Şifreniz düz metin olarak saklanmaz. Bunun yerine, güçlü şifreleme teknikleri kullanılarak dönüştürülür, okunamaz hale getirilir ve güvenli bir şekilde saklanması sağlanır. Bu, birisi saklanan verilere erişse bile, gerçek şifrenizi göremeyeceği anlamına gelir.",
+    "submitButton": "Kaydol",
+    "loginTitle": "Giriş Yap",
+    "usernameLabel": "Kullanıcı Adı:",
+    "loginButton": "Giriş Yap",
+    "forgotpasswordtitle": "Şifremi Unuttum",
+    "pagetitle": "SlowYou™",
+    "sendResetLinkButton": "Şifre Sıfırlama Bağlantısı Gönder",
+    
+      "navHome": "Ana Sayfa",
+      "navFeatures": "Özellikler",
+      "navPricing": "Fiyatlandırma",
+      "navFAQs": "SSS",
+      "navAbout": "Hakkında",
+      "signupButton": "Kaydol",
+      "heroTitle": "Çabasız Varoluş, Sınırsız Yaşam.",
+      "heroSubtitle": "İçsel Yolculuk",
+      "heroText1": "\"Çabasız Varoluş, Sınırsız Yaşam\" bir prensipten daha fazlasıdır; bu bir yaşam tarzıdır. Her eylemin anlamla dolu olduğu ve her anın büyüme ve mutluluk için bir fırsat olduğu bir dünyaya adım atmanızı davet eder. Sizi artık yaratılış dansında bir seyirci değil, canlı bir katılımcı olduğunuz bir hayata çağırır.",
+      "heroText2": "Bu felsefe size kim olduğunuzu değiştirmenizi değil, gerçekten kim olduğunuzu daha derinden keşfetmenizi ister - ışık, sevgi ve sonsuz potansiyel sahibi bir varlık. Bu web sitesinin ve hayatınızın sayfalarını çevirirken, sınırsız bir varoluşa giden yolun doğanıza sadık kalmanın çabasız basitliğinde yattığını unutmayın. Bu bilgi size dünyanın karmaşıklıklarında zarafet ve dinginlik içinde gezinirken rehberlik etsin ve sadece var olmanın sınırsız sevincini kucaklayın.",
+      "learnMoreButton": "Daha Fazla Bilgi Edinin",
+      "titlelanguage": "Dil Seçin:"
+  
+  
+  }
+  

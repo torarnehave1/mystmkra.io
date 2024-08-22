@@ -1,0 +1,35 @@
+{
+    "pageTitleUserReg": "Brukerregistrering",
+    "emailLabel": "Email:",
+    "passwordLabel": "Password:",
+    "confirmPasswordLabel": "Confirm Password:",
+    "securityMessage": "Your password is not stored as plain text. Instead, it is transformed using strong encryption techniques, making it unreadable and ensuring it is stored securely. This means that even if someone gains access to the stored data, they cannot see your actual password.",
+    "submitButton": "Register",
+    "loginTitle": "Login",
+    "forgotpasswordtitle": "Forgot Password",
+    "forgotpasswordlink": "Forgot Password",
+    "usernameLabel": "Username:",
+    "loginButton": "Login",
+    "pagetitle": "SlowYou™",
+    "sendResetLinkButton": "Send Reset Link",
+    "maintitlefirstpage": "SlowYou™",
+    "fullNameLabel": "Full Name:",
+    
+        "navHome": "Home",
+        "navFeatures": "Features",
+        "navPricing": "Pricing",
+        "navFAQs": "FAQs",
+        "navCalender":"SlowYou™ Calandar",
+        "navAbout": "About",
+        "signupButton": "Sign-up",
+        "heroTitle": "Effortless Being, Boundless Living.",
+        "heroSubtitle": "The Journey Inward",
+        "heroText1": "Effortless Being, Boundless Living\" is more than a principle; it is a way of life. It invites you to step into a world where each action is infused with meaning, and every moment is an opportunity for growth and joy. It calls you to a life where you are no longer a bystander but a vibrant participant in the dance of creation.",
+        "heroText2": "This philosophy does not ask you to change who you are but to become more profoundly what you truly are—a being of light, love, and infinite potential. As you turn the pages of this website and your life, remember that the path to a boundless existence lies in the effortless simplicity of being true to your nature. Let this knowledge guide you as you navigate the complexities of the world with grace and poise, embracing the limitless joy of simply being.",
+        "learnMoreButton": "Learn More",
+        "titlelanguage": "Choose Language:"
+    
+    
+
+  }
+  
