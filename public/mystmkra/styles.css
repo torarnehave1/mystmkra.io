@@ -1,0 +1,43 @@
+body.hero-background {
+    background: url('./images/riverflow.png') no-repeat center center fixed;
+    background-size: cover;
+}
+.form-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.message.error {
+    color: red;
+}
+.message.success {
+    color: green;
+}
+
+.container-fluid {
+    background-color: #e670099b;
+
+}
+
+.quote {
+    font-style: italic;
+    border-left: 5px solid #ccc;
+    padding-left: 10px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    font-size: large;
+    max-width: 50vw;
+  }
+  .quote-author {
+    font-size: 0.8rem;
+    font-style: italic;
+    color: #666;
+  }
+  .quote-timeperiod {
+    font-size: 0.8rem;
+    font-style: italic;
+    color: #666;
+  }
