@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reset Password</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Optional: Custom styles for form -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/css/flag-icon.min.css">
+    <style>
+        .form-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .error {
+            color: red;
+        }
+        .message {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+        }
+        .d-none {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="menu-container"></div>
+
+    <div class="container">
+        <h2 class="text-center my-4" id="title">Reset Your Password</h2>
+        <form class="form-container" id="resetPasswordForm">
+            <input type="hidden" id="token" value="<%= token %>">
+            <div class="form-group">
+                <label for="password">New Password:</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password:</label>
+                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            <p id="passwordHelp" class="form-text text-muted">
+                Password must be at least 8 characters long and include at least one uppercase letter and one symbol (e.g., !@#$%^&*()).
+            </p>
+            <div id="message" class="message"></div>
+            <button type="submit" class="btn btn-primary btn-block">Reset Password</button>
+            <a id="loginLink" href="/login.html" class="btn btn-link d-none">Go to Login Page</a>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('resetPasswordForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const token = document.getElementById('token').value;
+            const messageDiv = document.getElementById('message');
+            const loginLink = document.getElementById('loginLink');
+            
+            const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]).{8,}$/;
+
+            if (password !== confirmPassword) {
+                messageDiv.textContent = 'Passwords do not match.';
+                messageDiv.classList.add('error');
+                messageDiv.classList.remove('success');
+                return;
+            }
+
+            if (!passwordRegex.test(password)) {
+                messageDiv.textContent = 'Password must be at least 8 characters long and include at least one uppercase letter and one symbol (e.g., !@#$%^&*()).';
+                messageDiv.classList.add('error');
+                messageDiv.classList.remove('success');
+                return;
+            }
+
+            messageDiv.textContent = ''; // Clear any previous messages
+
+            try {
+                const response = await fetch('/a/save-new-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token, password })
+                });
+
+                const message = await response.text();
+                messageDiv.textContent = message;
+
+                if (response.ok) {
+                    messageDiv.classList.remove('error');
+                    messageDiv.classList.add('success');
+                    loginLink.classList.remove('d-none');
+                } else {
+                    messageDiv.classList.add('error');
+                    messageDiv.classList.remove('success');
+                }
+            } catch (err) {
+                console.error('Error occurred:', err);
+                messageDiv.textContent = 'An error occurred while resetting the password.';
+                messageDiv.classList.add('error');
+                messageDiv.classList.remove('success');
+            }
+        });
+    </script>
+</body>
+</html>

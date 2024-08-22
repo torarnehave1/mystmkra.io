@@ -1,0 +1,69 @@
+<html>
+<head>
+    <title>Search YouTube</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.0/font/bootstrap-icons.css" rel="stylesheet">
+
+</head>
+<body>
+<div class="container">
+<h1 class="mt-5 mb-4 display-4">YouTube Search</h1>
+<!-- Input group for search functionality -->
+<div class="input-group mb-">
+<input type="text" class="form-control" id="searchInput" placeholder="Search for videos">
+<button class="btn btn-primary" id="searchButton" onclick="searchVideos()">Search</button>
+</div>
+<table class="table table-striped mt-1" id="videoTable">
+<thead class="table-dark">
+<tr>
+<th>ID</th>
+<th>Title</th>
+<th>Description</th>
+<th>Thumbnail</th>
+</tr>
+</thead>
+<tbody>
+<% items.forEach(item => { %>
+<tr>
+<td><a href="/youtube/trans/<%= item.id.videoId %>"><%= item.id.videoId %></a></td>
+<td><%= item.snippet.title %></td>
+<td>
+    <h2>
+        <%= item.snippet.channelTitle %>
+    </h2>
+    <%= item.snippet.description %>
+</td>
+
+<td><img src="<%= item.snippet.thumbnails.medium.url %>" alt="<%= item.snippet.title %>" class="img-thumbnail thumbnail-img" style="max-width: 100px;"></td>
+</tr>
+<% }); %>
+</tbody>
+</table>
+</div>
+<script>
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        function searchVideos() {
+            const searchInput = document.getElementById('searchInput').value;
+            const encodedQuery = encodeURIComponent(searchInput);
+            window.location.href = `/youtube/search?q=${encodedQuery}`;
+        }
+
+
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchVideos();
+            }
+        });
+        
+        document.getElementById('searchButton').addEventListener('click', function() {
+        searchVideos();
+});
+   
+
+
+      
+    });
+
+</script>
+</body>
+</html>

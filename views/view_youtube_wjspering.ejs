@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wjspering</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    </style>
+    <style>
+        
+        .navbartop {
+            background-image: url('/logo_ww.png'); /* Adjust the path as needed */
+            background-size: cover;
+            background-position: center;
+            height:184px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbartop navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Wjspering</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Pricing</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="header-image"></div>
+        <div class="container mt-5">
+        <h2>Ethereal Video Insights for Everyone!</h2>
+        
+        <!-- Rest of your code... -->
+    </div>
+           
+       
+        <p class="lead">Analyze your YouTube videos with Wjspering: Ethereal Video Insights for Everyone!</p>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link <%= activeTab === 'tab1' ? 'active' : '' %>" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="<%= activeTab === 'tab1' ? 'true' : 'false' %>">Transcribe</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link <%= activeTab === 'tab2' ? 'active' : '' %>" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="<%= activeTab === 'tab2' ? 'true' : 'false' %>">Search</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link <%= activeTab === 'tab3' ? 'active' : '' %>" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3" type="button" role="tab" aria-controls="tab3" aria-selected="<%= activeTab === 'tab3' ? 'true' : 'false' %>">Intro</button>
+            </li>
+
+            <li class="nav-item" role="presentation">
+                <button class="nav-link <%= activeTab === 'tab4' ? 'active' : '' %>" id="tab4-tab" data-bs-toggle="tab" data-bs-target="#tab4" type="button" role="tab" aria-controls="tab4" aria-selected="<%= activeTab === 'tab4' ? 'true' : 'false' %>">Price models</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade <%= activeTab === 'tab1' ? 'show active' : '' %>" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+                <p class="mt-4">Transcribe</p>
+                <%-  include('partials/submeny-slowyou-tldr') %>
+                <%- include('partials/trans') %>
+            </div>
+            <div class="tab-pane fade <%= activeTab === 'tab2' ? 'show active' : '' %>" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+                <p class="mt-4">Search</p>
+                <!-- Possibly the search results or other relevant information -->
+
+                <%- include('partials/searchyoutube') %>
+            </div>
+
+            <div class="tab-pane fade <%= activeTab === 'tab3' ? 'show active' : '' %>" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
+                <p class="mt-4">Intro to Wjspering</p>
+               <p> <p class="lead">Welcome to the cutting edge of video engagement with Wjspering, exclusively available at SlowYou.net
+                for our partners. This innovative tool revolutionizes how you interact with YouTube content by not
+                only searching videos but also transcribing them effortlessly. Perfect for educators, researchers, and
+                content creators, Wjspering offers a streamlined approach to access spoken content in written
+                form, expanding your reach and enhancing accessibility. With Wjspering, dive deeper into
+                the vast ocean of YouTube videos and transform auditory information into actionable insights.
+                Join us on this transformative journey and leverage the full potential of video content like
+                never before.</p>
+                <div class="pricing-tiers">
+                    <div class="free-tier">
+                        <h2>Free Tier</h2>
+                        <p>
+                            Welcome to Wjspering! Our Free tier offers a perfect starting point for small teams and individuals
+                            looking to explore our platform. With 10 users included, 2 GB of storage, and email support, you can get started
+                            with managing your projects and collaborating with ease. Sign up today and experience the power of Wjspering
+                            for free!
+                        </p>
+                    </div>
+                    <div class="pro-tier">
+                        <h2>Pro Tier</h2>
+                        <p>
+                            Upgrade to our Pro tier for enhanced features and capabilities. With 20 users included, 10 GB of storage, and
+                            priority email support, the Pro tier is perfect for growing teams and businesses that need more robust project
+                            management tools. Get started today and take your productivity to the next level with Wjspering.
+                        </p>
+                    </div>
+                    <div class="enterprise-tier">
+                        <h2>Enterprise Tier</h2>
+                        <p>
+                            For larger organizations with complex needs, our Enterprise tier offers the ultimate solution. With 50 users
+                            included, 30 GB of storage, and both phone and email support, the Enterprise tier provides unparalleled support
+                            and scalability. Plus, enterprise-level customers have the option to host Wjspering on their own domain,
+                            ensuring complete control and customization. Contact us today to learn more about how Wjspering can empower
+                            your enterprise to achieve its goals.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade <%= activeTab === 'tab4' ? 'show active' : '' %>" id="tab4" role="tabpanel" aria-labelledby="tab4-tab">
+                <p class="mt-4">Search</p>
+                <!-- Possibly the search results or other relevant information -->
+
+                <%- include('partials/view_youtube_pricetable') %>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

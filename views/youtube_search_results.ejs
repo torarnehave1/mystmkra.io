@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube Search</title>
+  <!-- Include Bootstrap CSS for styling -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Custom styles to limit thumbnail image width */
+    .thumbnail-img {
+      max-width: 100px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Heading for the YouTube Search Page -->
+    <h1 class="mt-5 mb-4 display-4">YouTube Search</h1>
+    <!-- Input group for search functionality -->
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" id="searchInput" placeholder="Search for videos">
+      <button class="btn btn-primary" onclick="searchVideos()">Search</button>
+    </div>
+    <!-- Table for displaying search results -->
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Title</th> 
+          <th>Description</th>
+          <th>Thumbnail</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% items.forEach(item => { %>
+        <tr>
+            <td><a href="/t/run-script/<%= item.id.videoId %>"><%= item.id.videoId %></a></td>
+          <td><%= item.snippet.title %></td>
+          <td><%= item.snippet.description %></td>
+          <td><img src="<%= item.snippet.thumbnails.medium.url %>" alt="<%= item.snippet.title %>" class="img-thumbnail thumbnail-img"></td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // Wait for the DOM to be fully loaded before attaching JavaScript behaviors
+    document.addEventListener('DOMContentLoaded', function() {
+      function searchVideos() {
+        const searchInput = document.getElementById('searchInput').value;
+        const encodedQuery = encodeURIComponent(searchInput);
+        window.location.href = `/t/youtube-search?q=${encodedQuery}`;
+      }
+
+      // Attach keypress event to search input to handle "Enter" key
+      document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          searchVideos();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

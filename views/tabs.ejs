@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bootstrap Tabs Example</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Example with Two Tabs</h2>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">Tab 1</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">Tab 2</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+                <p class="mt-4">Content for Tab 1</p>
+            </div>
+            <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+                <p class="mt-4">Content for Tab 2</p>
+                <%- include('partials/searchyoutube') %>
+            </div>
+        </div>
+        <button type="button" onclick="addNewTab()" class="btn btn-primary mt-4">Add New Tab</button>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function searchVideos() {
+                const searchInput = document.getElementById('searchInput').value;
+                const encodedQuery = encodeURIComponent(searchInput);
+                window.location.href = `/youtube/search?q=${encodedQuery}`;
+                window.onload = function() {
+                    document.getElementById('tab2').click();
+                }
+            }
+            
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchVideos();
+                }
+            });
+
+            function addNewTab() {
+                const tabList = document.getElementById('myTab');
+                const tabContent = document.getElementById('myTabContent');
+                
+                // Create a new tab item
+                const newTabItem = document.createElement('li');
+                newTabItem.className = 'nav-item';
+                newTabItem.role = 'presentation';
+                newTabItem.innerHTML = `
+                    <button class="nav-link" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3" type="button" role="tab" aria-controls="tab3" aria-selected="false">Tab 3</button>
+                `;
+
+                // Create new tab content
+                const newTabPane = document.createElement('div');
+                newTabPane.className = 'tab-pane fade';
+                newTabPane.id = 'tab3';
+                newTabPane.role = 'tabpanel';
+                newTabPane.setAttribute('aria-labelledby', 'tab3-tab');
+                newTabPane.innerHTML = '<p class="mt-4">Content for Tab 3</p>';
+
+                // Append the new tab and content
+                tabList.appendChild(newTabItem);
+                tabContent.appendChild(newTabPane);
+            }
+
+            window.addNewTab = addNewTab; // Expose the function to global scope for button onclick
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

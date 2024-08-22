@@ -1,0 +1,84 @@
+<body>
+   <div class="container">
+    <h1>YouTube Transcript Viewer</h1>
+    <!-- Form to submit new YouTube video ID -->
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" id="videoURLInput" placeholder="Enter YouTube video URL" aria-label="YouTube video ID" aria-describedby="video-button-addon">
+      <button class="btn btn-outline-secondary" type="button" id="video-button-addon" onclick="submitVideoId()">Submit</button>
+    </div>
+    <!-- Display transcripts -->
+    <% transcript.forEach(item => { %>
+      <p><%= item.text %></p>
+    <% }); %>
+  </div>
+  <!-- Include Bootstrap JS and dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+  <script>
+    function submitVideoId() {
+      let url = document.getElementById('videoURLInput').value;
+      let videoId;
+
+      try {
+        url = new URL(url);
+        if (url.hostname === 'youtu.be') {
+          videoId = url.pathname.slice(1); // remove the leading '/'
+        } else if (url.hostname === 'www.youtube.com' || url.hostname === 'youtube.com') {
+          const params = new URLSearchParams(url.search);
+          videoId = params.get('v');
+        }
+      } catch (err) {
+        console.error('Invalid URL');
+      }
+
+      if (!videoId) {
+        console.error('No video ID found in URL');
+        return;
+      }
+
+      window.location.href = `/t/run-script/${videoId}`;
+    }
+  </script>
+  <!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@octokit/core@3.5.1/dist/octokit-core.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      const githubLink = document.querySelector('.github-link');
+      if (githubLink) {
+          githubLink.addEventListener('click', function(event) {
+              event.preventDefault(); // Prevent the default link behavior
+              submitToGithub();
+          });
+      }
+  });
+  </script>
+  
+
+
+<script>
+  async function submitToGithub() {
+    // Get the innerHTML from the element with ID 'content'
+    const content = document.getElementById('content').innerHTML;
+
+    // Create a new GitHub issue with the content
+    const octokit = new Octokit({
+      auth: process.env.ACCESS_TOKEN, // Access token from environment variable
+    });
+
+    try {
+      await octokit.request('POST /repos/torarnehave1/slowyouGPT/issues', {
+        owner: 'torarnehave1',
+        repo: 'slowyouGPT',
+        title: 'New issue from website',
+        body: content,
+        headers: {
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+      });
+    } catch (error) {
+      console.error('Error creating issue:', error);
+    }
+  }
+</script>
+</body>
