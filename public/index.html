@@ -3,102 +3,1035 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login MystMkra.io [BETA]</title>
+    <title>Mystmkra.io</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
     <link rel="stylesheet" href="markdown.css">
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/css/flag-icon.min.css">
-    <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        .bg-img {
-            background-image: url('https://cdn.midjourney.com/f7c1a775-d0ca-48f4-9e53-c80d9c6762c4/0_1.png');
-            height: 100%;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-            position: relative;
-        }
-
-        .form-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-    </style>
 </head>
-
 <body>
-
-    <div class="logo">MystMkra.io - [BETA]</div>
-
-    <div class="bg-img">
-        <form id="loginForm" class="form-container" action="/a/login" method="POST">
-            <div class="form-group">
-                <label for="username" id="usernameLabel">Username:</label>
-                <input type="text" class="form-control" id="username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password" id="passwordLabel">Password:</label>
-                <input type="password" class="form-control" id="password" name="password" required>
-            </div>
-            <button type="submit" class="btn btn-primary btn-block" id="submitButton">Login</button>
-            <div class="form-group">
-                <div class="alert alert-info" role="alert">
-                    Message: Forgot your password? Send a mail to <a href="mailto:slowyou.net@gmail.com">slowyou.net@gmail.com</a>
-                </div>
-            </div>
-        </form>
+    
+    <div class="logo"><h1>MystMkra.io - [BETA TEST]</h1></div>
+    
+    <div class="header-container">
+        
+        <div class="imgheader"><img src="https://cdn.midjourney.com/f7c1a775-d0ca-48f4-9e53-c80d9c6762c4/0_1.png" alt="Image Header"></div>
+        
+    
+        <div class="FileListfromSearch" id="FileListfromSearch">
+           
+        </div>
+        <ul class="pagination" id="paginationControls"></ul>
+        
+        
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const loginForm = document.getElementById('loginForm');
-            if (loginForm) {
-                loginForm.addEventListener('submit', async (event) => {
-                    event.preventDefault();
+    <div class="gridcontainer">
+        <div class="container">
+            <div class="searchbar"> <input class="form-control mr-sm-2" type="search" placeholder="Search for files" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button></div> 
+            
+                <div class="form-group">
+              
+                    
+            
+                <ul class="list-group">
+                <li class="list-group-item" id="snippetlist">
+                 
+                    
+                </li>
+            </ul>
+           
+            <div class="progress-bar-container">
+                <div class="progress-bar"></div>
+            </div>
 
-                    const username = document.getElementById('username').value;
-                    const password = document.getElementById('password').value;
+                <div class="mdmenu">
+                    <!-- <button class="btn btn-primary" id="DroboxButton" title="Dropbox"><i class="bi bi-dropbox"></i></button> -->
+                <button class="btn btn-primary" id="SaveasPDFButton" title="PDF" data-filename="" disabled>
+                    <i class="material-symbols-outlined">picture_as_pdf</i>
+                </button>
+                
+                <button class="btn btn-primary" id="saveSnippetButton" title="Save Snippet"><span class="material-symbols-outlined">
+                    code
+                    </span></button>  
+                    <button class="btn btn-primary" id="saveButton" disabled><span class="material-symbols-outlined">save</span></button>
+                    <button class="btn btn-primary" id="saveButtonProt"><span class="material-symbols-outlined">enhanced_encryption</span></button>
+                    
+                    
+                    <!--<button class="btn btn-primary" id="newButton"><span class="material-symbols-outlined">add</span></button>
+                    <button class="btn btn-primary" id="uploadButton"><span class="material-symbols-outlined">upload_file</span></button>
+                    <button class="btn btn-primary" id="downloadButton"><span class="material-symbols-outlined">download</span></button>
+                    <button class="btn btn-primary" id="openButton"><span class="material-symbols-outlined">file_open</span></button>
+                    <button class="btn btn-primary" id="deleteButton"><span class="material-symbols-outlined">delete</span></button>
+                    <button class="btn btn-primary" id="helpButton"><span class="material-symbols-outlined">help</span></button>-->
+                    
+                    
+                    <button id="insertHashTaglist" class="material-symbols-outlined">tag</button>
+                    <button id="insertHeading1" class="material-symbols-outlined">format_h1</button>
+                    <button id="insertHeading2" class="material-symbols-outlined">format_h2</button>
+                    <button id="insertHeading3" class="material-symbols-outlined">format_h3</button>
+                    <button id="insertHeading4" class="material-symbols-outlined">format_h4</button>
+                    <button id="insertBold" class="material-symbols-outlined">format_bold</button>
+                    <button id="insertItalic" class="material-symbols-outlined">format_italic</button>
+                    <button id="insertLink" class="material-symbols-outlined">link</button>
+                    <button id="insertImage" class="material-symbols-outlined">image</button>
+                    <button id="insertOrderedList" class="material-symbols-outlined">format_list_numbered_rtl</button>
+                    <button id="insertUnorderedList" class="material-symbols-outlined">list</button>
+                    <button id="insertCode" class="material-symbols-outlined">javascript</button>
+                    <button id="insertHorizontalRule" class="material-symbols-outlined">horizontal_rule</button>
+                </div>
+                <label for="markdownTextarea">Markdown Content:</label>
+                <textarea class="form-control" id="markdownTextarea" rows="10"></textarea>
+            </div>
+            <a class="ReturnfileURL" href="https://slowyou.net/dropbox/md/" target="_blank" rel="noopener">https://slowyou.net/dropbox/md/</a>
+            <div class="ReturnfileURL" data-url="https://slowyou.net/dropbox/md/"></div>
+            
+            <label for="preview">Preview:</label>
+            <div class="preview" id="preview">
+                <div class="previewgrid" id="previewgrid"></div>
+            </div>
+        </div>
+    </div>
+    
 
-                    try {
-                        const response = await fetch('/a/login', {
+    <script type="module">
+
+    import { marked } from 'https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateSaveToPdfButton();
+    });
+
+    async function loadSnippets() {
+    const snippetListContainer = document.getElementById('snippetlist');
+    const textarea = document.getElementById('markdownTextarea'); // Assuming your textarea has this ID
+    
+    try {
+        // Fetch the snippets from the server
+        const response = await fetch('/md/snippets');
+        const snippets = await response.json();
+
+        // Clear the existing list items
+        snippetListContainer.innerHTML = '';
+
+        // Iterate over the snippets and create list items
+        snippets.forEach(snippet => {
+            const snippetElement = document.createElement('a');
+            snippetElement.className = 'list-item';
+            snippetElement.href = '#';
+            snippetElement.dataset.snippet = snippet._id; // Use the snippet ID for reference
+            snippetElement.textContent = snippet.snippetname;
+
+            // Create a delete button
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.className = 'btn btn-danger btn-sm ml-2';
+            deleteButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                deleteSnippet(snippet._id);
+            });
+
+            // Create an insert button
+            const insertButton = document.createElement('button');
+            insertButton.textContent = 'Insert ' + snippet.snippetname;
+            insertButton.className = 'btn btn-primary btn-sm ml-2';
+            insertButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                insertSnippetIntoTextarea(snippet.content, textarea);
+            });
+
+            // Append the snippet element, insert button, and delete button to the list item
+            const listItem = document.createElement('li');
+            listItem.className = 'list-group-item';
+            //listItem.appendChild(snippetElement);
+            listItem.appendChild(insertButton);
+            listItem.appendChild(deleteButton);
+
+            // Append the list item to the list container
+            snippetListContainer.appendChild(listItem);
+        });
+
+    } catch (error) {
+        console.error('Error loading snippets:', error);
+        alert('An error occurred while loading snippets.');
+    }
+}
+
+function insertSnippetIntoTextarea(snippetContent, textarea) {
+    textarea.value += snippetContent;  // Append the snippet content to the textarea
+}
+
+async function deleteSnippet(snippetId) {
+    try {
+        const response = await fetch(`/md/snippet/${snippetId}`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            alert('Snippet deleted successfully.');
+            loadSnippets(); // Reload the list after deletion
+        } else {
+            alert('Failed to delete snippet.');
+        }
+    } catch (error) {
+        console.error('Error deleting snippet:', error);
+        alert('An error occurred while deleting the snippet.');
+    }
+}
+
+// Call loadSnippets to initially load the snippets
+loadSnippets();
+
+
+
+
+    document.getElementById('saveSnippetButton').addEventListener('click', saveSnippet);
+    
+    function saveSnippet() {
+    // Get the textarea element where the markdown content is written
+    const textarea = document.getElementById('markdownTextarea');
+
+    // Retrieve the entire content from the textarea
+    const contentText = textarea.value;
+    console.log('Textarea Content:', contentText);
+
+    // Extract the snippet name using a regular expression
+    const snippetNameMatch = contentText.match(/^snippetname: (.*)$/m);
+    if (!snippetNameMatch) {
+        console.warn('Snippet name not found in the textarea content.');
+        alert('No snippet name found in the textarea content.');
+        return;
+    }
+    const snippetname = snippetNameMatch[1];
+    console.log('Snippet Name:', snippetname);
+
+    // Extract the author name using a regular expression
+    const authorMatch = contentText.match(/^Author: (.*)$/m);
+    if (!authorMatch) {
+        console.warn('Author not found in the textarea content.');
+        alert('No author found in the textarea content.');
+        return;
+    }
+    const author = authorMatch[1];
+    console.log('Author:', author);
+
+
+    // Remove the snippet name and author lines from the content
+    const content = contentText.replace(/^snippetname: .*$/m, '').replace(/^Author: .*$/m, '').trim();
+    console.log('Content to be saved:', content);
+
+    // Define the endpoint URL for saving the snippet
+    const url = '/md/save/';
+    console.log('Saving snippet to URL:', url);
+
+    // Send the data to the server using a POST request
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ snippetname, content, author })
+    })
+    .then(response => {
+        console.log('Server response status:', response.status);
+        if (response.ok) {
+            console.info('Snippet saved successfully.');
+            alert('Snippet saved successfully.');
+        } else {
+            console.error('Failed to save snippet. Server returned status:', response.status);
+            alert('Failed to save snippet.');
+        }
+    })
+    .catch(error => {
+        console.error('Error occurred while saving the snippet:', error);
+        alert('An error occurred while saving the snippet.');
+    });
+}
+
+
+
+
+
+
+    function updateSaveToPdfButton() {
+        const saveToPdfButton = document.getElementById('SaveasPDFButton');
+        const filename = saveToPdfButton.getAttribute('data-filename');
+        saveToPdfButton.disabled = !filename;
+    }
+
+    // Add event listener to the savetopdf button
+    document.getElementById('SaveasPDFButton').addEventListener('click', saveToPdf);
+
+
+    async function saveToPdf() {
+        const saveToPdfButton = document.getElementById('SaveasPDFButton');
+        const filename = saveToPdfButton.getAttribute('data-filename');
+
+        if (!filename) {
+            alert('No current file to save as PDF.');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/md/topdf/${filename}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (response.ok) {
+                alert('PDF saved successfully to Dropbox.');
+            } else {
+                const errorData = await response.json();
+                console.error('Error saving PDF:', errorData.message);
+                alert('Error saving PDF.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while saving the PDF.');
+        }
+    }
+
+
+document.querySelectorAll('.list-item').forEach(item => {
+    item.addEventListener('click', event => {
+        event.preventDefault();
+        const snippetKey = event.target.getAttribute('data-snippet');
+        insertTextAtCursor(snippets[snippetKey]);
+    });
+});
+
+
+
+async function deleteContent(id) {
+    if (!id) {
+        console.error('No id provided');
+        alert('No document id provided');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/dropbox/filedelete/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        if (response.ok) {
+            alert('File deleted successfully to Dropbox.');
+            location.href = '/markdown/markdowncreate.html';
+        } else {
+            const errorData = await response.json();
+            console.error('Error deleting file:', errorData.message);
+            alert('Error deleting file.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while deleting the file.');
+    }
+}
+
+
+
+    // Ensure this function is at the top level
+    function insertContent(id) {
+        if (!id) {
+            console.error('No id provided');
+            alert('No document id provided');
+            return;
+        }
+
+        fetch(`/dropbox/file/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const textarea = document.getElementById('markdownTextarea');
+            if (textarea) {
+                textarea.value += data.content;
+                textarea.focus();
+              
+                // FileListfromSearch display hidden
+                document.getElementById('FileListfromSearch').style.display = 'none';
+
+                //paginationControls hide
+                document.getElementById('paginationControls').style.display = 'none';
+
+
+                
+            } else {
+                console.error('Textarea element not found');
+                alert('Textarea element not found');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching document:', error);
+            alert('Error fetching document');
+        });
+    }
+
+    // Remaining code...
+
+    const markdownTextarea = document.getElementById('markdownTextarea');
+    const previewGrid = document.getElementById('previewgrid');
+    const saveButton = document.getElementById('saveButton');
+    let isChanged = false;
+
+
+// Custom renderer to avoid wrapping images in paragraphs
+const renderer = new marked.Renderer();
+
+// Helper function to extract text from nested tokens
+function extractText(token) {
+    if (typeof token === 'string') {
+        return token;
+    }
+    if (token && typeof token === 'object' && token.text) {
+        return token.text;
+    }
+    return String(token);
+}
+
+// Custom renderer for headings
+renderer.heading = (token) => {
+    const text = extractText(token);
+    const level = token.depth || 1;
+    console.log(`Rendering heading level ${level}: ${text}`);
+    return `<div class="griditem"><h${level}>${text}</h${level}></div>`;
+};
+
+// Custom renderer for paragraphs
+renderer.paragraph = (text) => {
+    // Check if text is an array of tokens and handle accordingly
+    if (Array.isArray(text.tokens)) {
+        text = text.tokens.map(t => {
+            if (t.type === 'strong') {
+                return `<strong>${extractText(t)}</strong>`;
+            } else if (t.type === 'image') {
+                return `<img src="${t.href}" alt="${t.text}" title="${t.title || ''}">`;
+            }
+            return extractText(t);
+        }).join('');
+    } else {
+        text = extractText(text);
+    }
+
+    console.log('Rendering paragraph:', text);
+    if (text.includes('<img')) {
+        return `<div class="griditemimg">${text}</div>`;
+    } else {
+        return `<div class="griditem">${text}</div>`;
+    }
+};
+
+
+
+
+
+renderer.list = (token) => {
+    const type = token.ordered ? 'ol' : 'ul';
+    const body = token.items.map(item => renderer.listitem(item)).join('');
+    console.log('Rendering list:', body);
+    return `<div class="griditem"><${type}>${body}</${type}></div>`;
+};
+
+// Custom renderer for list items
+renderer.listitem = (token) => {
+    const text = token.tokens.map(t => extractText(t)).join('');
+    console.log('Rendering list item:', text);
+    return `<li>${text}</li>`;
+};
+
+
+renderer.code = (token) => {
+    const text = token.text || '';
+    const lang = token.lang || '';
+    console.log(`Rendering code block: ${text}`);
+    return `<div class="griditemcode"><pre><code class="language-${lang}">${text}</code></pre></div>`;
+};
+
+renderer.hr = () => {
+    console.log('Rendering horizontal rule');
+    return `<div class="griditem"><hr></div>`;
+};
+
+
+renderer.image = (token) => {
+    const href = token.href || '';
+    const alt = token.text || '';
+    const title = token.title || '';
+    console.log(`Rendering image: alt='${alt}', src='${href}', title='${title}'`);
+    return `
+        <img src="${href}" alt="${alt}" title="${title}">
+    `;
+};
+
+renderer.blockquote = (token) => {
+    // If the token has tokens (children), render their text
+    const text = token.tokens.map(t => extractText(t)).join('');
+    console.log(`Rendering blockquote: ${text}`);
+    return `<div class="griditem"><blockquote>${text}</blockquote></div>`;
+};
+
+renderer.table = (token) => {
+    // Check if header and rows are present
+    if (!token.header || !token.rows) {
+        console.error('Invalid table token structure:', token);
+        return '<div class="error">Invalid table structure</div>'; // Return some error HTML
+    }
+
+    // Helper function to extract text from tokens
+    const extractText = (tokens) => tokens.map(token => token.text).join('');
+
+    // Render the table header
+    const header = token.header.map(cell => `<th>${extractText(cell.tokens)}</th>`).join('');
+
+    // Render the table rows
+    const body = token.rows.map(row => {
+        return `<tr>${row.map(cell => `<td>${extractText(cell.tokens)}</td>`).join('')}</tr>`;
+    }).join('');
+
+    console.log('Rendering table:', header, body);
+
+    // Return the constructed HTML for the table
+    return `
+        <div class="griditem">
+            <table>
+                <thead>${header}</thead>
+                <tbody>${body}</tbody>
+            </table>
+        </div>
+    `;
+};
+
+
+
+
+
+
+marked.use({ renderer });
+
+// Function to update the preview
+function updatePreviewFromInput() {
+    const markdownTextarea = document.getElementById('markdownTextarea');
+    const previewGrid = document.getElementById('previewgrid');
+    const markdownContent = markdownTextarea.value;
+
+    console.log('Markdown input:', markdownContent);
+
+    const tokens = marked.lexer(markdownContent);
+    console.log('Parsed tokens:', tokens);
+
+    const htmlContent = marked.parser(tokens);
+    console.log('Rendered HTML:', htmlContent);
+
+    previewGrid.innerHTML = htmlContent;
+    applyGridClasses();
+}
+
+// Attach event listeners and initialize the preview
+document.addEventListener('DOMContentLoaded', () => {
+    const markdownTextarea = document.getElementById('markdownTextarea');
+    const progressBarContainer = document.querySelector('.progress-bar-container');
+
+    let debounceTimer;
+
+    markdownTextarea.addEventListener('input', function(event) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(async function() {
+            const value = markdownTextarea.value;
+
+            const matchCreateImage = value.match(/^\s*\/\/\s*CIMG\s*(.+?)\s*\?$/im);
+            const matchQuestion = value.match(/^\s*\/\/\s*QTEXT\s*(.+?)\s*\?$/im);
+            const matchRewrite = value.match(/^\s*\/\/\s*QRW\s*$/im);
+
+            try {
+                if (matchCreateImage && matchCreateImage[1].trim() && !value.includes('<iframe')) {
+                    const prompt = matchCreateImage[1].trim();
+                    if (prompt) {
+                        if (progressBarContainer) {
+                            progressBarContainer.style.display = 'block';
+                        }
+
+                        const response = await fetch('/openai/create-image', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify({ username, password })
+                            body: JSON.stringify({ prompt })
+                        });
+                        
+                        const data = await response.json();
+
+                        if (progressBarContainer) {
+                            progressBarContainer.style.display = 'none';
+                        }
+
+                        if (data.imageFilePath) {
+                            const beforePrompt = value.substring(0, matchCreateImage.index);
+                            const afterPrompt = value.substring(matchCreateImage.index + matchCreateImage[0].length);
+                            const newText = `${beforePrompt}![Generated Image](${data.ReturnimageUrl})\n${afterPrompt}`;
+                            markdownTextarea.value = newText;
+                            markdownTextarea.selectionStart = markdownTextarea.selectionEnd = beforePrompt.length + data.ReturnimageUrl.length + 20;
+                            markdownTextarea.focus();
+                        } else {
+                            console.error('No imageUrl returned from API');
+                            alert('No image was generated. Please try again.');
+                        }
+                    }
+                } else if ((matchQuestion && matchQuestion[1].trim() && !value.includes('<iframe')) || matchRewrite) {
+                    let prompt = null;
+                    let operation = null;
+
+                    if (matchQuestion) {
+                        prompt = matchQuestion[1].trim();
+                        operation = 'answer-question';
+                    } else if (matchRewrite) {
+                        prompt = "Reorganize this text. Remove all the chapter numbers, and add a new introduction chapter.\n" + value.trim();
+                        operation = 'spellcheck-rewrite';
+                    }
+
+                    if (operation && prompt) {
+                        if (progressBarContainer) {
+                            progressBarContainer.style.display = 'block';
+                        }
+
+                        const response = await fetch('/openai/process-text', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ operation, prompt })
                         });
 
-                        if (!response.ok) {
-                            throw new Error('Invalid username or password');
+                        const data = await response.json();
+
+                        if (progressBarContainer) {
+                            progressBarContainer.style.display = 'none';
                         }
 
-                        const data = await response.json(); // Parse JSON response
-                        if (data.redirectUrl) {
-                            window.location.href = data.redirectUrl; // Redirect to the provided URL
+                        if (operation === 'answer-question' && data.response) {
+                            const beforeQuestion = value.substring(0, matchQuestion.index);
+                            const afterQuestion = value.substring(matchQuestion.index + matchQuestion[0].length);
+                            const newText = `${beforeQuestion}${data.response}\n${afterQuestion}`;
+                            markdownTextarea.value = newText;
+                            markdownTextarea.selectionStart = markdownTextarea.selectionEnd = beforeQuestion.length + data.response.length + 1;
+                        } else if (operation === 'spellcheck-rewrite' && data.rewrittenText) {
+                            markdownTextarea.value = data.rewrittenText;
+                            markdownTextarea.selectionStart = markdownTextarea.selectionEnd = data.rewrittenText.length;
                         } else {
-                            throw new Error('No redirect URL provided');
+                            console.error('Unexpected API response');
+                            alert('Operation failed. Please try again.');
                         }
-                    } catch (error) {
-                        alert(error.message); // Display error message to the user
+
+                        markdownTextarea.focus();
                     }
-                });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to process request.');
+                if (progressBarContainer) {
+                    progressBarContainer.style.display = 'none';
+                }
+            }
+
+            updatePreviewFromInput();
+        }, 300);
+    });
+
+    updatePreviewFromInput();
+});
+
+
+
+
+
+
+
+
+
+        function updatePreviewFromButtonClick() {
+    const markdownTextarea = document.getElementById('markdownTextarea');
+    const previewGrid = document.getElementById('previewgrid');
+    const markdownContent = markdownTextarea.value;
+    const htmlContent = marked(markdownContent);
+    previewGrid.innerHTML = htmlContent;
+    applyGridClasses();
+}
+
+function applyGridClasses() {
+    const previewGrid = document.getElementById('previewgrid');
+    const images = previewGrid.querySelectorAll('img');
+    const idCount = {};
+
+    images.forEach((img) => {
+        const url = img.src;
+        const idMatch = url.match(/\/([^\/]+)\/[^\/]+$/);
+        const baseId = idMatch ? idMatch[1].replace(/\s+/g, '-').toLowerCase() : '';
+
+        if (!idCount[baseId]) {
+            idCount[baseId] = 0;
+        }
+        idCount[baseId] += 1;
+
+        const uniqueId = `${baseId}-${idCount[baseId]}`;
+        img.id = uniqueId;
+    });
+}
+
+        function insertTextAtCursor(text) {
+    const markdownTextarea = document.getElementById('markdownTextarea');
+    const start = markdownTextarea.selectionStart;
+    const end = markdownTextarea.selectionEnd;
+    const currentText = markdownTextarea.value;
+
+    const before = currentText.substring(0, start);
+    const after = currentText.substring(end);
+
+    markdownTextarea.value = before + text + after;
+
+    markdownTextarea.selectionStart = markdownTextarea.selectionEnd = start + text.length;
+    markdownTextarea.focus();
+    updatePreviewFromButtonClick(); // Update the preview
+}
+
+
+        function insertHashTaglist() {
+            insertTextAtCursor('\n```markdown\n#SlowYou #SelfCare #AI #Nature #Aliveness #AlivenssLAB\n```\n');
+        }
+
+        function insertHeading1() {
+            console.log('insertHeading1 called');
+            insertTextAtCursor('\n\n# This is heading one\n');
+        }
+
+        function insertHeading2() {
+            console.log('insertHeading2 called');
+            insertTextAtCursor('\n\n## This is heading two\n');
+        }
+
+        function insertHeading3() {
+            console.log('insertHeading3 called');
+            insertTextAtCursor('\n\n### This is heading three\n');
+        }
+
+        function insertHeading4() {
+            console.log('insertHeading4 called');
+            insertTextAtCursor('\n\n#### This is heading four\n');
+        }
+ 
+        function insertBold() {
+            console.log('insertBold called');
+            insertTextAtCursor('**bold text**');
+        }
+
+        function insertItalic() {
+            console.log('insertItalic called');
+            insertTextAtCursor('*italic text*');
+        }
+
+        function insertLink() {
+            console.log('insertLink called');
+            insertTextAtCursor('[link text](url)');
+        }
+
+        function insertImage() {
+            console.log('insertImage called');
+            insertTextAtCursor('![alt text](https://cdn.midjourney.com/bd7b3b48-777a-4013-9ed0-25accc6a090b/0_0.png)');
+        }
+
+        function insertOrderedList() {
+            console.log('insertOrderedList called');
+            insertTextAtCursor('\n1. First item\n2. Second item\n3. Third item\n');
+        }
+
+        function insertUnorderedList() {
+            console.log('insertUnorderedList called');
+            insertTextAtCursor('\n- First item\n- Second item\n- Third item\n');
+        }
+
+        function insertCode() {
+            console.log('insertCode called');
+            insertTextAtCursor('\n```markdown\n#SlowYou #SelfCare #AI #Nature #Aliveness #AlivenssLAB\n```\n');
+        }
+
+        function insertHorizontalRule() {
+            console.log('insertHorizontalRule called');
+            insertTextAtCursor('\n---\n');
+        }
+
+        // Ensure event listeners are only added once
+        function attachEventListeners() {
+            console.log('attachEventListeners called');
+            document.getElementById('insertHashTaglist').addEventListener('click', insertHashTaglist);
+            document.getElementById('insertHeading1').addEventListener('click', insertHeading1);
+            document.getElementById('insertHeading2').addEventListener('click', insertHeading2);
+            document.getElementById('insertHeading3').addEventListener('click', insertHeading3);
+            document.getElementById('insertHeading4').addEventListener('click', insertHeading4);
+            document.getElementById('insertBold').addEventListener('click', insertBold);
+            document.getElementById('insertItalic').addEventListener('click', insertItalic);
+            document.getElementById('insertLink').addEventListener('click', insertLink);
+            document.getElementById('insertImage').addEventListener('click', insertImage);
+            document.getElementById('insertOrderedList').addEventListener('click', insertOrderedList);
+            document.getElementById('insertUnorderedList').addEventListener('click', insertUnorderedList);
+            document.getElementById('insertCode').addEventListener('click', insertCode);
+            document.getElementById('insertHorizontalRule').addEventListener('click', insertHorizontalRule);
+            document.getElementById('saveButton').addEventListener('click', saveMarkdownContent);
+        }
+
+        let currentDocumentId = null; // Store the current document ID
+
+        async function saveMarkdownContent() {
+    const content = markdownTextarea.value;
+
+    if (!content.trim()) {
+        alert('Textarea is empty. Please enter some content.');
+        return;
+    }
+
+    if (!isChanged) {
+        alert('No changes detected.');
+        return;
+    }
+
+    saveButton.disabled = true;
+
+    try {
+        const response = await fetch('https://slowyou.net/dropbox/save-markdown', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ content, id: currentDocumentId }) // Use currentDocumentId here
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            console.log('File saved successfully:', result.id);
+            alert('File saved successfully');
+            currentDocumentId = result.id; // Update the current document ID
+            const returnfileURL = document.querySelector('.ReturnfileURL');
+            returnfileURL.href = 'https://slowyou.net/dropbox/md/' + result.id + '.md';
+            returnfileURL.text = 'https://slowyou.net/dropbox/md/' + result.id + '.md';
+            returnfileURL.setAttribute('data-url', 'https://slowyou.net/dropbox/md/' + result.id + '.md');
+            isChanged = false;
+
+            const saveToPdfButton = document.getElementById('SaveasPDFButton');
+            saveToPdfButton.setAttribute('data-filename', result.id + '.md');
+            updateSaveToPdfButton();
+        } else {
+            console.error('Error saving file:', result.message);
+            alert('Error saving file');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while saving the file');
+    } finally {
+        saveButton.disabled = false;
+    }
+}
+
+
+        // Update preview when user inputs text directly
+        markdownTextarea.addEventListener('input', () => {
+            updatePreviewFromInput();
+            isChanged = true;
+            saveButton.disabled = false;
+        });
+
+        // Attach event listeners once
+        attachEventListeners();
+
+        // Initial preview update
+        console.log('Initial preview update');
+        updatePreviewFromInput();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.querySelector('.form-control[type="search"]');
+            const searchButton = document.querySelector('.btn[type="submit"]');
+            const fileListfromSearch = document.querySelector('#FileListfromSearch');
+            const paginationControls = document.querySelector('#paginationControls');
+            let currentPage = 1;
+            const itemsPerPage = 3;
+            let searchResults = [];
+
+            searchButton.addEventListener('click', async (event) => {
+                event.preventDefault();
+                const query = searchInput.value.trim();
+
+                if (!query) {
+                    alert('Please enter a search term');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`https://slowyou.net/dropbox/search?query=${encodeURIComponent(query)}`);
+                    const results = await response.json();
+
+                    if (response.ok) {
+                        searchResults = results;
+                        currentPage = 1;  // Reset to first page on new search
+                        displaySearchResults(searchResults);
+                        setupPagination(searchResults.length);
+                    } else {
+                        console.error('Error searching files:', results.message);
+                        alert('Error searching files');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred while searching for files');
+                }
+            });
+
+            function displaySearchResults(results) {
+    fileListfromSearch.innerHTML = ''; // Clear previous results
+
+    if (results.length === 0) {
+        fileListfromSearch.innerHTML = '<p>No results found.</p>';
+        paginationControls.innerHTML = '';
+        return;
+    }
+
+    const pageResults = paginateResults(results, currentPage, itemsPerPage);
+    pageResults.forEach(result => {
+        const card = document.createElement('div');
+        card.classList.add('card', 'mb-3');
+        card.style.width = '18rem';
+        card.innerHTML = `
+            <div class="card-body">
+                <p class="card-text"><a href="https://slowyou.net/dropbox/md/${result.id}.md" target="_blank">${result.abs}</a></p>
+                <button class="btn btn-primary open-content-button" data-id="${result.id}">Open</button>
+                <button class="btn btn-primary insert-content-button" data-id="${result.id}">Insert Content</button>
+                <button class="btn btn-primary delete-content-button" data-id="${result.id}">Delete Content</button>
+            </div>
+        `;
+        fileListfromSearch.appendChild(card);
+    });
+
+    // Add event listeners to the new buttons
+    document.querySelectorAll('.open-content-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            openContent(id);
+        });
+    });
+
+    document.querySelectorAll('.insert-content-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            insertContent(id);
+        });
+    });
+
+    document.querySelectorAll('.delete-content-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            deleteContent(id);
+        });
+    });
+}
+
+
+async function openContent(id) {
+    if (!id) {
+        console.error('No id provided');
+        alert('No document id provided');
+        return;
+    }
+
+    try {
+        const response = await fetch(`https://slowyou.net/dropbox/file/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
-    </script>    
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        const textarea = document.getElementById('markdownTextarea');
+        if (textarea) {
+            textarea.value = data.content; // Load content into the textarea
+            textarea.focus();
+
+            // Hide the search results display
+            document.getElementById('FileListfromSearch').style.display = 'none';
+            document.getElementById('paginationControls').style.display = 'none';
+
+            // Update the current document ID
+            currentDocumentId = id;
+            const returnfileURL = document.querySelector('.ReturnfileURL');
+            returnfileURL.href = 'https://slowyou.net/dropbox/md/' + currentDocumentId + '.md';
+            returnfileURL.text = 'https://slowyou.net/dropbox/md/' + currentDocumentId + '.md';
+            returnfileURL.setAttribute('data-url', 'https://slowyou.net/dropbox/md/' + currentDocumentId + '.md');
+            isChanged = true;
+
+            alert('Document loaded successfully.');
+        } else {
+            console.error('Textarea element not found');
+            alert('Textarea element not found');
+        }
+    } catch (error) {
+        console.error('Error fetching document:', error);
+        alert('Error fetching document');
+    }
+}
+
+
+
+            function paginateResults(results, page, itemsPerPage) {
+                const start = (page - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+                return results.slice(start, end);
+            }
+
+            function setupPagination(totalItems) {
+                paginationControls.innerHTML = '';
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageItem = document.createElement('li');
+                    pageItem.classList.add('page-item');
+                    const pageLink = document.createElement('a');
+                    pageLink.classList.add('page-link');
+                    pageLink.href = '#';
+                    pageLink.textContent = i;
+
+                    if (i === currentPage) {
+                        pageItem.classList.add('active');
+                    }
+
+                    pageLink.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        currentPage = i;
+                        displaySearchResults(searchResults);
+                        setupPagination(totalItems);
+                    });
+
+                    pageItem.appendChild(pageLink);
+                    paginationControls.appendChild(pageItem);
+                }
+            }
+        });
+
+
+
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
 </body>
 </html>
