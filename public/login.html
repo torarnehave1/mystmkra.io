@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="pagetitle">Login</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Bootstrap  CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Optional: Custom styles for form -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/css/flag-icon.min.css">
+ 
+  <style>
+    .form-container {
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body class="d-flex flex-column pt-5 hero-background">
+  <div id="menu-container"></div> <!-- Placeholder for the menu -->
+  <div class="container">
+    <h2 class="text-center my-4" id="title">Login</h2>
+    <form id="loginForm" class="form-container">
+      <div class="form-group">
+        <label for="username" id="usernameLabel">Username:</label>
+        <input type="text" class="form-control" id="username" name="username" required>
+      </div>
+      <div class="form-group">
+        <label for="password" id="passwordLabel">Password:</label>
+        <input type="password" class="form-control" id="password" name="password" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" id="submitButton">Login</button>
+      <!-- Add this below your login form -->
+<div class="form-group">
+  <a href="/forgot-password.html" id="forgotPasswordLink">Forgot Password?</a>
+</div>
+    </form>
+  </div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <!-- Menu and Language Script -->
+  <script>
+    function loadLanguage(language) {
+        fetch(`/languages/${language}.json`)
+            .then(response => response.json())
+            .then(data => {
+              document.getElementById('forgotPasswordLink').innerText = data.forgotpasswordlink;
+                document.getElementById('title').innerText = data.loginTitle;
+                document.getElementById('usernameLabel').innerText = data.usernameLabel;
+                document.getElementById('passwordLabel').innerText = data.passwordLabel;
+                document.getElementById('submitButton').innerText = data.loginButton;
+                document.getElementById('titlelanguage').innerText = data.titlelanguage;
+                document.getElementById('navHome').innerText = data.navHome;
+                document.getElementById('navFeatures').innerText = data.navFeatures;
+                document.getElementById('navPricing').innerText = data.navPricing;
+                document.getElementById('navFAQs').innerText = data.navFAQs;
+                document.getElementById('navAbout').innerText = data.navAbout;
+                document.getElementById('pagetitle').innerText = data.pagetitle;
+            });
+    }
+
+    function initializeLanguageSelector() {
+        document.getElementById('languageSelector').addEventListener('change', function() {
+            const selectedLanguage = this.value;
+            localStorage.setItem('preferredLanguage', selectedLanguage);
+            loadLanguage(selectedLanguage);
+        });
+
+        const preferredLanguage = localStorage.getItem('preferredLanguage') || 'en';
+        document.getElementById('languageSelector').value = preferredLanguage;
+        loadLanguage(preferredLanguage);
+    }
+
+    function loadMenu() {
+        fetch('./menu.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('menu-container').innerHTML = data;
+                initializeLanguageSelector();
+                checkAuthStatus();
+            })
+            .catch(error => console.error('Error loading menu:', error));
+    }
+
+    function checkAuthStatus() {
+      
+            document.getElementById('auth-buttons').classList.add('d-none');
+           
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadMenu();
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+
+                try {
+                    const response = await fetch('/a/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Invalid username or password');
+                    }
+
+                    const data = await response.json();
+                    console.log('Token:', data.token);
+
+                    // Store the token
+                    localStorage.setItem('jwtToken', data.token);
+
+                    // Redirect to index.html
+                    window.location.href = data.redirectUrl;
+                } catch (error) {
+                    alert(error.message);
+                }
+            });
+        }
+    });
+  </script>
+</body>
+</html>

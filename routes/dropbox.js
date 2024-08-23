@@ -26,6 +26,7 @@ import {isAuthenticated} from '../auth/auth.js';
 
 
 console.log(`The application is running in ${config.NODE_ENV} mode.`);
+console.log(`REDIR = ${config.REDIRECT_URI}`)
 
 let accessToken = process.env.DROPBOX_ACCESS_TOKEN;
 let refreshToken = process.env.DROPBOX_REFRESH_TOKEN;
@@ -143,7 +144,8 @@ router.get('/auth/callback', async (req, res) => {
   params.append('grant_type', 'authorization_code');
   params.append('client_id', process.env.DROPBOX_APP_KEY);
   params.append('client_secret', process.env.DROPBOX_APP_SECRET);
-  params.append('redirect_uri', REDIRECT_URI);
+  params.append('redirect_uri', config.REDIRECT_URI);
+
 
   try {
     const response = await axios.post('https://api.dropboxapi.com/oauth2/token', params);
@@ -966,6 +968,39 @@ router.get('/file/:id', async (req, res) => {
     }
 });
 
+//Create a endpoint that is createing a new folder in dropbox with the name of the current user.is
 
+router.get('/createfolder', isAuthenticated, ensureValidToken, async (req, res) => {
+  try {
+      // Find the user and select their username and ID
+      const user = await User.findById(req.user.id).select('username');
+
+      // Use the user's ID as the folder name
+      const foldername = user.id;
+
+      // Initialize Dropbox with the access token
+      const dbx = new Dropbox({
+          accessToken: process.env.DROPBOX_ACCESS_TOKEN, // Ensure this is set in your environment variables
+          fetch: fetch,
+      });
+
+
+      
+      // Define the folder path in Dropbox
+      const folderPath = `/Slowyou.net/markdown/${foldername}`;
+
+      // Create the folder in Dropbox
+      await dbx.filesCreateFolderV2({ path: folderPath });
+
+      // Respond with success
+      res.status(200).json({
+          message: `Folder created successfully for user ID: ${foldername}`
+      });
+  } catch (ex) {
+      // Log the error and respond with a 500 status code
+      console.error('Error creating folder in Dropbox:', ex);
+      res.status(500).send('An error occurred while processing your request.');
+  }
+});
 
 export default router;

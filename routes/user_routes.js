@@ -282,7 +282,7 @@ router.post('/login', async (req, res) => {
         });
 
         // Send a redirect response
-        res.status(200).json({ message: 'Login successful', redirectUrl: '/mystmkra.html' });
+        res.status(200).json({ message: 'Login successful', redirectUrl: '/index.html' });
     } catch (err) {
         //console.error(err);
         res.status(500).send('Server error.');
