@@ -244,7 +244,7 @@ router.get("/verify-email", async (req, res) => {
 });
 
 //user route prefix = 
-router.post('/login-bak', async (req, res) => {
+router.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     try {
@@ -282,7 +282,7 @@ router.post('/login-bak', async (req, res) => {
         });
 
         // Send a redirect response
-        res.status(200).json({ message: 'Login successful', redirectUrl: '/index.html' });
+        res.status(200).json({ message: 'Login successful', redirectUrl: '/mystmkra.html' });
     } catch (err) {
         //console.error(err);
         res.status(500).send('Server error.');
@@ -290,7 +290,7 @@ router.post('/login-bak', async (req, res) => {
 });
 
 
-router.post('/login', async (req, res) => {
+router.post('/login-bak', async (req, res) => {
     const { username, password } = req.body;
     const host = req.headers.host; // Get the Host header to determine the source
 

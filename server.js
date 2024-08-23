@@ -11,6 +11,9 @@ import blogpost from './routes/blogpost_routes.js'; // Blog post routes
 import rateLimit from 'express-rate-limit'; // Security to protect from brute force
 import morgan from 'morgan'; // Log functionality
 import { isAuthenticated } from './auth/auth.js';
+import ChatGPT from './routes/openai.js';
+import ENVconfig from './config/config.js';
+
 
 // Load environment variables
 dotenv.config();
@@ -28,6 +31,9 @@ app.use(limiter);
 // Set up logging
 const logger = morgan('combined');
 app.use(logger);
+
+console.log(`The application is running in ${ENVconfig.NODE_ENV} mode.`);
+console.log(`The base URL is ${ENVconfig.BASE_URL}`);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -65,6 +71,7 @@ app.use('/a', userRoutes); // Authentication routes
 app.use('/dropbox', dropboxfilesroutes); // Dropbox routes
 app.use('/md', mdroute); // Markdown routes
 app.use('/blog', blogpost); // Blog post routes
+app.use('/openai', ChatGPT);
 
 // Support page
 app.get('/support', (req, res) => {
