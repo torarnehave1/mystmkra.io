@@ -19,7 +19,7 @@ import ENVconfig from './config/config.js';
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 // Set up rate limiter
 const limiter = rateLimit({
