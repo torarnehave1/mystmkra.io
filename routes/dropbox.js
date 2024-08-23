@@ -791,46 +791,72 @@ router.get('/imgcollection/:filename', ensureValidToken, async (req, res) => {
 });
 
 router.post('/save-markdown', ensureValidToken, async (req, res) => {
+  console.log('Request received to save markdown');
+
   const { content, id } = req.body;
 
   if (!content) {
+      console.log('No content provided');
       return res.status(400).json({
           message: 'Content is required to save the file'
       });
   }
 
+  console.log('Content is provided');
+
   const dbx = new Dropbox({
-      accessToken: accessToken,
+      accessToken: process.env.DROPBOX_ACCESS_TOKEN, // Assuming accessToken is stored in environment variables
       fetch: fetch,
   });
 
   try {
+      console.log('Finding user by ID:', req.user.id);
+      // Get the current user
+      const user = await User.findById(req.user.id).select('username');
+
+      if (!user) {
+          console.log('User not found');
+          return res.status(404).json({
+              message: 'User not found'
+          });
+      }
+
+      console.log('User found:', user);
+
       let fileDoc;
 
       if (id) {
+          console.log('Finding existing document by ID:', id);
           // If an ID is provided, find the document and update it
           fileDoc = await MDfile.findById(id);
           if (!fileDoc) {
+              console.log('Document not found');
               return res.status(404).json({
                   message: 'Document not found'
               });
           }
           fileDoc.content = content;
       } else {
+          console.log('Creating new document');
           // If no ID is provided, create a new document
           fileDoc = new MDfile({
               _id: new mongoose.Types.ObjectId(),
               content: content
-          
           });
       }
 
+      console.log('Saving document to MongoDB');
       // Save to MongoDB
       await fileDoc.save();
 
+      // Define the file path in the user's folder
+      const foldername = user.id; // Use the user's ID as the folder name
       const filename = `${fileDoc._id}.md`;
-      const filePath = `/Slowyou.net/markdown/${filename}`;
+      const filePath = `/Slowyou.net/markdown/${foldername}/${filename}`;  // Updated the path
 
+      console.log('FilePath is:', filePath);  // This should output the file path
+
+      console.log('Uploading file to Dropbox');
       // Upload the file to Dropbox
       await dbx.filesUpload({
           path: filePath,
@@ -838,9 +864,12 @@ router.post('/save-markdown', ensureValidToken, async (req, res) => {
           mode: 'overwrite'
       });
 
+      console.log('File uploaded successfully to Dropbox');
+
       res.status(200).json({
           message: 'File saved successfully',
-          id: fileDoc._id
+          id: fileDoc._id,
+          filePath: filePath  // Ensure this variable is correctly passed
       });
   } catch (error) {
       console.error('Error saving file to Dropbox or MongoDB:', error);
@@ -850,6 +879,9 @@ router.post('/save-markdown', ensureValidToken, async (req, res) => {
       });
   }
 });
+
+
+
 
 
 router.delete('/filedelete/:id', ensureValidToken, async (req, res) => {
@@ -984,7 +1016,7 @@ router.get('/createfolder', isAuthenticated, ensureValidToken, async (req, res) 
           fetch: fetch,
       });
 
-
+      
       
       // Define the folder path in Dropbox
       const folderPath = `/Slowyou.net/markdown/${foldername}`;
