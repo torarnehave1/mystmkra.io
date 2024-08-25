@@ -388,6 +388,91 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
 });
 
 
+router.get('/md-test/:filename', isAuthenticated, ensureValidToken, async (req, res) => {
+  const filename = req.params.filename;
+
+  // Assuming that the user has their own directory in Dropbox based on their user ID
+  const userId = req.user.id;
+  const filePath = `/${userId}/${filename}`;
+
+  const dbx = new Dropbox({
+      accessToken: accessToken,
+      fetch: fetch,
+  });
+
+  try {
+      const response = await dbx.filesDownload({ path: filePath });
+      const fileContent = response.result.fileBinary.toString('utf-8');
+
+      // Extract image URL from the markdown content
+      const imageRegex = /!\[.*?\]\((.*?)\)/;
+      const imageMatch = fileContent.match(imageRegex);
+      const imageUrlFromMarkdown = imageMatch ? imageMatch[1] : '';
+      const imageTag = `<img src="${imageUrlFromMarkdown}" alt="${filename}" class="img-fluid header-image">`;
+      const contentWithoutImage = fileContent.replace(imageRegex, '');
+
+      const htmlContent = marked(contentWithoutImage);
+
+      // Ensure the URL is HTTPS
+      const protocol = req.protocol === 'https' ? 'https' : 'http';
+      const host = req.get('host');
+      const fullUrl = `${protocol}://${host}${req.originalUrl}`;
+
+      const html = `
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <title>SlowYou™ Blog</title>
+              <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+              <link rel="stylesheet" href="../../markdown/markdown.css">
+          </head>
+          <body>
+          
+          <div id="menu-container"></div> 
+          <div style="text-align: center;">
+              ${imageTag}
+          </div>
+          <div class="container">
+              ${htmlContent}
+
+              <!-- Facebook Share Button -->
+              <div style="text-align: center; margin-top: 20px;">
+                  <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fullUrl)}" target="_blank" class="btn btn-primary">
+                      Share on Facebook
+                  </a>
+              </div>
+          </div>
+              
+          </body>
+          <script>
+          function loadMenu() {
+              fetch('/menu.html')
+                  .then(response => response.text())
+                  .then(data => {
+                      document.getElementById('menu-container').innerHTML = data;
+                      initializeLanguageSelector(); // Initialize the language selector after loading the menu
+                      checkAuthStatus(); // Check auth status after loading the menu
+                  })
+                  .catch(error => console.error('Error loading menu:', error));
+          }
+
+          document.addEventListener('DOMContentLoaded', () => {
+              console.log("DOM fully loaded and parsed");
+              loadMenu();
+          });
+          </script>
+          </html>
+      `;
+
+      res.send(html);
+  } catch (error) {
+      console.error('Error fetching file from Dropbox:', error);
+      res.status(500).json({
+          message: 'Error fetching file from Dropbox',
+          error: error.error ? error.error.error_summary : error.message
+      });
+  }
+});
 
 
 
@@ -790,10 +875,15 @@ router.get('/imgcollection/:filename', ensureValidToken, async (req, res) => {
   }
 });
 
-router.post('/save-markdown', ensureValidToken, async (req, res) => {
+
+
+
+
+
+router.post('/save-markdown', isAuthenticated, ensureValidToken, async (req, res) => {
   console.log('Request received to save markdown');
 
-  const { content, id } = req.body;
+  const { content, documentId } = req.body;  // Use documentId here
 
   if (!content) {
       console.log('No content provided');
@@ -804,15 +894,12 @@ router.post('/save-markdown', ensureValidToken, async (req, res) => {
 
   console.log('Content is provided');
 
-  const dbx = new Dropbox({
-      accessToken: process.env.DROPBOX_ACCESS_TOKEN, // Assuming accessToken is stored in environment variables
-      fetch: fetch,
-  });
-
   try {
-      console.log('Finding user by ID:', req.user.id);
-      // Get the current user
-      const user = await User.findById(req.user.id).select('username');
+      const userId = req.user.id;
+      console.log('User ID:', userId);
+
+      // Get the current user from the database
+      const user = await User.findById(userId).select('username');
 
       if (!user) {
           console.log('User not found');
@@ -825,10 +912,10 @@ router.post('/save-markdown', ensureValidToken, async (req, res) => {
 
       let fileDoc;
 
-      if (id) {
-          console.log('Finding existing document by ID:', id);
-          // If an ID is provided, find the document and update it
-          fileDoc = await MDfile.findById(id);
+      if (documentId) {  // Use documentId instead of id
+          console.log('Finding existing document by ID:', documentId);
+          // If a document ID is provided, find the document and update it
+          fileDoc = await MDfile.findById(documentId);
           if (!fileDoc) {
               console.log('Document not found');
               return res.status(404).json({
@@ -838,7 +925,7 @@ router.post('/save-markdown', ensureValidToken, async (req, res) => {
           fileDoc.content = content;
       } else {
           console.log('Creating new document');
-          // If no ID is provided, create a new document
+          // If no document ID is provided, create a new document
           fileDoc = new MDfile({
               _id: new mongoose.Types.ObjectId(),
               content: content
@@ -852,9 +939,15 @@ router.post('/save-markdown', ensureValidToken, async (req, res) => {
       // Define the file path in the user's folder
       const foldername = user.id; // Use the user's ID as the folder name
       const filename = `${fileDoc._id}.md`;
-      const filePath = `/Slowyou.net/markdown/${foldername}/${filename}`;  // Updated the path
+      const filePath = `/${foldername}/${filename}`;
 
       console.log('FilePath is:', filePath);  // This should output the file path
+
+      // Initialize Dropbox with the refreshed access token
+      const dbx = new Dropbox({
+          accessToken: accessToken, // Use the refreshed access token from middleware
+          fetch: fetch,
+      });
 
       console.log('Uploading file to Dropbox');
       // Upload the file to Dropbox
@@ -1007,32 +1100,46 @@ router.get('/createfolder', isAuthenticated, ensureValidToken, async (req, res) 
       // Find the user and select their username and ID
       const user = await User.findById(req.user.id).select('username');
 
+      if (!user) {
+          return res.status(404).json({
+              message: 'User not found'
+          });
+      }
+
       // Use the user's ID as the folder name
       const foldername = user.id;
 
-      // Initialize Dropbox with the access token
+      // Initialize Dropbox with the refreshed access token
       const dbx = new Dropbox({
-          accessToken: process.env.DROPBOX_ACCESS_TOKEN, // Ensure this is set in your environment variables
+          accessToken: accessToken, // Use the refreshed access token
           fetch: fetch,
       });
 
-      
-      
       // Define the folder path in Dropbox
-      const folderPath = `/Slowyou.net/markdown/${foldername}`;
+      const folderPath = `/${foldername}`;
 
       // Create the folder in Dropbox
-      await dbx.filesCreateFolderV2({ path: folderPath });
+      const response = await dbx.filesCreateFolderV2({ path: folderPath });
 
-      // Respond with success
-      res.status(200).json({
-          message: `Folder created successfully for user ID: ${foldername}`
-      });
+      if (response.result.metadata) {
+          // Respond with success if folder was created
+          res.status(200).json({
+              message: `Folder created successfully for user ID: ${foldername}`,
+              folderPath: response.result.metadata.path_display,
+          });
+      } else {
+          res.status(500).json({
+              message: 'Failed to create folder in Dropbox',
+          });
+      }
+
   } catch (ex) {
       // Log the error and respond with a 500 status code
       console.error('Error creating folder in Dropbox:', ex);
       res.status(500).send('An error occurred while processing your request.');
   }
 });
+
+
 
 export default router;

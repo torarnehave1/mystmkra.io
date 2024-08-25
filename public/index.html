@@ -84,8 +84,8 @@
                 <label for="markdownTextarea">Markdown Content:</label>
                 <textarea class="form-control" id="markdownTextarea" rows="10"></textarea>
             </div>
-            <a class="ReturnfileURL" href="https://slowyou.net/dropbox/md/" target="_blank" rel="noopener">https://slowyou.net/dropbox/md/</a>
-            <div class="ReturnfileURL" data-url="https://slowyou.net/dropbox/md/"></div>
+            <a class="ReturnfileURL" href="https://mystmkra.io/dropbox/md/" target="_blank" rel="noopener">https://slowyou.net/dropbox/md/</a>
+            <div class="ReturnfileURL" data-url="https://mystmkra.io/dropbox/md/"></div>
             
             <label for="preview">Preview:</label>
             <div class="preview" id="preview">
@@ -793,6 +793,7 @@ function applyGridClasses() {
 
         async function saveMarkdownContent() {
     const content = markdownTextarea.value;
+    const documentId = currentDocumentId;
 
     if (!content.trim()) {
         alert('Textarea is empty. Please enter some content.');
@@ -812,11 +813,11 @@ function applyGridClasses() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ content, id: currentDocumentId }) // Use currentDocumentId here
+            body: JSON.stringify({ content, documentId })
         });
 
-        const result = await response.json();
         if (response.ok) {
+            const result = await response.json();
             console.log('File saved successfully:', result.id, result.filePath);
             alert('File saved successfully');
             currentDocumentId = result.id; // Update the current document ID
@@ -830,7 +831,8 @@ function applyGridClasses() {
             saveToPdfButton.setAttribute('data-filename', result.id + '.md');
             updateSaveToPdfButton();
         } else {
-            console.error('Error saving file:', result.message);
+            const errorText = await response.text();
+            console.error('Error saving file:', errorText);
             alert('Error saving file');
         }
     } catch (error) {
@@ -840,6 +842,7 @@ function applyGridClasses() {
         saveButton.disabled = false;
     }
 }
+
 
 
         // Update preview when user inputs text directly
@@ -875,7 +878,7 @@ function applyGridClasses() {
                 }
 
                 try {
-                    const response = await fetch(`https://slowyou.net/dropbox/search?query=${encodeURIComponent(query)}`);
+                    const response = await fetch(`/dropbox/search?query=${encodeURIComponent(query)}`);
                     const results = await response.json();
 
                     if (response.ok) {
