@@ -13,14 +13,10 @@ export function isAuthenticated(req, res, next) {
     const token = req.cookies.jwtToken || req.header('Authorization')?.replace('Bearer ', '');
 
     if (!token) {
-      console.log('No token provided. Redirecting to login.');
-      // Check the domain to determine the correct login page
-      const host = req.headers.host;
-      if (host === 'mystmkra.io') {
-        return res.redirect('https://mystmkra.io/index.html'); // Redirect to index.html for mystmkra.io
-      } else {
-        return res.redirect('/login.html'); // Default redirect to login.html
-      }
+      console.log('No token provided. Returning 401 status.');
+
+      // Return 401 Unauthorized if no token is provided
+      return res.status(401).json({ message: 'No token provided. Please log in.' });
     }
 
     // Verify the token
@@ -33,14 +29,16 @@ export function isAuthenticated(req, res, next) {
     next();
   } catch (ex) {
     console.log('Token verification failed:', ex.message);
-    // Optionally, you could add more detailed logging here
 
-    // Check the domain to determine the correct login page
-    const host = req.headers.host;
-    if (host === 'mystmkra.io') {
-      return res.redirect('https://mystmkra.io/index.html'); // Redirect to index.html for mystmkra.io
-    } else {
-      return res.redirect('/login.html'); // Default redirect to login.html
+    // Handle token expiration specifically
+    if (ex.name === 'TokenExpiredError') {
+      console.log('Token has expired. Returning 401 status with session expired message.');
+
+      // Return 401 Unauthorized with a specific message for expired tokens
+      return res.status(401).json({ message: 'Session expired. Please log in again.' });
     }
+
+    // Handle other token verification errors
+    return res.status(401).json({ message: 'Invalid token. Please log in.' });
   }
 }

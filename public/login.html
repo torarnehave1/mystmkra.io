@@ -19,6 +19,11 @@
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
+    .error-message {
+      color: red;
+      margin-top: 10px;
+      text-align: center;
+    }
   </style>
 </head>
 <body class="d-flex flex-column pt-5 hero-background">
@@ -35,10 +40,10 @@
         <input type="password" class="form-control" id="password" name="password" required>
       </div>
       <button type="submit" class="btn btn-primary btn-block" id="submitButton">Login</button>
-      <!-- Add this below your login form -->
-<div class="form-group">
-  <a href="/forgot-password.html" id="forgotPasswordLink">Forgot Password?</a>
-</div>
+      <div class="form-group">
+        <a href="/forgot-password.html" id="forgotPasswordLink">Forgot Password?</a>
+      </div>
+      <div id="errorMessage" class="error-message"></div>
     </form>
   </div>
 
@@ -49,56 +54,16 @@
 
   <!-- Menu and Language Script -->
   <script>
-    function loadLanguage(language) {
-        fetch(`/languages/${language}.json`)
-            .then(response => response.json())
-            .then(data => {
-              document.getElementById('forgotPasswordLink').innerText = data.forgotpasswordlink;
-                document.getElementById('title').innerText = data.loginTitle;
-                document.getElementById('usernameLabel').innerText = data.usernameLabel;
-                document.getElementById('passwordLabel').innerText = data.passwordLabel;
-                document.getElementById('submitButton').innerText = data.loginButton;
-                document.getElementById('titlelanguage').innerText = data.titlelanguage;
-                document.getElementById('navHome').innerText = data.navHome;
-                document.getElementById('navFeatures').innerText = data.navFeatures;
-                document.getElementById('navPricing').innerText = data.navPricing;
-                document.getElementById('navFAQs').innerText = data.navFAQs;
-                document.getElementById('navAbout').innerText = data.navAbout;
-                document.getElementById('pagetitle').innerText = data.pagetitle;
-            });
-    }
+    
 
-    function initializeLanguageSelector() {
-        document.getElementById('languageSelector').addEventListener('change', function() {
-            const selectedLanguage = this.value;
-            localStorage.setItem('preferredLanguage', selectedLanguage);
-            loadLanguage(selectedLanguage);
-        });
+    
 
-        const preferredLanguage = localStorage.getItem('preferredLanguage') || 'en';
-        document.getElementById('languageSelector').value = preferredLanguage;
-        loadLanguage(preferredLanguage);
-    }
+    
 
-    function loadMenu() {
-        fetch('./menu.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('menu-container').innerHTML = data;
-                initializeLanguageSelector();
-                checkAuthStatus();
-            })
-            .catch(error => console.error('Error loading menu:', error));
-    }
-
-    function checkAuthStatus() {
-      
-            document.getElementById('auth-buttons').classList.add('d-none');
-           
-    }
-
+    
     document.addEventListener('DOMContentLoaded', () => {
-        loadMenu();
+       
+
         const loginForm = document.getElementById('loginForm');
         if (loginForm) {
             loginForm.addEventListener('submit', async (event) => {
@@ -117,19 +82,20 @@
                     });
 
                     if (!response.ok) {
-                        throw new Error('Invalid username or password');
+                        const errorMessage = response.status === 401 ? 'Invalid username or password' : 'Login failed';
+                        throw new Error(errorMessage);
                     }
 
                     const data = await response.json();
-                    console.log('Token:', data.token);
 
                     // Store the token
                     localStorage.setItem('jwtToken', data.token);
 
-                    // Redirect to index.html
-                    window.location.href = data.redirectUrl;
+                    // Redirect to the specified URL or a default page
+                    const redirectUrl = data.redirectUrl || '/index.html';
+                    window.location.href = redirectUrl;
                 } catch (error) {
-                    alert(error.message);
+                    document.getElementById('errorMessage').innerText = error.message;
                 }
             });
         }
