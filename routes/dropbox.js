@@ -68,7 +68,102 @@ const filePath = path.resolve(__dirname, '..', '..');
 
 dotenv.config(); // Load environment variables from .env file
 
+router.post('/share-folder-test', isAuthenticated, ensureValidToken, async (req, res) => {
+  const email = 'post@universi.no';
+  const folderName = '6665c107e4a8ea992f1ad942';
+  const folderPath = `/${folderName}`; // Assuming the folder is directly under the root
 
+  try {
+    // Initialize Dropbox with the refreshed access token
+    const dbx = new Dropbox({
+      accessToken: accessToken,
+      fetch: fetch,
+    });
+
+    // Prepare the member object
+    const member = {
+      member: {
+        '.tag': 'email',
+        email: email,
+      },
+      access_level: {
+        '.tag': 'viewer' // You can change this to 'editor' if needed
+      }
+    };
+
+    // Retrieve shared folder ID using the folder path
+    const sharedFolderMetadata = await dbx.sharingShareFolder({
+      path: folderPath,
+      acl_update_policy: { '.tag': 'editors' },
+    });
+
+    const sharedFolderId = sharedFolderMetadata.result.shared_folder_id;
+
+    // Add the email as a member to the specified folder
+    await dbx.sharingAddFolderMember({
+      shared_folder_id: sharedFolderId,
+      members: [member],
+      quiet: false, // Send an email notification to the user
+    });
+
+    res.status(200).json({
+      message: `Folder shared successfully with ${email}`,
+    });
+  } catch (error) {
+    console.error('Error sharing folder on Dropbox:', error);
+    res.status(500).json({
+      message: 'Error sharing folder on Dropbox',
+      error: error.error ? error.error.error_summary : error.message
+    });
+  }
+});
+
+
+router.post('/share-folder', isAuthenticated, ensureValidToken, async (req, res) => {
+  const { email, folderPath } = req.body;
+
+  if (!email || !folderPath) {
+    return res.status(400).json({
+      message: 'Email and folder path are required'
+    });
+  }
+
+  try {
+    // Initialize Dropbox with the refreshed access token
+    const dbx = new Dropbox({
+      accessToken: accessToken,
+      fetch: fetch,
+    });
+
+    // Prepare the member object
+    const member = {
+      member: {
+        '.tag': 'email',
+        email: email,
+      },
+      access_level: {
+        '.tag': 'viewer' // You can change this to 'editor' if needed
+      }
+    };
+
+    // Add the email as a member to the specified folder
+    await dbx.sharingAddFolderMember({
+      shared_folder_id: folderPath, // Assuming folderPath is the shared folder ID
+      members: [member],
+      quiet: false, // Send an email notification to the user
+    });
+
+    res.status(200).json({
+      message: `Folder shared successfully with ${email}`,
+    });
+  } catch (error) {
+    console.error('Error sharing folder on Dropbox:', error);
+    res.status(500).json({
+      message: 'Error sharing folder on Dropbox',
+      error: error.error ? error.error.error_summary : error.message
+    });
+  }
+});
 
 
 
