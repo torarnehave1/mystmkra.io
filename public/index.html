@@ -12,7 +12,8 @@
 <body>
     
     <div class="logo"><h1>MystMkra.io - [BETA TEST]</h1></div>
-    
+    <div class="loggedin" id="loggedinas"></div>
+
     <div class="header-container">
         
         <div class="imgheader"><img src="https://cdn.midjourney.com/f7c1a775-d0ca-48f4-9e53-c80d9c6762c4/0_1.png" alt="Image Header"></div>
@@ -102,6 +103,30 @@
     document.addEventListener('DOMContentLoaded', () => {
         updateSaveToPdfButton();
     });
+
+    async function updateLoggedInStatus() {
+            try {
+                const response = await fetch('/dropbox/protected', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}` // Assuming you're using token-based auth
+                    }
+                });
+
+                if (response.ok) {
+                    const text = await response.text();
+                    document.getElementById('loggedinas').innerText = text;
+                } else {
+                    document.getElementById('loggedinas').innerText = 'Failed to retrieve user information.';
+                }
+            } catch (error) {
+                console.error('Error fetching authentication status:', error);
+                document.getElementById('loggedinas').innerText = 'Error fetching authentication status.';
+            }
+        }
+
+        // Call the function when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', updateLoggedInStatus);
 
     async function loadSnippets() {
     const snippetListContainer = document.getElementById('snippetlist');
