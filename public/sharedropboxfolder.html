@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share Dropbox Folder</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Share Your Dropbox Folder</h2>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form id="shareForm">
+                    <div class="form-group">
+                        <label for="email">Email address to share with:</label>
+                        <input type="email" class="form-control" id="email" placeholder="Enter email" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Share Folder</button>
+                </form>
+                <div id="responseMessage" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('shareForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            try {
+                const response = await fetch('/dropbox/share-folder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const result = await response.json();
+                const responseMessage = document.getElementById('responseMessage');
+                
+                if (response.ok) {
+                    responseMessage.innerHTML = `<div class="alert alert-success">${result.message}</div>`;
+                } else {
+                    responseMessage.innerHTML = `<div class="alert alert-danger">${result.message || 'Error sharing the folder.'}</div>`;
+                }
+            } catch (error) {
+                document.getElementById('responseMessage').innerHTML = `<div class="alert alert-danger">An error occurred: ${error.message}</div>`;
+            }
+        });
+    </script>
+</body>
+
+</html>

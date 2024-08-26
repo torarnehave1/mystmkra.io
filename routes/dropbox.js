@@ -68,111 +68,282 @@ const filePath = path.resolve(__dirname, '..', '..');
 
 dotenv.config(); // Load environment variables from .env file
 
-router.post('/share-folder-test', isAuthenticated, ensureValidToken, async (req, res) => {
-  const email = 'post@universi.no';
-  const folderName = '6665c107e4a8ea992f1ad942';
-  const folderPath = `/${folderName}`; // Assuming the folder is directly under the root
 
+
+
+
+
+
+router.get('/list-user-folder', isAuthenticated, ensureValidToken, async (req, res) => {
   try {
-    // Initialize Dropbox with the refreshed access token
-    const dbx = new Dropbox({
-      accessToken: accessToken,
-      fetch: fetch,
-    });
+      const userId = req.user.id; // Assuming the folder name is the user ID
+      const folderPath = `/${userId}`; // Use the correct path
 
-    // Prepare the member object
-    const member = {
-      member: {
-        '.tag': 'email',
-        email: email,
-      },
-      access_level: {
-        '.tag': 'viewer' // You can change this to 'editor' if needed
+      const dbx = new Dropbox({
+          accessToken: accessToken, // Use the valid access token
+          fetch: fetch,
+      });
+
+      // List the contents of the user's folder
+      const response = await dbx.filesListFolder({ path: folderPath });
+
+      if (response.result.entries && response.result.entries.length > 0) {
+          const contents = response.result.entries.map(entry => ({
+              name: entry.name,
+              path_lower: entry.path_lower,
+              tag: entry['.tag'],
+          }));
+
+          res.status(200).json({
+              message: `Contents of folder ${folderPath} listed successfully.`,
+              folderPath: folderPath,
+              contents: contents
+          });
+      } else {
+          res.status(404).json({
+              message: 'Folder is empty or not found',
+              folderPath: folderPath,
+              contents: []
+          });
       }
-    };
-
-    // Retrieve shared folder ID using the folder path
-    const sharedFolderMetadata = await dbx.sharingShareFolder({
-      path: folderPath,
-      acl_update_policy: { '.tag': 'editors' },
-    });
-
-    const sharedFolderId = sharedFolderMetadata.result.shared_folder_id;
-
-    // Add the email as a member to the specified folder
-    await dbx.sharingAddFolderMember({
-      shared_folder_id: sharedFolderId,
-      members: [member],
-      quiet: false, // Send an email notification to the user
-    });
-
-    res.status(200).json({
-      message: `Folder shared successfully with ${email}`,
-    });
   } catch (error) {
-    console.error('Error sharing folder on Dropbox:', error);
-    res.status(500).json({
-      message: 'Error sharing folder on Dropbox',
-      error: error.error ? error.error.error_summary : error.message
-    });
+      console.error('Error listing folder contents:', error);
+      res.status(500).json({
+          message: 'Failed to list folder contents.',
+          details: error.message
+      });
   }
 });
+
+
+router.get('/list-root-folders', isAuthenticated, ensureValidToken, async (req, res) => {
+  try {
+      const dbx = new Dropbox({
+          accessToken: accessToken, // Use the valid access token
+          fetch: fetch,
+      });
+
+      // Define the path as an empty string to list from the root of the App's directory
+      const folderPath = '';
+
+      // List the contents of the root folder
+      const response = await dbx.filesListFolder({ path: folderPath });
+
+      // Check if the folder contains any entries
+      if (response.result.entries && response.result.entries.length > 0) {
+          const folders = response.result.entries.map(entry => ({
+              name: entry.name,
+              path_lower: entry.path_lower,
+              tag: entry['.tag'],
+          }));
+
+          res.status(200).json({
+              message: 'Folders listed successfully.',
+              folders: folders
+          });
+      } else {
+          res.status(404).json({
+              message: 'No folders found in the root directory.',
+              folders: []
+          });
+      }
+  } catch (error) {
+      console.error('Error listing folders from the root directory:', error);
+      res.status(500).json({
+          message: 'Failed to list folders from the root directory.',
+          details: error.message
+      });
+  }
+});
+
+
+
+
+router.get('/verify-folder', isAuthenticated, ensureValidToken, async (req, res) => {
+  try {
+      // Find the user and select their ID
+      const user = await User.findById(req.user.id).select('username');
+      if (!user) {
+          return res.status(404).json({
+              message: 'User not found'
+          });
+      }
+
+      // Define the full path to the user's folder
+      const folderPath = `/${user.id}`;
+
+      const dbx = new Dropbox({
+          accessToken: accessToken,
+          fetch: fetch,
+      });
+
+      // Try to get metadata for the folder
+      const metadata = await dbx.filesGetMetadata({ path: folderPath });
+
+      res.status(200).json({
+          message: `Folder metadata retrieved successfully.`,
+          metadata: metadata
+      });
+  } catch (error) {
+      console.error('Error retrieving folder metadata:', error);
+
+      let errorMessage = 'Failed to retrieve folder metadata.';
+      if (error.error && error.error.error_summary && error.error.error_summary.includes('not_found')) {
+          errorMessage = 'Folder not found.';
+      }
+
+      res.status(500).json({ message: errorMessage, details: error.message });
+  }
+});
+
 
 
 router.post('/share-folder', isAuthenticated, ensureValidToken, async (req, res) => {
-  const { email, folderPath } = req.body;
-
-  if (!email || !folderPath) {
-    return res.status(400).json({
-      message: 'Email and folder path are required'
-    });
-  }
+  const { email } = req.body;
 
   try {
-    // Initialize Dropbox with the refreshed access token
-    const dbx = new Dropbox({
-      accessToken: accessToken,
-      fetch: fetch,
-    });
-
-    // Prepare the member object
-    const member = {
-      member: {
-        '.tag': 'email',
-        email: email,
-      },
-      access_level: {
-        '.tag': 'viewer' // You can change this to 'editor' if needed
+      // Find the user and select their ID
+      const user = await User.findById(req.user.id).select('username');
+      if (!user) {
+          return res.status(404).json({
+              message: 'User not found'
+          });
       }
-    };
 
-    // Add the email as a member to the specified folder
-    await dbx.sharingAddFolderMember({
-      shared_folder_id: folderPath, // Assuming folderPath is the shared folder ID
-      members: [member],
-      quiet: false, // Send an email notification to the user
-    });
+      // Define the full path to the user's folder
+      const folderPath = `/mystmkra/${user.id}`;
 
-    res.status(200).json({
-      message: `Folder shared successfully with ${email}`,
-    });
+      const dbx = new Dropbox({
+          accessToken: accessToken,
+          fetch: fetch,
+      });
+
+      // Get the metadata to ensure the folder exists and retrieve its ID
+      const metadata = await dbx.filesGetMetadata({ path: folderPath });
+
+      let folderId;
+
+      // Check if the folder is already shared
+      if (metadata.result['.tag'] === 'folder' && !metadata.result.shared_folder_id) {
+          // Share the folder if it is not shared yet
+          const shareResponse = await dbx.sharingShareFolder({ path: folderPath });
+
+          if (!shareResponse.result || !shareResponse.result.shared_folder_id) {
+              throw new Error('Failed to share folder.');
+          }
+
+          folderId = shareResponse.result.shared_folder_id;
+      } else {
+          folderId = metadata.result.shared_folder_id;
+      }
+
+      // Share the folder using its ID
+      await dbx.sharingAddFolderMember({
+          shared_folder_id: folderId,
+          members: [{
+              member: {
+                  '.tag': 'email',
+                  email: email
+              },
+              access_level: {
+                  '.tag': 'viewer'  // Use 'editor' if you want to grant edit access
+              }
+          }],
+          quiet: false  // Set to true if you don't want to send an email notification
+      });
+
+      res.status(200).json({ message: 'Folder shared successfully.' });
   } catch (error) {
-    console.error('Error sharing folder on Dropbox:', error);
-    res.status(500).json({
-      message: 'Error sharing folder on Dropbox',
-      error: error.error ? error.error.error_summary : error.message
-    });
+      console.error('Error sharing folder:', error);
+
+      let errorMessage = 'Failed to share folder.';
+      if (error.error && error.error.error_summary && error.error.error_summary.includes('not_found')) {
+          errorMessage = 'Folder not found.';
+      } else if (error.error && error.error.error_summary && error.error.error_summary.includes('email_unverified')) {
+          errorMessage = 'The email address is not verified with Dropbox.';
+      }
+
+      res.status(500).json({ message: errorMessage, details: error.message });
   }
 });
 
 
+
+
+
+router.get('/get-shared-folder-id', isAuthenticated, ensureValidToken, async (req, res) => {
+  try {
+      // Find the user and select their ID
+      const user = await User.findById(req.user.id).select('username');
+      if (!user) {
+          return res.status(404).json({
+              message: 'User not found'
+          });
+      }
+
+      // Define the full path to the user's folder
+      const folderPath = `/${user.id}`;
+
+      const dbx = new Dropbox({
+          accessToken: accessToken,
+          fetch: fetch,
+      });
+
+      // Try to list shared folders and see if the user's folder is already shared
+      const sharedFoldersList = await dbx.sharingListFolders();
+
+      const sharedFolder = sharedFoldersList.result.entries.find(folder => folder.path_lower === folderPath.toLowerCase());
+
+      if (sharedFolder) {
+          // Folder is already shared, return the shared folder ID
+          return res.status(200).json({
+              message: 'Shared folder ID retrieved successfully.',
+              shared_folder_id: sharedFolder.shared_folder_id,
+          });
+      } else {
+          // Folder is not shared, attempt to share it
+          try {
+              const shareFolderResponse = await dbx.sharingShareFolder({
+                  path: folderPath
+              });
+
+              return res.status(200).json({
+                  message: 'Folder shared successfully.',
+                  shared_folder_id: shareFolderResponse.result.shared_folder_id,
+              });
+          } catch (shareError) {
+              console.error('Error sharing folder:', shareError);
+              res.status(500).json({
+                  message: 'Failed to share the folder.',
+                  details: shareError.message,
+              });
+          }
+      }
+
+  } catch (error) {
+      console.error('Error retrieving or creating shared folder ID:', error);
+
+      let errorMessage = 'Failed to retrieve or create shared folder ID.';
+      if (error.status === 409) {
+          if (error.error.error_summary.includes('not_found')) {
+              errorMessage = 'Folder not found.';
+          } else if (error.error.error_summary.includes('not_a_folder')) {
+              errorMessage = 'Specified path is not a folder.';
+          } else if (error.error.error_summary.includes('invalid_shared_folder_id')) {
+              errorMessage = 'The folder is not shared and cannot be accessed as a shared folder.';
+          }
+      }
+
+      res.status(500).json({ message: errorMessage, details: error.message });
+  }
+});
 
 
 // Protected route app.use('/prot', protectedRoutes);
 router.get('/protected', isAuthenticated, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('username');
-    res.send(`Innlogget Bruker: ${user.username} ${user.id}`);
+    const user = await User.findById(req.user.id).select('fullName username');
+    res.send(`Innlogget Bruker: ${user.fullName} (${user.username}) - ID: ${user.id}`);
   } catch (ex) {
     console.error(ex);
     res.status(500).send('An error occurred while processing your request.');
@@ -226,7 +397,7 @@ async function ensureValidToken(req, res, next) {
 
 // Endpoint to start the OAuth flow
 router.get('/auth', (req, res) => {
-  const authUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${process.env.DROPBOX_APP_KEY}&response_type=code&redirect_uri=${REDIRECT_URI}&token_access_type=offline`;
+  const authUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${process.env.DROPBOX_APP_KEY}&response_type=code&redirect_uri=${process.env.DROPBOX_REDIRECT_URI_DEV}&token_access_type=offline`;
   //res.redirect(authUrl);
   console.log(authUrl);
 
@@ -1035,7 +1206,7 @@ router.post('/save-markdown', isAuthenticated, ensureValidToken, async (req, res
       // Define the file path in the user's folder
       const foldername = user.id; // Use the user's ID as the folder name
       const filename = `${fileDoc._id}.md`;
-      const filePath = `/${foldername}/${filename}`;
+      const filePath = `/mystmkra/${foldername}/${filename}`;
 
       console.log('FilePath is:', filePath);  // This should output the file path
 
@@ -1232,6 +1403,79 @@ router.get('/createfolder', isAuthenticated, ensureValidToken, async (req, res) 
   } catch (ex) {
       // Log the error and respond with a 500 status code
       console.error('Error creating folder in Dropbox:', ex);
+      res.status(500).send('An error occurred while processing your request.');
+  }
+});
+
+
+router.get('/createfolderws', isAuthenticated, ensureValidToken, async (req, res) => {
+  try {
+      // Find the user and select their username, ID, and email
+      const user = await User.findById(req.user.id).select('username');
+
+      if (!user) {
+          return res.status(404).json({
+              message: 'User not found'
+          });
+      }
+
+      // Use the user's ID as the folder name
+      const foldername = user.id;
+
+      // Initialize Dropbox with the refreshed access token
+      const dbx = new Dropbox({
+          accessToken: accessToken, // Use the refreshed access token
+          fetch: fetch,
+      });
+
+      // Define the folder path in Dropbox
+      const folderPath = `/mystmkra/${foldername}`;
+
+      // Step 1: Create the folder in Dropbox
+      const createFolderResponse = await dbx.filesCreateFolderV2({ path: folderPath });
+
+      if (!createFolderResponse.result.metadata) {
+          return res.status(500).json({
+              message: 'Failed to create folder in Dropbox',
+          });
+      }
+
+      // Step 2: Make the folder sharable
+      const shareFolderResponse = await dbx.sharingShareFolder({ path: folderPath });
+
+      if (!shareFolderResponse.result || !shareFolderResponse.result.shared_folder_id) {
+          return res.status(500).json({
+              message: 'Failed to share folder in Dropbox',
+          });
+      }
+
+      const sharedFolderId = shareFolderResponse.result.shared_folder_id;
+
+      // Step 3: Share the folder with the user's email
+      await dbx.sharingAddFolderMember({
+          shared_folder_id: sharedFolderId,
+          members: [{
+              member: {
+                  '.tag': 'email',
+                  email: user.username // Use the user's email
+              },
+              access_level: {
+                  '.tag': 'viewer'  // Can be 'viewer' or 'editor'
+              }
+          }],
+          quiet: false  // Set to true if you don't want to send an email notification
+      });
+
+      // Respond with success if everything was successful
+      res.status(200).json({
+          message: `Folder created and shared successfully for user ID: ${foldername}`,
+          folderPath: createFolderResponse.result.metadata.path_display,
+          sharedFolderId: sharedFolderId
+      });
+
+  } catch (ex) {
+      // Log the error and respond with a 500 status code
+      console.error('Error creating or sharing folder in Dropbox:', ex);
       res.status(500).send('An error occurred while processing your request.');
   }
 });
