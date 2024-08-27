@@ -74,6 +74,40 @@ router.post('/ask', async (req, res) => {
     }
 });
 
+router.post('/generate-image-prompt', async (req, res) => {
+    const { content } = req.body;
+
+    if (!content) {
+        return res.status(400).json({ error: 'Content is required to generate an image prompt' });
+    }
+
+    try {
+        // Define the system message to instruct OpenAI to generate a prompt for an image
+        const systemMessage = "You are an AI that generates creative and descriptive prompts for generating images based on provided text content. Please generate an image prompt that best represents the key themes or scenes from the following content.";
+
+        // Call OpenAI to generate the image prompt
+        const completion = await openai.chat.completions.create({
+            model: "gpt-4o",
+            messages: [
+                { role: "system", content: systemMessage },
+                { role: "user", content: content },
+            ],
+        });
+
+        const prompt = completion.choices[0].message.content.trim();
+
+        if (!prompt) {
+            return res.status(500).json({ error: 'Failed to generate a prompt from OpenAI' });
+        }
+
+        res.json({ prompt });
+    } catch (error) {
+        console.error('Error generating image prompt:', error.message || error);
+        res.status(500).json({ error: 'Failed to generate image prompt' });
+    }
+});
+
+
 
 router.post('/process-text', async (req, res) => {
     const { operation, prompt } = req.body;
@@ -86,7 +120,7 @@ router.post('/process-text', async (req, res) => {
         if (operation === 'answer-question') {
             systemMessage = "You will answer back in a professional way with markdown format and titles where it is appropriate";
         } else if (operation === 'spellcheck-rewrite') {
-            systemMessage = "You will spellcheck and rewrite the following text, keeping it as close to the original as possible while fixing any grammatical or typographical errors.";
+            systemMessage = "You will spellcheck and rewrite the following text, keeping it as close to the original as possible while fixing any grammatical or typographical errors. You will answer back in a professional way with markdown format and titles where it is appropriate. If the main title of the text is missing come up with your own suggestion based on the text content.";
         } else {
             return res.status(400).json({ error: 'Invalid operation type' });
         }
