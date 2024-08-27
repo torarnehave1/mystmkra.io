@@ -1009,7 +1009,7 @@ async function openContent(id) {
     }
 
     try {
-        const response = await fetch(`https://slowyou.net/dropbox/file/${id}`, {
+        const response = await fetch(`/dropbox/file/${id}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
@@ -1032,9 +1032,9 @@ async function openContent(id) {
             // Update the current document ID
             currentDocumentId = id;
             const returnfileURL = document.querySelector('.ReturnfileURL');
-            returnfileURL.href = 'https://slowyou.net/dropbox/md/' + currentDocumentId + '.md';
-            returnfileURL.text = 'https://slowyou.net/dropbox/md/' + currentDocumentId + '.md';
-            returnfileURL.setAttribute('data-url', 'https://slowyou.net/dropbox/md/' + currentDocumentId + '.md');
+            returnfileURL.href = 'https://mystmkra.io/dropbox/md/' + currentDocumentId + '.md';
+            returnfileURL.text = 'https://mystmkra.io/dropbox/md/' + currentDocumentId + '.md';
+            returnfileURL.setAttribute('data-url', 'https://mystmkra.io/dropbox/md/' + currentDocumentId + '.md');
             isChanged = true;
 
             alert('Document loaded successfully.');

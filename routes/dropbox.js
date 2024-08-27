@@ -571,10 +571,13 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
   });
   
   // Endpoint to fetch and render a markdown file
-  router.get('/md/:filename', ensureValidToken, async (req, res) => {
+  router.get('/md/:filename', isAuthenticated , ensureValidToken, async (req, res) => {
     const filename = req.params.filename;
-    const filePath = `/Slowyou.net/markdown/${filename}`;
-  
+    const curUserFolder = req.user.id;
+
+    const filePath = `/mystmkra/${curUserFolder}/${filename}`;
+    
+
     const dbx = new Dropbox({
       accessToken: accessToken,
       fetch: fetch,
@@ -604,7 +607,7 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
         <head>
             <title>SlowYou™ Blog</title>
             <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-            <link rel="stylesheet" href="../../markdown/markdown.css">
+            <link rel="stylesheet" href="/markdown.css">
         </head>
         <body>
         
@@ -1151,6 +1154,7 @@ router.post('/save-markdown', isAuthenticated, ensureValidToken, async (req, res
   console.log('Request received to save markdown');
 
   const { content, documentId } = req.body;  // Use documentId here
+  const userid = req.user.id
 
   if (!content) {
       console.log('No content provided');
@@ -1195,7 +1199,8 @@ router.post('/save-markdown', isAuthenticated, ensureValidToken, async (req, res
           // If no document ID is provided, create a new document
           fileDoc = new MDfile({
               _id: new mongoose.Types.ObjectId(),
-              content: content
+              content: content,
+              User_id: userid
           });
       }
 
