@@ -57,7 +57,8 @@
             </div>
 
                 <div class="mdmenu">
-                    <!-- <button class="btn btn-primary" id="DroboxButton" title="Dropbox"><i class="bi bi-dropbox"></i></button> -->
+                <button class="btn btn-primary" id="DroboxButton" title="Dropbox"><i class="bi bi-dropbox"></i></button>
+              
                 <button class="btn btn-primary" id="SaveasPDFButton" title="PDF" data-filename="" disabled>
                     <i class="material-symbols-outlined">picture_as_pdf</i>
                 </button>
@@ -95,7 +96,7 @@
                 <label for="markdownTextarea">Markdown Content:</label>
                 <textarea class="form-control" id="markdownTextarea" rows="10"></textarea>
             </div>
-            <a class="ReturnfileURL" href="https://mystmkra.io/dropbox/md/" target="_blank" rel="noopener">https://slowyou.net/dropbox/md/</a>
+            <a class="ReturnfileURL" href="https://mystmkra.io/dropbox/md/" target="_blank" rel="noopener">https://mystmkra.io/dropbox/md/</a>
             <div class="ReturnfileURL" data-url="https://mystmkra.io/dropbox/md/"></div>
             
             <label for="preview">Preview:</label>
@@ -114,6 +115,9 @@
         updateSaveToPdfButton();
     });
 
+    document.getElementById('DroboxButton').addEventListener('click', function() {
+                        window.open('/sharedropboxfolder.html', '_blank');
+                    });
    
     async function updateLoggedInStatus() {
     try {
@@ -610,8 +614,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const matchCreateImage = value.match(/^\s*\/\/\s*CIMG\s*(.+?)\s*\?$/im);
             const matchQuestion = value.match(/^\s*\/\/\s*QTEXT\s*(.+?)\s*\?$/im);
             const matchRewrite = value.match(/^\s*\/\/\s*QRW\s*$/im);
+            const matchWriteImgPrompt = value.match(/^\s*\/\/\s*AIMG\s*$/im);
 
             try {
+                // Handle //CIMG command: Create an image from the given prompt
                 if (matchCreateImage && matchCreateImage[1].trim() && !value.includes('<iframe')) {
                     const prompt = matchCreateImage[1].trim();
                     if (prompt) {
@@ -626,38 +632,30 @@ document.addEventListener('DOMContentLoaded', () => {
                             },
                             body: JSON.stringify({ prompt })
                         });
-                        
+
                         const data = await response.json();
 
                         if (progressBarContainer) {
                             progressBarContainer.style.display = 'none';
                         }
 
-                        if (data.imageFilePath) {
+                        if (data.ReturnimageUrl) {
                             const beforePrompt = value.substring(0, matchCreateImage.index);
                             const afterPrompt = value.substring(matchCreateImage.index + matchCreateImage[0].length);
                             const newText = `${beforePrompt}![Generated Image](${data.ReturnimageUrl})\n${afterPrompt}`;
                             markdownTextarea.value = newText;
-                            markdownTextarea.selectionStart = markdownTextarea.selectionEnd = beforePrompt.length + data.ReturnimageUrl.length + 20;
+                            markdownTextarea.selectionStart = markdownTextarea.selectionEnd = newText.length;
                             markdownTextarea.focus();
                         } else {
                             console.error('No imageUrl returned from API');
                             alert('No image was generated. Please try again.');
                         }
                     }
-                } else if ((matchQuestion && matchQuestion[1].trim() && !value.includes('<iframe')) || matchRewrite) {
-                    let prompt = null;
-                    let operation = null;
-
-                    if (matchQuestion) {
-                        prompt = matchQuestion[1].trim();
-                        operation = 'answer-question';
-                    } else if (matchRewrite) {
-                        prompt = "Reorganize this text. Remove all the chapter numbers, and add a new introduction chapter.\n" + value.trim();
-                        operation = 'spellcheck-rewrite';
-                    }
-
-                    if (operation && prompt) {
+                }
+                // Handle //QTEXT command: Generate a response to a question
+                else if (matchQuestion && matchQuestion[1].trim()) {
+                    const prompt = matchQuestion[1].trim();
+                    if (prompt) {
                         if (progressBarContainer) {
                             progressBarContainer.style.display = 'block';
                         }
@@ -667,7 +665,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify({ operation, prompt })
+                            body: JSON.stringify({ operation: 'answer-question', prompt: prompt })
                         });
 
                         const data = await response.json();
@@ -676,21 +674,100 @@ document.addEventListener('DOMContentLoaded', () => {
                             progressBarContainer.style.display = 'none';
                         }
 
-                        if (operation === 'answer-question' && data.response) {
+                        if (data.response) {
                             const beforeQuestion = value.substring(0, matchQuestion.index);
                             const afterQuestion = value.substring(matchQuestion.index + matchQuestion[0].length);
                             const newText = `${beforeQuestion}${data.response}\n${afterQuestion}`;
                             markdownTextarea.value = newText;
-                            markdownTextarea.selectionStart = markdownTextarea.selectionEnd = beforeQuestion.length + data.response.length + 1;
-                        } else if (operation === 'spellcheck-rewrite' && data.rewrittenText) {
-                            markdownTextarea.value = data.rewrittenText;
-                            markdownTextarea.selectionStart = markdownTextarea.selectionEnd = data.rewrittenText.length;
+                            markdownTextarea.selectionStart = markdownTextarea.selectionEnd = newText.length;
+                            markdownTextarea.focus();
                         } else {
-                            console.error('Unexpected API response');
-                            alert('Operation failed. Please try again.');
+                            console.error('No response returned from API');
+                            alert('No response was generated. Please try again.');
+                        }
+                    }
+                }
+                // Handle //QRW command: Spellcheck and rewrite the content
+                else if (matchRewrite) {
+                    const prompt = value.trim();
+                    if (prompt) {
+                        if (progressBarContainer) {
+                            progressBarContainer.style.display = 'block';
                         }
 
-                        markdownTextarea.focus();
+                        const response = await fetch('/openai/process-text', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ operation: 'spellcheck-rewrite', prompt: prompt })
+                        });
+
+                        const data = await response.json();
+
+                        if (progressBarContainer) {
+                            progressBarContainer.style.display = 'none';
+                        }
+
+                        if (data.rewrittenText) {
+                            markdownTextarea.value = data.rewrittenText;
+                            markdownTextarea.selectionStart = markdownTextarea.selectionEnd = data.rewrittenText.length;
+                            markdownTextarea.focus();
+                        } else {
+                            console.error('No rewritten text returned from API');
+                            alert('No rewrite was generated. Please try again.');
+                        }
+                    }
+                }
+                // Handle //AIMG command: Generate an image prompt and directly create the image
+                else if (matchWriteImgPrompt) {
+                    const cleanedValue = value.replace(/^\s*\/\/\s*AIMG\s*$/im, '').trim();
+
+                    if (cleanedValue) {
+                        if (progressBarContainer) {
+                            progressBarContainer.style.display = 'block';
+                        }
+
+                        // Step 1: Generate the image prompt
+                        const promptResponse = await fetch('/openai/process-text', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ operation: 'generate-image-prompt', prompt: cleanedValue })
+                        });
+
+                        const promptData = await promptResponse.json();
+
+                        if (promptData.prompt) {
+                            // Step 2: Use the generated prompt to create the image
+                            const imageResponse = await fetch('/openai/create-image', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ prompt: promptData.prompt })
+                            });
+
+                            const imageData = await imageResponse.json();
+
+                            if (progressBarContainer) {
+                                progressBarContainer.style.display = 'none';
+                            }
+
+                            if (imageData.ReturnimageUrl) {
+                                const newText = `![Generated Image](${imageData.ReturnimageUrl})\n\n${cleanedValue}`;
+                                markdownTextarea.value = newText;
+                                markdownTextarea.selectionStart = markdownTextarea.selectionEnd = newText.length;
+                                markdownTextarea.focus();
+                            } else {
+                                console.error('No imageUrl returned from API');
+                                alert('No image was generated. Please try again.');
+                            }
+                        } else {
+                            console.error('No prompt returned from API');
+                            alert('No image prompt was generated. Please try again.');
+                        }
                     }
                 }
             } catch (error) {
@@ -707,6 +784,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updatePreviewFromInput();
 });
+
 
 
 
@@ -968,7 +1046,7 @@ function applyGridClasses() {
         card.style.width = '18rem';
         card.innerHTML = `
             <div class="card-body">
-                <p class="card-text"><a href="https://slowyou.net/dropbox/md/${result.id}.md" target="_blank">${result.abs}</a></p>
+                <p class="card-text"><a href="https://mystmkra.io/dropbox/md/${result.id}.md" target="_blank">${result.abs}</a></p>
                 <button class="btn btn-primary open-content-button" data-id="${result.id}">Open</button>
                 <button class="btn btn-primary insert-content-button" data-id="${result.id}">Insert Content</button>
                 <button class="btn btn-primary delete-content-button" data-id="${result.id}">Delete Content</button>
