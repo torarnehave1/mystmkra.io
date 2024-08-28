@@ -119,17 +119,28 @@
                         window.open('/sharedropboxfolder.html', '_blank');
                     });
    
-    async function updateLoggedInStatus() {
+                    async function updateLoggedInStatus() {
     try {
         const response = await fetch('/dropbox/protected', {
-            method: 'GET'
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+            }
         });
 
+        // Check for 401 status to handle unauthorized access
         if (response.status === 401) {
-            // Handle unauthorized access
-            const message = await response.json();
-            console.log('Not authenticated:', message);
-            window.location.href = '/login.html?message=session_expired';
+            const data = await response.json(); // Parse the JSON response
+
+            console.log('Not authenticated:', data);
+
+            // Check if the response has a redirect flag, indicating the session has expired
+            if (data.redirect) {
+                window.location.href = '/login.html?message=session_expired';
+            } else {
+                // Handle other unauthorized scenarios
+                alert(data.message || 'Unauthorized access.');
+            }
             return;
         }
 
@@ -137,6 +148,7 @@
             const text = await response.text();
             document.getElementById('loggedinas').innerText = text;
         } else {
+            // Handle other non-OK responses
             document.getElementById('loggedinas').innerText = 'Failed to retrieve user information.';
         }
     } catch (error) {
@@ -144,6 +156,7 @@
         document.getElementById('loggedinas').innerText = 'Error fetching authentication status.';
     }
 }
+
 
 function logout() {
             // Clear the token from local storage

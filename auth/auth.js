@@ -14,7 +14,7 @@ export function isAuthenticated(req, res, next) {
 
     if (!token) {
       console.log('No token provided. Returning 401 status.');
-
+      
       // Return 401 Unauthorized if no token is provided
       return res.status(401).json({ message: 'No token provided. Please log in.' });
     }
@@ -35,7 +35,7 @@ export function isAuthenticated(req, res, next) {
       console.log('Token has expired. Returning 401 status with session expired message.');
 
       // Return 401 Unauthorized with a specific message for expired tokens
-      return res.redirect('/login.html?message=session_expired');
+      return res.status(401).json({ message: 'Session expired. Please log in again.', redirect: true });
     }
 
     // Handle other token verification errors
