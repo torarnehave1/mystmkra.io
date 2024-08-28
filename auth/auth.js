@@ -35,7 +35,7 @@ export function isAuthenticated(req, res, next) {
       console.log('Token has expired. Returning 401 status with session expired message.');
 
       // Return 401 Unauthorized with a specific message for expired tokens
-      return res.status(401).json({ message: 'Session expired. Please log in again.' });
+      return res.redirect('/login.html?message=session_expired');
     }
 
     // Handle other token verification errors
