@@ -70,50 +70,57 @@ const filePath = path.resolve(__dirname, '..', '..');
 
 
 // Endpoint to create a property template for tagging files in Dropbox
-router.post('/create-template', ensureValidToken, async (req, res) => {
-  const url = 'https://api.dropboxapi.com/2/file_properties/templates/add_for_user';
-
-  // Define the template payload
-  const templatePayload = {
-    name: 'File Tags',
-    description: 'Template for adding tags to files',
-    fields: [
-      {
-        name: 'tag',
-        description: 'Tag for categorizing files',
-        type: {
-          '.tag': 'string',
-        },
-      },
-    ],
-  };
-
-  try {
-    // Send the POST request to Dropbox API
-    const response = await axios.post(url, templatePayload, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    // Respond with the Dropbox API response
-    res.status(200).json({
-      message: 'Template created successfully',
-      template_id: response.data.template_id,
-      details: response.data,
-    });
-  } catch (error) {
-    console.error('Error creating template:', error.response?.data || error.message);
-    res.status(500).json({
-      message: 'Failed to create template',
-      error: error.response?.data || error.message,
-    });
-  }
-});
 
 
 // Endpoint to get the current access token using the refresh token
+
+
+
+
+// Function to refresh the access token
+async function refreshAccessToken() {
+  const params = new URLSearchParams();
+  params.append('grant_type', 'refresh_token');
+  params.append('refresh_token', refreshToken);
+
+  try {
+    const response = await axios.post('https://api.dropboxapi.com/oauth2/token', params, {
+      auth: {
+        username: process.env.DROPBOX_APP_KEY,
+        password: process.env.DROPBOX_APP_SECRET,
+      },
+    });
+
+    const newAccessToken = response.data.access_token;
+    const expiresIn = response.data.expires_in; // Expiry time in seconds
+    expiryTime = Date.now() + expiresIn * 1000; // Current time + expiry duration in ms
+
+    // Update the global access token
+    accessToken = newAccessToken;
+
+    return newAccessToken;
+  } catch (error) {
+    console.error('Error refreshing access token:', error);
+    throw error;
+  }
+}
+
+// Middleware to refresh the access token if expired
+async function ensureValidToken(req, res, next) {
+  if (!accessToken || Date.now() >= expiryTime) {
+    try {
+      accessToken = await refreshAccessToken();
+    } catch (error) {
+      return res.status(500).json({
+        message: 'Error refreshing access token',
+        error: error.message,
+      });
+    }
+  }
+  next();
+}
+
+
 router.get('/current-access-token', async (req, res) => {
   try {
     // Refresh the access token using the existing function
@@ -413,48 +420,48 @@ router.get('/protected', isAuthenticated, async (req, res) => {
 
 
 
-// Function to refresh the access token
-async function refreshAccessToken() {
-  const params = new URLSearchParams();
-  params.append('grant_type', 'refresh_token');
-  params.append('refresh_token', refreshToken);
+router.post('/test', ensureValidToken, async (req, res) => {
+  const url = 'https://api.dropboxapi.com/2/file_properties/templates/add_for_user';
+
+  // Define the template payload
+  const templatePayload = {
+    name: 'File Tags',
+    description: 'Template for adding tags to files',
+    fields: [
+      {
+        name: 'tag',
+        description: 'Tag for categorizing files',
+        type: {
+          '.tag': 'string',
+        },
+      },
+    ],
+  };
 
   try {
-    const response = await axios.post('https://api.dropboxapi.com/oauth2/token', params, {
-      auth: {
-        username: process.env.DROPBOX_APP_KEY,
-        password: process.env.DROPBOX_APP_SECRET,
+    // Send the POST request to Dropbox API
+    const response = await axios.post(url, templatePayload, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
       },
     });
 
-    const newAccessToken = response.data.access_token;
-    const expiresIn = response.data.expires_in; // Expiry time in seconds
-    expiryTime = Date.now() + expiresIn * 1000; // Current time + expiry duration in ms
-
-    // Update the global access token
-    accessToken = newAccessToken;
-
-    return newAccessToken;
+    // Respond with the Dropbox API response
+    res.status(200).json({
+      message: 'Template created successfully',
+      template_id: response.data.template_id,
+      details: response.data,
+    });
   } catch (error) {
-    console.error('Error refreshing access token:', error);
-    throw error;
+    console.error('Error creating template:', error.response?.data || error.message);
+    res.status(500).json({
+      message: 'Failed to create template',
+      error: error.response?.data || error.message,
+    });
   }
-}
+});
 
-// Middleware to refresh the access token if expired
-async function ensureValidToken(req, res, next) {
-  if (!accessToken || Date.now() >= expiryTime) {
-    try {
-      accessToken = await refreshAccessToken();
-    } catch (error) {
-      return res.status(500).json({
-        message: 'Error refreshing access token',
-        error: error.message,
-      });
-    }
-  }
-  next();
-}
 
 // Endpoint to start the OAuth flow
 router.get('/auth', (req, res) => {
