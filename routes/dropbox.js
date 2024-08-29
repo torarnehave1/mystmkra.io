@@ -418,9 +418,15 @@ router.get('/protected', isAuthenticated, async (req, res) => {
   }
 });
 
+//Write a end poin called test
+router.get('/test', ensureValidToken, async (req, res) => {
+  res.send('test');
+});
 
 
-router.post('/test', ensureValidToken, async (req, res) => {
+
+
+router.post('/test2', ensureValidToken, async (req, res) => {
   const url = 'https://api.dropboxapi.com/2/file_properties/templates/add_for_user';
 
   // Define the template payload
