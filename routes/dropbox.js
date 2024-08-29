@@ -66,7 +66,7 @@ const filePath = path.resolve(__dirname, '..', '..');
 
 // Get the hostname of the current machine
 
-dotenv.config(); // Load environment variables from .env file
+
 
 
 // Endpoint to create a property template for tagging files in Dropbox
