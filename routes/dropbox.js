@@ -70,7 +70,7 @@ dotenv.config(); // Load environment variables from .env file
 
 
 // Endpoint to create a property template for tagging files in Dropbox
-router.post('/create-template', isAuthenticated, ensureValidToken, async (req, res) => {
+router.post('/create-template', ensureValidToken, async (req, res) => {
   const url = 'https://api.dropboxapi.com/2/file_properties/templates/add_for_user';
 
   // Define the template payload
