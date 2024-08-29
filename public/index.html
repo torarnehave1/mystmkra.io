@@ -395,7 +395,7 @@ async function deleteContent(id) {
 
         if (response.ok) {
             alert('File deleted successfully to Dropbox.');
-            location.href = '/markdown/markdowncreate.html';
+            location.href = '/index.html';
         } else {
             const errorData = await response.json();
             console.error('Error deleting file:', errorData.message);

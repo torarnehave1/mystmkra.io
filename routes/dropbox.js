@@ -69,8 +69,69 @@ const filePath = path.resolve(__dirname, '..', '..');
 dotenv.config(); // Load environment variables from .env file
 
 
+// Endpoint to create a property template for tagging files in Dropbox
+router.post('/create-template', isAuthenticated, ensureValidToken, async (req, res) => {
+  const url = 'https://api.dropboxapi.com/2/file_properties/templates/add_for_user';
+
+  // Define the template payload
+  const templatePayload = {
+    name: 'File Tags',
+    description: 'Template for adding tags to files',
+    fields: [
+      {
+        name: 'tag',
+        description: 'Tag for categorizing files',
+        type: {
+          '.tag': 'string',
+        },
+      },
+    ],
+  };
+
+  try {
+    // Send the POST request to Dropbox API
+    const response = await axios.post(url, templatePayload, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Respond with the Dropbox API response
+    res.status(200).json({
+      message: 'Template created successfully',
+      template_id: response.data.template_id,
+      details: response.data,
+    });
+  } catch (error) {
+    console.error('Error creating template:', error.response?.data || error.message);
+    res.status(500).json({
+      message: 'Failed to create template',
+      error: error.response?.data || error.message,
+    });
+  }
+});
 
 
+// Endpoint to get the current access token using the refresh token
+router.get('/current-access-token', async (req, res) => {
+  try {
+    // Refresh the access token using the existing function
+    const currentAccessToken = await refreshAccessToken();
+
+    // Respond with the current access token
+    res.status(200).json({
+      message: 'Access token refreshed successfully',
+      access_token: currentAccessToken,
+    });
+  } catch (error) {
+    console.error('Error refreshing access token:', error);
+    res.status(500).json({
+      message: 'Failed to refresh access token',
+      error: error.message,
+    });
+  }
+});
 
 
 
@@ -627,23 +688,7 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
         </div>
             
         </body>
-        <script>
-        function loadMenu() {
-            fetch('/menu.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('menu-container').innerHTML = data;
-                    initializeLanguageSelector(); // Initialize the language selector after loading the menu
-                    checkAuthStatus(); // Check auth status after loading the menu
-                })
-                .catch(error => console.error('Error loading menu:', error));
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log("DOM fully loaded and parsed");
-            loadMenu();
-        });
-        </script>
+        
         </html>
       `;
   
@@ -1249,9 +1294,10 @@ router.post('/save-markdown', isAuthenticated, ensureValidToken, async (req, res
 
 
 
-router.delete('/filedelete/:id', ensureValidToken, async (req, res) => {
+router.delete('/filedelete/:id', isAuthenticated, ensureValidToken, async (req, res) => {
   const id = req.params.id;
-
+  const foldername = req.user.id;
+  
   if (!id) {
       return res.status(400).json({
           message: 'Document id is required'
@@ -1272,7 +1318,8 @@ router.delete('/filedelete/:id', ensureValidToken, async (req, res) => {
       });
 
       const filename = `${fileDoc._id}.md`;
-      const filePath = `/Slowyou.net/markdown/${filename}`;
+      const filePath = `/mystmkra/${foldername}/${filename}`;
+      
 
       // Delete the file from Dropbox
       await dbx.filesDeleteV2({ path: filePath });
@@ -1292,8 +1339,9 @@ router.delete('/filedelete/:id', ensureValidToken, async (req, res) => {
   }
 });
 
-router.get('/search', ensureValidToken, async (req, res) => {
+router.get('/search', isAuthenticated, ensureValidToken, async (req, res) => {
     const { query } = req.query;
+    const userid = req.user.id;
 
     if (!query) {
         return res.status(400).json({
@@ -1304,7 +1352,10 @@ router.get('/search', ensureValidToken, async (req, res) => {
     try {
         // Search the MDfile collection for documents containing the query in their content
         const results = await MDfile.find({
-            content: { $regex: query, $options: 'i' }
+            $and: [
+                { content: { $regex: query, $options: 'i' } },
+                { User_id: userid }
+            ]
         });
 
         // Generate an array of results with id and a plain text abstract
