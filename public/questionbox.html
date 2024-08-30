@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Question Box</title>
+    <style>
+        /* Basic styling for the question box */
+        .question-box {
+            display: none; /* Initially hidden */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            width: 300px;
+        }
+        .question-box.active {
+            display: block; /* Show when active */
+        }
+        .question-box input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        .question-box button {
+            margin-top: 10px;
+            padding: 10px;
+            width: 100%;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .question-box button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div id="questionBox" class="question-box">
+    <p>What is your name?</p>
+    <input type="text" id="answerInput">
+    <button onclick="submitAnswer()">Submit</button>
+</div>
+
+<script>
+    // Function to show the question box
+    function showQuestionBox() {
+        document.getElementById('questionBox').classList.add('active');
+    }
+
+    // Function to handle the answer submission
+    function submitAnswer() {
+        let answer = document.getElementById('answerInput').value;
+        if (answer) {
+            console.log("Hello, " + answer + "!");
+            document.getElementById('questionBox').classList.remove('active'); // Hide the question box
+        }
+    }
+
+    // Show the question box on page load (for demonstration purposes)
+    window.onload = showQuestionBox;
+</script>
+
+</body>
+</html>

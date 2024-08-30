@@ -424,6 +424,64 @@ router.get('/test', ensureValidToken, async (req, res) => {
 });
 
 
+// Endpoint to add a tag to a file using a hardcoded template ID
+router.post('/add-tag-to-file', isAuthenticated ,ensureValidToken, async (req, res) => {
+  // Hardcoded template ID (replace with your actual template ID)
+  const foldername = req.user.id;
+  
+
+  const templateId = 'ptid:_ujB2H4nu48AAAAAAAE2yw';
+  
+  // Extract the file path and tag from the request body
+  const { documentId, tag } = req.body;
+
+  const filePath = `/mystmkra/${foldername}/${documentId}.md`;
+
+  // Validate input
+  if (!filePath || !tag) {
+    return res.status(400).json({
+      message: 'File path and tag are required',
+    });
+  }
+
+  // Define the payload to add the property (tag) to the file
+  const addTagPayload = {
+    path: filePath,
+    property_groups: [
+      {
+        template_id: templateId,
+        fields: [
+          {
+            name: 'tag',
+            value: tag,
+          },
+        ],
+      },
+    ],
+  };
+
+  try {
+    // Send the POST request to Dropbox API to add the tag
+    const response = await axios.post('https://api.dropboxapi.com/2/file_properties/properties/add', addTagPayload, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Respond with success message
+    res.status(200).json({
+      message: 'Tag added to file successfully',
+      details: response.data,
+    });
+  } catch (error) {
+    console.error('Error adding tag to file:', error.response?.data || error.message);
+    res.status(500).json({
+      message: 'Failed to add tag to file',
+      error: error.response?.data || error.message,
+    });
+  }
+});
 
 
 router.post('/test2', ensureValidToken, async (req, res) => {
