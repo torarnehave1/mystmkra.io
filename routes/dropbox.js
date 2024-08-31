@@ -424,64 +424,91 @@ router.get('/test', ensureValidToken, async (req, res) => {
 });
 
 
-// Endpoint to add a tag to a file using a hardcoded template ID
-router.post('/add-tag-to-file', isAuthenticated ,ensureValidToken, async (req, res) => {
-  // Hardcoded template ID (replace with your actual template ID)
+router.post('/add-tag-to-file', isAuthenticated, ensureValidToken, async (req, res) => {
   const foldername = req.user.id;
-  
+  const templateId = 'ptid:_ujB2H4nu48AAAAAAAE20g';
 
-  const templateId = 'ptid:_ujB2H4nu48AAAAAAAE2yw';
-  
-  // Extract the file path and tag from the request body
   const { documentId, tag } = req.body;
-
   const filePath = `/mystmkra/${foldername}/${documentId}.md`;
 
-  // Validate input
   if (!filePath || !tag) {
     return res.status(400).json({
       message: 'File path and tag are required',
     });
   }
 
-  // Define the payload to add the property (tag) to the file
-  const addTagPayload = {
-    path: filePath,
-    property_groups: [
-      {
-        template_id: templateId,
-        fields: [
-          {
-            name: 'tag',
-            value: tag,
-          },
-        ],
-      },
-    ],
-  };
-
   try {
-    // Send the POST request to Dropbox API to add the tag
-    const response = await axios.post('https://api.dropboxapi.com/2/file_properties/properties/add', addTagPayload, {
+    // Step 1: Fetch existing tags
+    const searchPayload = {
+      queries: [{
+        logical_operator: "or_operator",
+        mode: {
+          ".tag": "field_name",
+          "field_name": "tag"
+        },
+        query: ""
+      }],
+      template_filter: {
+        ".tag": "filter_none"
+      }
+    };
+
+    const getResponse = await axios.post('https://api.dropboxapi.com/2/file_properties/properties/search', searchPayload, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
     });
 
-    // Respond with success message
-    res.status(200).json({
-      message: 'Tag added to file successfully',
-      details: response.data,
+    let currentTags = '';
+    if (getResponse.data.matches && getResponse.data.matches.length > 0) {
+      // Assuming the 'tag' field exists and extracting the current value
+      const field = getResponse.data.matches[0].properties[0].fields.find(f => f.name === 'tag');
+      currentTags = field ? field.value : '';
+    }
+
+    // Step 2: Combine the new tag with existing tags
+    const updatedTags = currentTags ? `${currentTags}, ${tag}` : tag;
+
+    // Step 3: Overwrite the property with the updated tags
+    const overwritePayload = {
+      path: filePath,
+      property_groups: [
+        {
+          template_id: templateId,
+          fields: [
+            {
+              name: 'tag',
+              value: updatedTags,  // Updated tags
+            },
+          ],
+        },
+      ],
+    };
+
+    const overwriteResponse = await axios.post('https://api.dropboxapi.com/2/file_properties/properties/overwrite', overwritePayload, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
     });
+
+    res.status(200).json({
+      message: 'Tag updated successfully',
+      details: overwriteResponse.data,
+    });
+
   } catch (error) {
-    console.error('Error adding tag to file:', error.response?.data || error.message);
+    console.error('Error updating tag on file:', error.response?.data || error.message);
     res.status(500).json({
-      message: 'Failed to add tag to file',
+      message: 'Failed to update tag on file',
       error: error.response?.data || error.message,
     });
   }
 });
+
+
+
 
 
 router.post('/test2', ensureValidToken, async (req, res) => {

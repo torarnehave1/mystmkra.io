@@ -25,20 +25,18 @@
     }
 
     .mdmenu {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: repeat(2, 1fr);
-        grid-gap: 2px;
-        display: flex;
-        justify-content: flex-start;
+        display: flex; /* Use flexbox for layout */
+        flex-wrap: wrap; /* Allow items to wrap */
+        justify-content: flex-start; /* Align items to the start */
         align-items: center;
-        gap: 2px;
-        grid-row-start: 4;
-        grid-column-start: 1;
-        justify-content: flex-start;
-        align-items: center;
-        flex-direction: row;
+        gap: 5px; /* Adjust the gap between items */
         margin-top: 10px;
+        grid-row-start: unset; /* Unset grid properties that are not needed */
+        grid-column-start: unset;
+    }
+    .mdmenu .btn {
+        flex: 1 1 calc(50% - 10px); /* Two buttons per row */
+        max-width: calc(50% - 10px); /* Ensure they don't exceed half the width */
     }
 
     .topmenu {
