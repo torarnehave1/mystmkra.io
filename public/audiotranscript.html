@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Translation - Mystmkra.io</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+        .btn-primary {
+            width: 100%;
+        }
+        #progress-container {
+            margin-top: 20px;
+            display: none;
+        }
+        #result {
+            margin-top: 20px;
+            white-space: pre-wrap; /* To keep line breaks */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Translate Audio</h2>
+        <form id="translateAudioForm">
+            <div class="form-group">
+                <label for="audioFile">Upload Audio File</label>
+                <input type="file" class="form-control" id="audioFile" accept=".flac,.mp3,.mp4,.mpeg,.mpga,.m4a,.ogg,.wav,.webm" required>
+            </div>
+            <div class="form-group">
+                <label for="language">Select Language (Optional)</label>
+                <select class="form-control" id="language">
+                    <option value="">Auto-Detect</option>
+                    <option value="en">English</option>
+                    <option value="es">Spanish</option>
+                    <option value="fr">French</option>
+                    <option value="de">German</option>
+                    <option value="no">Norwegian</option>
+            
+                    <!-- Add other languages as needed -->
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Translate</button>
+        </form>
+
+        <div id="progress-container">
+            <label for="uploadProgress">Upload Progress</label>
+            <div class="progress">
+                <div id="uploadProgress" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+            </div>
+        </div>
+
+        <div id="result" class="alert alert-secondary"></div>
+    </div>
+
+    <script>
+        document.getElementById('translateAudioForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById('audioFile');
+            const file = fileInput.files[0];
+            const language = document.getElementById('language').value;
+
+            if (!file) {
+                showAlert('Please upload a valid audio file.', 'alert-danger');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+            if (language) {
+                formData.append('language', language);  // Include language if specified
+            }
+
+            const progressBar = document.getElementById('uploadProgress');
+            const progressContainer = document.getElementById('progress-container');
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = '';  // Clear previous results
+            progressContainer.style.display = 'block';
+
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/openai/translate-audio', true);
+
+                xhr.upload.onprogress = function(event) {
+                    if (event.lengthComputable) {
+                        const percentComplete = (event.loaded / event.total) * 100;
+                        progressBar.style.width = percentComplete + '%';
+                        progressBar.textContent = Math.floor(percentComplete) + '%';
+                        progressBar.setAttribute('aria-valuenow', Math.floor(percentComplete));
+                    }
+                };
+
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.LOADING || xhr.readyState === XMLHttpRequest.DONE) {
+                        const newLines = xhr.responseText.split('\n');
+                        newLines.forEach(line => {
+                            if (line) {
+                                resultDiv.textContent += line + '\n';  // Append new lines as they come in
+                            }
+                        });
+                    }
+
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status !== 200) {
+                        showAlert('Error: Failed to translate audio', 'alert-danger');
+                    }
+                };
+
+                xhr.send(formData);
+            } catch (error) {
+                showAlert('An error occurred while translating the audio.', 'alert-danger');
+                console.error('Error:', error);
+            }
+        });
+
+        function showAlert(message, alertClass) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = message;
+            resultDiv.className = `alert ${alertClass}`;
+            resultDiv.classList.remove('d-none');
+        }
+    </script>
+</body>
+</html>

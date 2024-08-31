@@ -1,14 +1,16 @@
 import { Router } from 'express';
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
+import multer from 'multer';
+import util from 'util';
 
+
+import FormData from 'form-data';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 
-
 import axios from 'axios';
-
 import sharp from 'sharp';
 
 import config from '../config/config.js';
@@ -27,12 +29,7 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-//write a test end point to see if I can connect to openai
-
-
-
-
-// Define the route for handling OpenAI requests
+// Test endpoint to verify OpenAI connection
 router.post('/ask', async (req, res) => {
     const { question } = req.body;
 
@@ -52,7 +49,47 @@ router.post('/ask', async (req, res) => {
     }
 });
 
+// Refactored translate-audio endpoint
+const upload = multer({ storage: multer.memoryStorage() });
 
+router.post('/translate-audio', upload.single('file'), async (req, res) => {
+    try {
+        const file = req.file;
+        const language = 'en'   // Get the language from the request body if provided
+
+        if (!file) {
+            console.error('File not provided');
+            return res.status(400).json({ error: 'File is required' });
+        }
+
+        const formData = new FormData();
+        formData.append('file', file.buffer, file.originalname);
+        formData.append('model', 'whisper-1');
+
+        if (language) {
+            formData.append('language', language);  // Include language in the request if provided
+        }
+
+        const response = await axios.post('https://api.openai.com/v1/audio/translations', formData, {
+            headers: {
+                Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+                ...formData.getHeaders(),
+            },
+        });
+
+        res.json(response.data);  // Send the full response back to the client
+    } catch (error) {
+        console.error('Error translating audio:', error.message || error);
+        if (error.response) {
+            console.error('Response data:', error.response.data);  // Log the error data
+            console.error('Response status:', error.response.status);
+            console.error('Response headers:', error.response.headers);
+        } else if (error.request) {
+            console.error('Request data:', error.request);
+        }
+        res.status(500).json({ error: 'Failed to translate audio' });
+    }
+});
 
 router.post('/process-text', async (req, res) => {
     const { operation, prompt } = req.body;
@@ -89,17 +126,11 @@ router.post('/process-text', async (req, res) => {
     }
 });
 
-
-
-
-
-
-
 router.post('/create-image', async (req, res) => {
     const { prompt } = req.body;
 
     try {
-        const response = await openai.images.generate({  // Ensure 'generate' is correct for your SDK
+        const response = await openai.images.generate({
             model: "dall-e-3",
             prompt: prompt,
             n: 1,
@@ -111,40 +142,29 @@ router.post('/create-image', async (req, res) => {
         }
 
         const imageUrl = response.data[0].url;
-
-
         const imageResponse = await axios.get(imageUrl, { responseType: 'arraybuffer' });
         const imageBuffer = Buffer.from(imageResponse.data, 'binary');
 
-        // Process the image to crop to 1024x341
         const croppedImageBuffer = await sharp(imageBuffer)
-            .resize(1024, 341)  // Resize to 1024x341
+            .resize(1024, 341)
             .toBuffer();
 
         const timestamp = Date.now();
-        const imageFilePath = path.join(__dirname,'..', '/public/images', `image_${timestamp}.png`);
-        console.log(imageFilePath);
-
+        const imageFilePath = path.join(__dirname, '..', '/public/images', `image_${timestamp}.png`);
         const imageUrlRelative = `/images/image_${timestamp}.png`;
         const ReturnimageUrl = `${config.BASE_URL}${imageUrlRelative}`;
 
         fs.writeFileSync(imageFilePath, croppedImageBuffer);
 
         res.json({ message: 'Image saved successfully', imageFilePath, ReturnimageUrl });
-
-
-        //res.json({ imageUrl });
     } catch (error) {
         console.error('Error creating image:', error.message || error);
         res.status(500).json({ error: 'Failed to create image' });
     }
 });
 
-
-
-
 router.get('/createimage', async (req, res) => {
-    const prompt = req.query.prompt;  // Get the prompt from the query parameters
+    const prompt = req.query.prompt;
 
     if (!prompt) {
         return res.status(400).json({ error: 'Prompt is required' });
@@ -152,26 +172,22 @@ router.get('/createimage', async (req, res) => {
 
     try {
         const response = await openai.images.generate({
-            model: "dall-e-2",  // Ensure this is the correct model for your API version
+            model: "dall-e-2",
             prompt: prompt,
             n: 1,
-            size: "1024x1024"  // Generate a square image
+            size: "1024x1024"
         });
 
         const imageUrl = response.data[0].url;
-
-        // Download the image from the URL
         const imageResponse = await axios.get(imageUrl, { responseType: 'arraybuffer' });
         const imageBuffer = Buffer.from(imageResponse.data, 'binary');
 
-        // Process the image to crop to 1024x341
         const croppedImageBuffer = await sharp(imageBuffer)
-            .resize(1024, 341)  // Resize to 1024x341
+            .resize(1024, 341)
             .toBuffer();
 
         const timestamp = Date.now();
-        const imageFilePath = path.join(__dirname,'..', '/public/images', `image_${timestamp}.png`);
-        console.log(imageFilePath);
+        const imageFilePath = path.join(__dirname, '..', '/public/images', `image_${timestamp}.png`);
 
         fs.writeFileSync(imageFilePath, croppedImageBuffer);
 
@@ -181,6 +197,5 @@ router.get('/createimage', async (req, res) => {
         res.status(500).json({ error: 'Failed to create image' });
     }
 });
-
 
 export default router;
