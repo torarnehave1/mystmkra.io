@@ -7,6 +7,65 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <style>
+        /* General form styling */
+        .settings-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffffc7;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .settings-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #f9f9f9;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #007bff;
+            background-color: #fff;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #a19999;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .save-btn:hover {
+            background-color: #8c8888;
+        }
+
         body {
             background-color: #f8f9fa;
         }
@@ -125,17 +184,46 @@
                                 <i class="bi bi-person-circle"></i> Profile Overview
                             </div>
                             <div class="card-body">
-                                <img src="profile-picture.jpg" alt="Profile Picture" class="img-fluid rounded-circle mb-3">
+                                <img src="./images/profile_img.png" alt="Profile Picture" class="img-fluid rounded-circle mb-3">
                                 <h5>Username</h5>
-                                <p>Email: user@example.com</p>
+                                <p>Email: slowyou.net@gmail.com</p>
                                 <p>Account Type: Premium</p>
                                 <p>Last Login: 2024-08-30 12:34 PM</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Statistics & Analytics -->
+                    <!-- Settings Container -->
                     <div class="col-md-8">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="bi bi-gear"></i> User Settings
+                            </div>
+                            <div class="card-body">
+                                <div class="settings-container">
+                                    <h2>User Settings</h2>
+                                    <form id="user-settings-form">
+                                        <div class="form-group">
+                                            <label for="email">Email Address</label>
+                                            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="password">Password</label>
+                                            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="submit" class="save-btn">Save Settings</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics & Analytics -->
+                <div class="row">
+                    <div class="col-md-12">
                         <div class="card mb-4">
                             <div class="card-header">
                                 <i class="bi bi-bar-chart-line"></i> Statistics & Analytics
@@ -154,7 +242,7 @@
                                     </div>
                                 </div>
                                 <div class="progress-bar-container">
-                                    <div class="progress-bar" style="width: 20%;"></div>
+                                    <div class="progress-bar progress-bar-20"></div>
                                 </div>
                             </div>
                         </div>
@@ -178,7 +266,7 @@
                                     </div>
                                     <div class="col-sm-8">
                                         <div class="progress-bar-container">
-                                            <div class="progress-bar" style="width: 25%;"></div>
+                                            <div class="progress-bar progress-bar-25"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -297,7 +385,6 @@
                         </div>
                     </div>
                 </div>
-
             </main>
         </div>
     </div>
