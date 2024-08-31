@@ -1,0 +1,886 @@
+Hostname: srv515168
+Read from .env: srv515168
+Environment: production
+The application is running in production mode.
+The application is running in production mode.
+The base URL is https://slowyou.net/
+The application is running in production mode.
+The base URL is https://slowyou.net/
+Server running at http://localhost:3001
+Connected to MongoDB with Mongoose
+Hostname: srv515168
+Read from .env: srv515168
+Environment: production
+The application is running in production mode.
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+Server running at http://localhost:3001
+Connected to MongoDB with Mongoose
+::1 - - [23/Aug/2024:10:03:37 +0000] "GET /index.html HTTP/1.0" 200 39921 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [23/Aug/2024:10:03:37 +0000] "GET /markdown.css HTTP/1.0" 200 9097 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [23/Aug/2024:10:03:38 +0000] "GET /md/snippets HTTP/1.0" 200 1109 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+Hostname: srv515168
+Read from .env: srv515168
+Environment: production
+The application is running in production mode.
+REDIR = https://slowyou.net/dropbox/auth/callback
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+Server running at http://localhost:3001
+Connected to MongoDB with Mongoose
+::ffff:127.0.0.1 - - [23/Aug/2024:12:31:59 +0000] "GET /a/login HTTP/1.0" 404 146 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::1 - - [23/Aug/2024:12:32:02 +0000] "GET / HTTP/1.0" 200 39921 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [23/Aug/2024:12:32:02 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [23/Aug/2024:12:32:02 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [23/Aug/2024:12:32:34 +0000] "GET / HTTP/1.0" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [23/Aug/2024:12:32:34 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [23/Aug/2024:12:32:34 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [23/Aug/2024:12:32:59 +0000] "GET /login.html HTTP/1.0" 200 5653 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [23/Aug/2024:12:33:00 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [23/Aug/2024:12:33:00 +0000] "GET /menu.html HTTP/1.0" 404 148 "https://mystmkra.io/login.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [23/Aug/2024:12:33:01 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [23/Aug/2024:12:33:01 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [23/Aug/2024:12:33:02 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [23/Aug/2024:12:33:02 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [23/Aug/2024:13:22:32 +0000] "GET / HTTP/1.0" 200 39921 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+::1 - - [23/Aug/2024:13:22:32 +0000] "GET /favicon.ico HTTP/1.0" 404 150 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+::ffff:127.0.0.1 - - [23/Aug/2024:15:55:18 +0000] "GET / HTTP/1.0" 200 39921 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::1 - - [23/Aug/2024:19:34:40 +0000] "GET /robots.txt HTTP/1.0" 404 149 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.134 Safari/537.36"
+::ffff:127.0.0.1 - - [23/Aug/2024:20:22:43 +0000] "GET /.env HTTP/1.0" 404 143 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:83.0) Gecko/20100101 Firefox/83.0"
+::1 - - [23/Aug/2024:20:22:43 +0000] "POST / HTTP/1.0" 404 140 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:83.0) Gecko/20100101 Firefox/83.0"
+::ffff:127.0.0.1 - - [23/Aug/2024:23:36:22 +0000] "GET / HTTP/1.0" 200 39921 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::1 - - [24/Aug/2024:10:16:02 +0000] "GET / HTTP/1.0" 200 39921 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::ffff:127.0.0.1 - - [25/Aug/2024:01:00:24 +0000] "GET /robots.txt HTTP/1.0" 404 149 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::1 - - [25/Aug/2024:07:08:23 +0000] "GET /robots.txt HTTP/1.0" 404 149 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::ffff:127.0.0.1 - - [25/Aug/2024:07:08:26 +0000] "GET / HTTP/1.0" 200 39921 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::1 - - [25/Aug/2024:09:40:08 +0000] "GET /.git/config HTTP/1.0" 404 150 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:104.0) Gecko/20100101 Firefox/104.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:09:56:18 +0000] "GET / HTTP/1.0" 200 39921 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.6167.160 Safari/537.36"
+::1 - - [25/Aug/2024:09:56:18 +0000] "GET /markdown.css HTTP/1.0" 200 9097 "https://mystmkra.io/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.6167.160 Safari/537.36"
+::ffff:127.0.0.1 - - [25/Aug/2024:09:56:19 +0000] "GET /md/snippets HTTP/1.0" 200 1109 "https://mystmkra.io/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.6167.160 Safari/537.36"
+::1 - - [25/Aug/2024:09:56:25 +0000] "GET /favicon.ico HTTP/1.0" 404 150 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.6167.160 Safari/537.36"
+::ffff:127.0.0.1 - - [25/Aug/2024:13:28:26 +0000] "GET / HTTP/1.0" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:13:28:26 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:13:28:27 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+Hostname: srv515168
+Read from .env: srv515168
+Environment: production
+The application is running in production mode.
+REDIR = https://slowyou.net/dropbox/auth/callback
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+Server running at http://localhost:3001
+Connected to MongoDB with Mongoose
+::1 - - [25/Aug/2024:13:29:38 +0000] "GET / HTTP/1.0" 200 39954 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:13:29:38 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:13:29:38 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:13:37:11 +0000] "POST /openai/process-text HTTP/1.0" 200 4447 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+Token verification failed: jwt expired
+::1 - - [25/Aug/2024:13:37:59 +0000] "POST /dropbox/save-markdown HTTP/1.0" 302 52 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:13:37:59 +0000] "GET /index.html HTTP/1.0" 200 39954 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:13:38:10 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:13:48:10 +0000] "GET /login.html HTTP/1.0" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:13:48:10 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:13:48:11 +0000] "GET /menu.html HTTP/1.0" 404 148 "https://mystmkra.io/login.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:13:48:12 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:13:48:12 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:13:48:12 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:13:48:13 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:13:50:01 +0000] "GET / HTTP/1.0" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:13:50:01 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:13:50:02 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:13:50:07 +0000] "GET /login.html HTTP/1.0" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:13:50:07 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:13:50:07 +0000] "GET /menu.html HTTP/1.0" 404 148 "https://mystmkra.io/login.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:13:50:09 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:13:50:09 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:13:50:09 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:13:50:09 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:13:50:28 +0000] "GET /dropbox/protected HTTP/1.0" 200 71 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+Hostname: srv515168
+Read from .env: srv515168
+Environment: production
+The application is running in production mode.
+REDIR = https://slowyou.net/dropbox/auth/callback
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+Server running at http://localhost:3001
+Connected to MongoDB with Mongoose
+::ffff:127.0.0.1 - - [25/Aug/2024:14:12:20 +0000] "GET / HTTP/1.0" 200 41061 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:14:12:20 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:14:12:20 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:14:12:20 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+Request received to save markdown
+Content is provided
+User ID: 6665c107e4a8ea992f1ad942
+User found: {
+  _id: new ObjectId('6665c107e4a8ea992f1ad942'),
+  username: 'torarnehave@gmail.com'
+}
+Creating new document
+Saving document to MongoDB
+FilePath is: /6665c107e4a8ea992f1ad942/66cb3bcd933a66e8182c7714.md
+Uploading file to Dropbox
+File uploaded successfully to Dropbox
+::ffff:127.0.0.1 - - [25/Aug/2024:14:12:30 +0000] "POST /dropbox/save-markdown HTTP/1.0" 200 136 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+Request received to save markdown
+Content is provided
+User ID: 6665c107e4a8ea992f1ad942
+User found: {
+  _id: new ObjectId('6665c107e4a8ea992f1ad942'),
+  username: 'torarnehave@gmail.com'
+}
+Finding existing document by ID: 66cb3bcd933a66e8182c7714
+Saving document to MongoDB
+FilePath is: /6665c107e4a8ea992f1ad942/66cb3bcd933a66e8182c7714.md
+Uploading file to Dropbox
+File uploaded successfully to Dropbox
+::1 - - [25/Aug/2024:14:24:58 +0000] "POST /dropbox/save-markdown HTTP/1.0" 200 136 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:14:25:21 +0000] "GET /dropbox/md/66cb3bcd933a66e8182c7714.md HTTP/1.0" 500 73 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:18:08:05 +0000] "GET / HTTP/1.0" 200 41061 "-" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [25/Aug/2024:18:08:05 +0000] "GET /markdown.css HTTP/1.0" 200 9097 "https://mystmkra.io/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+Token verification failed: jwt malformed
+::ffff:127.0.0.1 - - [25/Aug/2024:18:08:05 +0000] "GET /dropbox/protected HTTP/1.0" 302 52 "https://mystmkra.io/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [25/Aug/2024:18:08:05 +0000] "GET /md/snippets HTTP/1.0" 200 1109 "https://mystmkra.io/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [25/Aug/2024:18:08:05 +0000] "GET /index.html HTTP/1.0" 200 41061 "https://mystmkra.io/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [25/Aug/2024:18:08:05 +0000] "GET /favicon.ico HTTP/1.0" 404 150 "https://mystmkra.io/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [25/Aug/2024:18:08:11 +0000] "GET / HTTP/1.0" 304 - "-" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [25/Aug/2024:18:08:11 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+Token verification failed: jwt malformed
+::1 - - [25/Aug/2024:18:08:11 +0000] "GET /dropbox/protected HTTP/1.0" 302 52 "https://mystmkra.io/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [25/Aug/2024:18:08:11 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [25/Aug/2024:18:08:11 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [25/Aug/2024:18:08:44 +0000] "GET /index.html HTTP/1.0" 304 - "-" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [25/Aug/2024:18:08:44 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+Token verification failed: jwt malformed
+::1 - - [25/Aug/2024:18:08:44 +0000] "GET /dropbox/protected HTTP/1.0" 302 52 "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [25/Aug/2024:18:08:44 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [25/Aug/2024:18:08:44 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [25/Aug/2024:18:58:56 +0000] "GET /login%20html HTTP/1.0" 404 151 "-" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [25/Aug/2024:19:07:47 +0000] "GET / HTTP/1.0" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:19:07:47 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+Token verification failed: jwt expired
+::1 - - [25/Aug/2024:19:07:47 +0000] "GET /dropbox/protected HTTP/1.0" 302 52 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:19:07:47 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:19:07:47 +0000] "GET /index.html HTTP/1.0" 200 41061 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:19:08:06 +0000] "GET /login.html HTTP/1.0" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:19:08:06 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:19:08:06 +0000] "GET /menu.html HTTP/1.0" 404 148 "https://mystmkra.io/login.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:19:08:08 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:19:08:08 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:19:08:08 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:19:08:09 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:19:08:09 +0000] "GET /dropbox/protected HTTP/1.0" 200 71 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:19:29:32 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:19:29:32 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:19:29:32 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:19:29:32 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:19:35:00 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:19:35:00 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:19:35:00 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:19:35:00 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:19:37:18 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:19:37:18 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [25/Aug/2024:19:37:18 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::ffff:127.0.0.1 - - [25/Aug/2024:19:37:18 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0"
+::1 - - [26/Aug/2024:15:33:20 +0000] "GET / HTTP/1.0" 200 41061 "-" "Mozilla/5.0 (Macintosh; PPC Mac OS X 10.9; rv:46.0) Gecko/20100101 Firefox/46.0"
+::ffff:127.0.0.1 - - [26/Aug/2024:15:45:02 +0000] "GET / HTTP/1.0" 200 41061 "-" "Mozilla/5.0 (Windows NT 6.3; rv:50.0) Gecko/20100101 Firefox/50.0"
+Hostname: srv515168
+Read from .env: srv515168
+Environment: production
+The application is running in production mode.
+REDIR = https://slowyou.net/dropbox/auth/callback
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+Server running at http://localhost:3001
+Connected to MongoDB with Mongoose
+::1 - - [26/Aug/2024:18:07:19 +0000] "GET / HTTP/1.0" 200 41657 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [26/Aug/2024:18:07:19 +0000] "GET /markdown.css HTTP/1.0" 200 9545 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+No token provided. Returning 401 status.
+::ffff:127.0.0.1 - - [26/Aug/2024:18:07:19 +0000] "GET /dropbox/protected HTTP/1.0" 401 47 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [26/Aug/2024:18:07:19 +0000] "GET /md/snippets HTTP/1.0" 200 1109 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [26/Aug/2024:18:07:20 +0000] "GET /login.html?message=session_expired HTTP/1.0" 200 3740 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [26/Aug/2024:18:07:20 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [26/Aug/2024:18:07:20 +0000] "GET /favicon.ico HTTP/1.0" 404 150 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [26/Aug/2024:18:07:22 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [26/Aug/2024:18:07:22 +0000] "GET /index.html HTTP/1.0" 200 41657 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [26/Aug/2024:18:07:22 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [26/Aug/2024:18:07:23 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [26/Aug/2024:18:07:23 +0000] "GET /dropbox/protected HTTP/1.0" 200 87 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [26/Aug/2024:18:07:30 +0000] "GET /login.html?message=logged_out HTTP/1.0" 200 3740 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [26/Aug/2024:18:07:30 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html?message=logged_out" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [26/Aug/2024:18:07:39 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html?message=logged_out" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [26/Aug/2024:18:07:39 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html?message=logged_out" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [26/Aug/2024:18:07:39 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [26/Aug/2024:18:07:39 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [26/Aug/2024:18:07:39 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Request received to save markdown
+Content is provided
+User ID: 6665c107e4a8ea992f1ad942
+User found: {
+  _id: new ObjectId('6665c107e4a8ea992f1ad942'),
+  username: 'torarnehave@gmail.com'
+}
+Creating new document
+Saving document to MongoDB
+FilePath is: /mystmkra/6665c107e4a8ea992f1ad942/66ccc473c1c5fa71eb8f156f.md
+Uploading file to Dropbox
+File uploaded successfully to Dropbox
+::ffff:127.0.0.1 - - [26/Aug/2024:18:07:48 +0000] "POST /dropbox/save-markdown HTTP/1.0" 200 145 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [26/Aug/2024:18:17:00 +0000] "GET /dropbox/search?query=Heading HTTP/1.0" 200 1544 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [26/Aug/2024:18:17:05 +0000] "DELETE /dropbox/filedelete/66c49381b2779105b4cafd82 HTTP/1.0" 200 39 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [26/Aug/2024:18:17:07 +0000] "GET /markdown/markdowncreate.html HTTP/1.0" 404 167 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [26/Aug/2024:18:17:38 +0000] "DELETE /dropbox/filedelete/66c49381b2779105b4cafd82 HTTP/1.0" 404 32 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [26/Aug/2024:18:18:35 +0000] "DELETE /dropbox/filedelete/66c883480a1158a61d191beb HTTP/1.0" 500 75 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [26/Aug/2024:18:31:59 +0000] "GET / HTTP/1.0" 200 41657 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::1 - - [26/Aug/2024:19:12:34 +0000] "GET / HTTP/1.0" 200 41657 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::ffff:127.0.0.1 - - [26/Aug/2024:19:51:53 +0000] "GET / HTTP/1.0" 200 41657 "-" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [26/Aug/2024:19:51:53 +0000] "GET /markdown.css HTTP/1.0" 200 9545 "https://mystmkra.io/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+No token provided. Returning 401 status.
+::ffff:127.0.0.1 - - [26/Aug/2024:19:51:53 +0000] "GET /dropbox/protected HTTP/1.0" 401 47 "https://mystmkra.io/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [26/Aug/2024:19:51:53 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [26/Aug/2024:19:51:53 +0000] "GET /login.html?message=session_expired HTTP/1.0" 200 3740 "https://mystmkra.io/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [26/Aug/2024:19:51:53 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [26/Aug/2024:19:51:56 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [26/Aug/2024:19:51:57 +0000] "GET /index.html HTTP/1.0" 200 41657 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [26/Aug/2024:19:51:57 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [26/Aug/2024:19:51:57 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [26/Aug/2024:19:51:57 +0000] "GET /dropbox/protected HTTP/1.0" 200 87 "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [26/Aug/2024:20:03:32 +0000] "POST /openai/process-text HTTP/1.0" 200 2780 "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [26/Aug/2024:20:22:34 +0000] "GET /.git/config HTTP/1.0" 404 150 "-" "Mozilla/5.0 (Linux; Android 9; Pixel 3 XL) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.111 Mobile Safari/537.36"
+::1 - - [27/Aug/2024:10:19:12 +0000] "GET / HTTP/1.0" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:10:19:12 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Token verification failed: jwt expired
+Token has expired. Returning 401 status with session expired message.
+::ffff:127.0.0.1 - - [27/Aug/2024:10:19:12 +0000] "GET /dropbox/protected HTTP/1.0" 401 51 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:10:19:12 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:10:19:13 +0000] "GET /login.html?message=session_expired HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:10:19:13 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:10:19:14 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:10:19:14 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:10:19:14 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:10:19:15 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:10:19:15 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Request received to save markdown
+Content is provided
+User ID: 6665c107e4a8ea992f1ad942
+User found: {
+  _id: new ObjectId('6665c107e4a8ea992f1ad942'),
+  username: 'torarnehave@gmail.com'
+}
+Creating new document
+Saving document to MongoDB
+FilePath is: /mystmkra/6665c107e4a8ea992f1ad942/66cda8d9c1c5fa71eb8f157f.md
+Uploading file to Dropbox
+File uploaded successfully to Dropbox
+::ffff:127.0.0.1 - - [27/Aug/2024:10:22:18 +0000] "POST /dropbox/save-markdown HTTP/1.0" 200 145 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:10:30:32 +0000] "GET /robots.txt HTTP/1.0" 404 149 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::ffff:127.0.0.1 - - [27/Aug/2024:10:30:34 +0000] "GET / HTTP/1.0" 200 41657 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::1 - - [27/Aug/2024:11:16:49 +0000] "GET /.git/config HTTP/1.0" 404 150 "-" "Mozilla/5.0 (Windows NT 10.0; rv:46.0) Gecko/20100101 Firefox/46.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:11:28:07 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:11:28:07 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Token verification failed: jwt expired
+Token has expired. Returning 401 status with session expired message.
+::1 - - [27/Aug/2024:11:28:08 +0000] "GET /dropbox/protected HTTP/1.0" 401 51 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:11:28:08 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:11:28:08 +0000] "GET /login.html?message=session_expired HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:11:28:08 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:11:28:09 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:11:28:09 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:11:28:10 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:11:28:10 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:11:28:10 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+/var/www/html/mystmkra.io/public/images/image_1724758317865.png
+::1 - - [27/Aug/2024:11:31:57 +0000] "POST /openai/create-image HTTP/1.0" 500 34 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Request received to save markdown
+Content is provided
+User ID: 6665c107e4a8ea992f1ad942
+User found: {
+  _id: new ObjectId('6665c107e4a8ea992f1ad942'),
+  username: 'torarnehave@gmail.com'
+}
+Creating new document
+Saving document to MongoDB
+FilePath is: /mystmkra/6665c107e4a8ea992f1ad942/66cdb967c1c5fa71eb8f1586.md
+Uploading file to Dropbox
+File uploaded successfully to Dropbox
+::ffff:127.0.0.1 - - [27/Aug/2024:11:32:56 +0000] "POST /dropbox/save-markdown HTTP/1.0" 200 145 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:12:37:21 +0000] "GET / HTTP/1.0" 200 41657 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+::ffff:127.0.0.1 - - [27/Aug/2024:12:37:25 +0000] "GET /favicon.ico HTTP/1.0" 404 150 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+Hostname: srv515168
+Read from .env: srv515168
+Environment: production
+The application is running in production mode.
+REDIR = https://slowyou.net/dropbox/auth/callback
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+Server running at http://localhost:3001
+Connected to MongoDB with Mongoose
+::1 - - [27/Aug/2024:15:28:13 +0000] "GET /index.html HTTP/1.0" 200 41638 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:15:28:13 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Token verification failed: jwt expired
+Token has expired. Returning 401 status with session expired message.
+::ffff:127.0.0.1 - - [27/Aug/2024:15:28:13 +0000] "GET /dropbox/protected HTTP/1.0" 401 51 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:15:28:13 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:15:28:13 +0000] "GET /login.html?message=session_expired HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:15:28:14 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:15:28:15 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:15:28:15 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:15:28:15 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:15:28:15 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:15:28:15 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:15:28:31 +0000] "GET /dropbox/search?query=a HTTP/1.0" 200 7481 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:15:28:37 +0000] "GET /dropbox/file/66cdb967c1c5fa71eb8f1586 HTTP/1.0" 200 4322 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:15:28:41 +0000] "GET /dropbox/md/66cdb967c1c5fa71eb8f1586.md HTTP/1.0" 200 6501 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:15:28:41 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/dropbox/md/66cdb967c1c5fa71eb8f1586.md" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:15:28:41 +0000] "GET /menu.html HTTP/1.0" 404 148 "https://mystmkra.io/dropbox/md/66cdb967c1c5fa71eb8f1586.md" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:15:35:34 +0000] "POST /openai/process-text HTTP/1.0" 200 4906 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:15:40:42 +0000] "POST /openai/process-text HTTP/1.0" 200 4901 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:15:44:15 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:15:44:16 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:15:44:16 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:15:44:16 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Request received to save markdown
+Content is provided
+User ID: 6665c107e4a8ea992f1ad942
+User found: {
+  _id: new ObjectId('6665c107e4a8ea992f1ad942'),
+  username: 'torarnehave@gmail.com'
+}
+Creating new document
+Saving document to MongoDB
+FilePath is: /mystmkra/6665c107e4a8ea992f1ad942/66cdf467033ad7955d433021.md
+Uploading file to Dropbox
+File uploaded successfully to Dropbox
+::1 - - [27/Aug/2024:15:44:41 +0000] "POST /dropbox/save-markdown HTTP/1.0" 200 145 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Request received to save markdown
+Content is provided
+User ID: 6665c107e4a8ea992f1ad942
+User found: {
+  _id: new ObjectId('6665c107e4a8ea992f1ad942'),
+  username: 'torarnehave@gmail.com'
+}
+Finding existing document by ID: 66cdf467033ad7955d433021
+Saving document to MongoDB
+FilePath is: /mystmkra/6665c107e4a8ea992f1ad942/66cdf467033ad7955d433021.md
+Uploading file to Dropbox
+File uploaded successfully to Dropbox
+::ffff:127.0.0.1 - - [27/Aug/2024:15:46:32 +0000] "POST /dropbox/save-markdown HTTP/1.0" 200 145 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Request received to save markdown
+Content is provided
+User ID: 6665c107e4a8ea992f1ad942
+User found: {
+  _id: new ObjectId('6665c107e4a8ea992f1ad942'),
+  username: 'torarnehave@gmail.com'
+}
+Finding existing document by ID: 66cdf467033ad7955d433021
+Saving document to MongoDB
+FilePath is: /mystmkra/6665c107e4a8ea992f1ad942/66cdf467033ad7955d433021.md
+Uploading file to Dropbox
+File uploaded successfully to Dropbox
+::1 - - [27/Aug/2024:15:46:50 +0000] "POST /dropbox/save-markdown HTTP/1.0" 200 145 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:15:57:13 +0000] "POST /openai/process-text HTTP/1.0" 200 5843 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Request received to save markdown
+Content is provided
+User ID: 6665c107e4a8ea992f1ad942
+User found: {
+  _id: new ObjectId('6665c107e4a8ea992f1ad942'),
+  username: 'torarnehave@gmail.com'
+}
+Finding existing document by ID: 66cdf467033ad7955d433021
+Saving document to MongoDB
+FilePath is: /mystmkra/6665c107e4a8ea992f1ad942/66cdf467033ad7955d433021.md
+Uploading file to Dropbox
+File uploaded successfully to Dropbox
+::1 - - [27/Aug/2024:15:57:18 +0000] "POST /dropbox/save-markdown HTTP/1.0" 200 145 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:16:18:40 +0000] "GET /dropbox/md/ HTTP/1.0" 404 150 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:16:29:25 +0000] "GET /dropbox/md/ HTTP/1.0" 404 150 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::ffff:127.0.0.1 - - [27/Aug/2024:16:29:44 +0000] "GET /dropbox/md/ HTTP/1.0" 404 150 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::1 - - [27/Aug/2024:17:59:05 +0000] "GET /dropbox/md/ HTTP/1.0" 404 150 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.36"
+No token provided. Returning 401 status.
+::ffff:127.0.0.1 - - [27/Aug/2024:20:11:03 +0000] "GET /dropbox/md/66ce328e006de627a2308328.md HTTP/1.0" 401 47 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+No token provided. Returning 401 status.
+::1 - - [27/Aug/2024:20:11:14 +0000] "GET /dropbox/md/66ce328e006de627a2308328.md HTTP/1.0" 401 47 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:20:11:24 +0000] "GET /index.html HTTP/1.0" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:20:11:24 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Token verification failed: jwt expired
+Token has expired. Returning 401 status with session expired message.
+::1 - - [27/Aug/2024:20:11:24 +0000] "GET /dropbox/protected HTTP/1.0" 401 51 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:20:11:24 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:20:11:24 +0000] "GET /login.html?message=session_expired HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:20:11:24 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:20:11:26 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:20:11:26 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:20:11:26 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:20:11:26 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:20:11:26 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+No token provided. Returning 401 status.
+::1 - - [27/Aug/2024:20:11:31 +0000] "GET /dropbox/md/66ce328e006de627a2308328.md HTTP/1.0" 401 47 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:20:11:38 +0000] "GET / HTTP/1.0" 200 41638 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:20:11:38 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:20:11:38 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:20:11:38 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:20:11:46 +0000] "GET /dropbox/search?query=a HTTP/1.0" 200 7927 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:20:11:49 +0000] "GET /dropbox/file/66ce328e006de627a2308328 HTTP/1.0" 200 5913 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:20:11:53 +0000] "GET /dropbox/md/66ce328e006de627a2308328.md HTTP/1.0" 200 7734 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:20:11:54 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/dropbox/md/66ce328e006de627a2308328.md" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [27/Aug/2024:20:11:54 +0000] "GET /menu.html HTTP/1.0" 404 148 "https://mystmkra.io/dropbox/md/66ce328e006de627a2308328.md" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [27/Aug/2024:20:19:05 +0000] "GET / HTTP/1.0" 200 41638 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::ffff:127.0.0.1 - - [27/Aug/2024:22:38:50 +0000] "GET / HTTP/1.0" 200 41638 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::1 - - [28/Aug/2024:03:03:07 +0000] "GET / HTTP/1.0" 200 41638 "-" "Mozilla/5.0 Firefox/33.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:03:03:07 +0000] "GET /robots.txt HTTP/1.0" 404 149 "-" "python-requests/2.31.0"
+::1 - - [28/Aug/2024:03:03:08 +0000] "GET / HTTP/1.0" 200 41638 "-" "Mozilla/5.0 Firefox/33.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:03:47:03 +0000] "GET /md/snippets HTTP/1.0" 200 1109 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::1 - - [28/Aug/2024:03:47:07 +0000] "GET /markdown.css HTTP/1.0" 200 9545 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::ffff:127.0.0.1 - - [28/Aug/2024:04:04:01 +0000] "GET / HTTP/1.0" 200 41638 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+No token provided. Returning 401 status.
+::1 - - [28/Aug/2024:04:20:16 +0000] "GET /dropbox/protected HTTP/1.0" 401 47 "https://mystmkra.io/" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/112.0.0.0 Safari/537.36"
+::ffff:127.0.0.1 - - [28/Aug/2024:04:20:16 +0000] "GET /login.html?message=session_expired HTTP/1.0" 200 3740 "https://mystmkra.io/" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/112.0.0.0 Safari/537.36"
+::1 - - [28/Aug/2024:04:20:17 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/112.0.0.0 Safari/537.36"
+::ffff:127.0.0.1 - - [28/Aug/2024:04:34:15 +0000] "GET /login.html?message=session_expired HTTP/1.0" 200 3740 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::1 - - [28/Aug/2024:04:34:38 +0000] "GET /styles.css HTTP/1.0" 404 149 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+Hostname: srv515168
+Read from .env: srv515168
+Environment: production
+The application is running in production mode.
+REDIR = https://slowyou.net/dropbox/auth/callback
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+Server running at http://localhost:3001
+Connected to MongoDB with Mongoose
+::ffff:127.0.0.1 - - [28/Aug/2024:04:45:12 +0000] "GET / HTTP/1.0" 200 45361 "-" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [28/Aug/2024:04:45:12 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+Token verification failed: jwt expired
+Token has expired. Returning 401 status with session expired message.
+::1 - - [28/Aug/2024:04:45:12 +0000] "GET /dropbox/protected HTTP/1.0" 401 51 "https://mystmkra.io/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [28/Aug/2024:04:45:12 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [28/Aug/2024:04:45:13 +0000] "GET /login.html?message=session_expired HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [28/Aug/2024:04:45:13 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [28/Aug/2024:04:45:15 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [28/Aug/2024:04:45:15 +0000] "GET /index.html HTTP/1.0" 200 45361 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [28/Aug/2024:04:45:15 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [28/Aug/2024:04:45:15 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [28/Aug/2024:04:45:15 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+Token verification failed: jwt expired
+Token has expired. Returning 401 status with session expired message.
+::1 - - [28/Aug/2024:04:46:11 +0000] "GET /dropbox/md/66cdb967c1c5fa71eb8f1586.md HTTP/1.0" 401 51 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Token verification failed: jwt expired
+Token has expired. Returning 401 status with session expired message.
+::ffff:127.0.0.1 - - [28/Aug/2024:04:48:13 +0000] "GET /dropbox/md/66cdb967c1c5fa71eb8f1586.md HTTP/1.0" 401 51 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Token verification failed: jwt expired
+Token has expired. Returning 401 status with session expired message.
+::1 - - [28/Aug/2024:04:48:15 +0000] "GET /dropbox/md/66cdb967c1c5fa71eb8f1586.md HTTP/1.0" 401 51 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Hostname: srv515168
+Read from .env: srv515168
+Environment: production
+The application is running in production mode.
+REDIR = https://slowyou.net/dropbox/auth/callback
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+Server running at http://localhost:3001
+Connected to MongoDB with Mongoose
+Token verification failed: jwt expired
+Token has expired. Returning 401 status with session expired message.
+::ffff:127.0.0.1 - - [28/Aug/2024:04:49:06 +0000] "GET /dropbox/md/66cdb967c1c5fa71eb8f1586.md HTTP/1.0" 302 114 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:04:49:06 +0000] "GET /login.html?message=session_expired HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:04:49:06 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:04:49:12 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:04:49:12 +0000] "GET /index.html HTTP/1.0" 200 45361 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:04:49:12 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:04:49:12 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:04:49:12 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:04:50:49 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:04:56:21 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [28/Aug/2024:04:56:21 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [28/Aug/2024:04:56:21 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [28/Aug/2024:04:56:21 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [28/Aug/2024:04:56:44 +0000] "GET /index.html HTTP/1.0" 200 45359 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [28/Aug/2024:04:56:44 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [28/Aug/2024:04:56:44 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [28/Aug/2024:04:56:44 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+Token verification failed: jwt expired
+Token has expired. Returning 401 status with session expired message.
+::1 - - [28/Aug/2024:06:17:14 +0000] "GET /dropbox/md/66ce328e006de627a2308328.md HTTP/1.0" 302 114 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:06:17:14 +0000] "GET /login.html?message=session_expired HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:06:17:14 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:06:17:15 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:06:17:16 +0000] "GET /index.html HTTP/1.0" 200 45359 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:06:17:16 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:06:17:16 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:06:17:16 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Hostname: srv515168
+Read from .env: srv515168
+Environment: production
+The application is running in production mode.
+REDIR = https://slowyou.net/dropbox/auth/callback
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+Server running at http://localhost:3001
+Connected to MongoDB with Mongoose
+::1 - - [28/Aug/2024:06:30:50 +0000] "GET / HTTP/1.0" 200 45863 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+No token provided. Returning 401 status.
+::ffff:127.0.0.1 - - [28/Aug/2024:06:37:42 +0000] "GET /dropbox/md/66afeec3f0da4acd6fd94f61.md HTTP/1.0" 401 47 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+No token provided. Returning 401 status.
+::1 - - [28/Aug/2024:06:37:48 +0000] "GET /dropbox/md/66afeec3f0da4acd6fd94f61.md HTTP/1.0" 401 47 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:06:38:04 +0000] "GET / HTTP/1.0" 200 45863 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:06:38:04 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:06:38:04 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:06:38:04 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:07:14:32 +0000] "GET /forgot-password.html HTTP/1.0" 404 159 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+No token provided. Returning 401 status.
+::1 - - [28/Aug/2024:09:14:29 +0000] "GET /dropbox/md/66cee9ced345ef7a5d625328.md HTTP/1.0" 401 47 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+No token provided. Returning 401 status.
+::ffff:127.0.0.1 - - [28/Aug/2024:09:14:42 +0000] "GET /dropbox/md/66cee9ced345ef7a5d625328.md HTTP/1.0" 401 47 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:10:26:40 +0000] "GET /dropbox/md/ HTTP/1.0" 404 150 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::ffff:127.0.0.1 - - [28/Aug/2024:14:08:58 +0000] "GET / HTTP/1.0" 200 45863 "-" "Screaming Frog SEO Spider/19.8"
+::1 - - [28/Aug/2024:16:10:51 +0000] "GET / HTTP/1.0" 200 45863 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:98.0) Gecko/20100101 Firefox/98.0"
+No token provided. Returning 401 status.
+::ffff:127.0.0.1 - - [28/Aug/2024:16:13:15 +0000] "GET /dropbox/md/66cf4c52d345ef7a5d625347.md HTTP/1.0" 401 47 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:16:13:24 +0000] "GET / HTTP/1.0" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:16:13:24 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Token verification failed: jwt expired
+Token has expired. Returning 401 status with session expired message.
+::ffff:127.0.0.1 - - [28/Aug/2024:16:13:25 +0000] "GET /dropbox/protected HTTP/1.0" 401 67 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:16:13:25 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:16:13:25 +0000] "GET /login.html?message=session_expired HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:16:13:25 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:16:13:26 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:16:13:26 +0000] "GET /index.html HTTP/1.0" 200 45863 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:16:13:27 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:16:13:27 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:16:13:27 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:16:13:30 +0000] "GET /dropbox/md/66cf4c52d345ef7a5d625347.md HTTP/1.0" 200 5613 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:16:13:30 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/dropbox/md/66cf4c52d345ef7a5d625347.md" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:16:13:30 +0000] "GET /menu.html HTTP/1.0" 404 148 "https://mystmkra.io/dropbox/md/66cf4c52d345ef7a5d625347.md" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+No token provided. Returning 401 status.
+::1 - - [28/Aug/2024:17:00:40 +0000] "GET /dropbox/md/66cf503ad345ef7a5d62534d.md HTTP/1.0" 401 47 "http://localhost:3001/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:17:12:40 +0000] "GET / HTTP/1.0" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:17:12:40 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:17:12:41 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:17:12:41 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:17:12:45 +0000] "GET /dropbox/md/66cf5a2ad345ef7a5d62535a.md HTTP/1.0" 200 5266 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:17:12:45 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/dropbox/md/66cf5a2ad345ef7a5d62535a.md" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [28/Aug/2024:17:12:46 +0000] "GET /menu.html HTTP/1.0" 404 148 "https://mystmkra.io/dropbox/md/66cf5a2ad345ef7a5d62535a.md" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [28/Aug/2024:17:26:41 +0000] "GET / HTTP/1.0" 200 45863 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::ffff:127.0.0.1 - - [28/Aug/2024:19:22:33 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+No token provided. Returning 401 status.
+::ffff:127.0.0.1 - - [28/Aug/2024:19:22:33 +0000] "GET /dropbox/protected HTTP/1.0" 401 47 "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [28/Aug/2024:19:22:33 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [28/Aug/2024:19:22:33 +0000] "GET /login.html?message=session_expired HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::ffff:127.0.0.1 - - [28/Aug/2024:19:22:34 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+::1 - - [28/Aug/2024:19:22:34 +0000] "GET /favicon.ico HTTP/1.0" 404 150 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Mobile Safari/537.36"
+Hostname: srv515168
+Read from .env: srv515168
+Environment: production
+The application is running in production mode.
+REDIR = https://slowyou.net/dropbox/auth/callback
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+Server running at http://localhost:3001
+Connected to MongoDB with Mongoose
+::ffff:127.0.0.1 - - [29/Aug/2024:05:45:03 +0000] "GET /dropbox/create-template HTTP/1.0" 404 162 "http://mystmkra.io/dropbox/create-template" "PostmanRuntime/7.41.2"
+::1 - - [29/Aug/2024:05:46:52 +0000] "GET /dropbox/current-access-token HTTP/1.0" 200 221 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [29/Aug/2024:05:47:08 +0000] "GET /dropbox/create-template HTTP/1.0" 404 162 "http://mystmkra.io/dropbox/create-template" "PostmanRuntime/7.41.2"
+::1 - - [29/Aug/2024:05:47:24 +0000] "GET / HTTP/1.0" 200 45845 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [29/Aug/2024:05:47:25 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Token verification failed: jwt expired
+Token has expired. Returning 401 status with session expired message.
+::ffff:127.0.0.1 - - [29/Aug/2024:05:47:26 +0000] "GET /dropbox/protected HTTP/1.0" 401 67 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [29/Aug/2024:05:47:26 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [29/Aug/2024:05:47:26 +0000] "GET /login.html?message=session_expired HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [29/Aug/2024:05:47:27 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [29/Aug/2024:05:47:28 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [29/Aug/2024:05:47:28 +0000] "GET /index.html HTTP/1.0" 200 45845 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [29/Aug/2024:05:47:28 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [29/Aug/2024:05:47:28 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [29/Aug/2024:05:47:28 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [29/Aug/2024:05:47:34 +0000] "GET /dropbox/create-template HTTP/1.0" 404 162 "http://mystmkra.io/dropbox/create-template" "PostmanRuntime/7.41.2"
+Token verification failed: jwt malformed
+::1 - - [29/Aug/2024:05:49:34 +0000] "GET /dropbox/protected HTTP/1.0" 401 43 "http://mystmkra.io/dropbox/protected" "PostmanRuntime/7.41.2"
+Hostname: srv515168
+Read from .env: srv515168
+Environment: production
+The application is running in production mode.
+REDIR = https://slowyou.net/dropbox/auth/callback
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+Server running at http://localhost:3001
+Connected to MongoDB with Mongoose
+::ffff:127.0.0.1 - - [29/Aug/2024:05:51:58 +0000] "GET /dropbox/create-template HTTP/1.0" 404 162 "http://mystmkra.io/dropbox/create-template" "PostmanRuntime/7.41.2"
+::1 - - [29/Aug/2024:05:52:44 +0000] "GET /dropbox/create-template HTTP/1.0" 404 162 "http://mystmkra.io/dropbox/create-template" "PostmanRuntime/7.41.2"
+No token provided. Returning 401 status.
+::ffff:127.0.0.1 - - [29/Aug/2024:05:53:25 +0000] "GET /dropbox/list-user-folder HTTP/1.0" 401 47 "http://mystmkra.io/dropbox/list-user-folder" "PostmanRuntime/7.41.2"
+::1 - - [29/Aug/2024:05:54:08 +0000] "GET /dropbox/text HTTP/1.0" 404 151 "http://mystmkra.io/dropbox/text" "PostmanRuntime/7.41.2"
+::ffff:127.0.0.1 - - [29/Aug/2024:05:54:14 +0000] "GET /dropbox/test HTTP/1.0" 404 151 "http://mystmkra.io/dropbox/test" "PostmanRuntime/7.41.2"
+::1 - - [29/Aug/2024:05:54:57 +0000] "GET /dropbox/current-access-token HTTP/1.0" 200 221 "http://mystmkra.io/dropbox/current-access-token" "PostmanRuntime/7.41.2"
+::ffff:127.0.0.1 - - [29/Aug/2024:05:59:36 +0000] "GET / HTTP/1.0" 200 45845 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+Hostname: srv515168
+Read from .env: srv515168
+Environment: production
+The application is running in production mode.
+REDIR = https://slowyou.net/dropbox/auth/callback
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+Server running at http://localhost:3001
+Connected to MongoDB with Mongoose
+::1 - - [29/Aug/2024:06:00:36 +0000] "GET /dropbox/test HTTP/1.0" 404 151 "http://mystmkra.io/dropbox/test" "PostmanRuntime/7.41.2"
+Hostname: srv515168
+Read from .env: srv515168
+Environment: production
+The application is running in production mode.
+REDIR = https://slowyou.net/dropbox/auth/callback
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+Server running at http://localhost:3001
+Connected to MongoDB with Mongoose
+::ffff:127.0.0.1 - - [29/Aug/2024:06:02:49 +0000] "GET /dropbox/test HTTP/1.0" 200 4 "http://mystmkra.io/dropbox/test" "PostmanRuntime/7.41.2"
+::1 - - [29/Aug/2024:06:03:07 +0000] "GET /dropbox/test2 HTTP/1.0" 404 152 "http://mystmkra.io/dropbox/test2" "PostmanRuntime/7.41.2"
+::ffff:127.0.0.1 - - [29/Aug/2024:06:06:51 +0000] "POST /dropbox/test2 HTTP/1.0" 200 143 "-" "PostmanRuntime/7.41.2"
+::1 - - [29/Aug/2024:09:55:09 +0000] "GET / HTTP/1.0" 200 45845 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15"
+::ffff:127.0.0.1 - - [29/Aug/2024:09:55:10 +0000] "GET /markdown.css HTTP/1.0" 200 9545 "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15"
+Token verification failed: jwt malformed
+::ffff:127.0.0.1 - - [29/Aug/2024:09:55:10 +0000] "GET /dropbox/protected HTTP/1.0" 401 43 "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15"
+::1 - - [29/Aug/2024:09:55:10 +0000] "GET /md/snippets HTTP/1.0" 200 1109 "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15"
+::1 - - [29/Aug/2024:09:55:12 +0000] "GET /favicon.ico HTTP/1.0" 404 150 "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15"
+No token provided. Returning 401 status.
+::ffff:127.0.0.1 - - [29/Aug/2024:09:56:16 +0000] "GET /dropbox/search?query=k HTTP/1.0" 401 47 "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15"
+::1 - - [29/Aug/2024:09:56:44 +0000] "GET / HTTP/1.0" 200 45845 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15"
+::ffff:127.0.0.1 - - [29/Aug/2024:09:56:44 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15"
+Token verification failed: jwt malformed
+::ffff:127.0.0.1 - - [29/Aug/2024:09:56:44 +0000] "GET /dropbox/protected HTTP/1.0" 401 43 "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15"
+::1 - - [29/Aug/2024:09:56:44 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15"
+No token provided. Returning 401 status.
+::1 - - [29/Aug/2024:09:58:59 +0000] "GET /dropbox/search?query=k HTTP/1.0" 401 47 "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15"
+::1 - - [29/Aug/2024:10:00:19 +0000] "POST /openai/process-text HTTP/1.0" 200 2262 "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15"
+::ffff:127.0.0.1 - - [29/Aug/2024:10:00:20 +0000] "POST /openai/process-text HTTP/1.0" 200 2748 "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15"
+::ffff:127.0.0.1 - - [29/Aug/2024:12:56:53 +0000] "GET / HTTP/1.0" 200 45845 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+::1 - - [29/Aug/2024:12:56:55 +0000] "GET /favicon.ico HTTP/1.0" 404 150 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+Token verification failed: jwt expired
+Token has expired. Returning 401 status with session expired message.
+::ffff:127.0.0.1 - - [29/Aug/2024:19:03:07 +0000] "GET /dropbox/search?query=kropp HTTP/1.0" 401 67 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [29/Aug/2024:19:03:11 +0000] "GET /login.html?message=logged_out HTTP/1.0" 200 3740 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [29/Aug/2024:19:03:11 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html?message=logged_out" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [29/Aug/2024:19:03:13 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html?message=logged_out" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [29/Aug/2024:19:03:13 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html?message=logged_out" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [29/Aug/2024:19:03:14 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [29/Aug/2024:19:03:14 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [29/Aug/2024:19:03:14 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [29/Aug/2024:19:03:19 +0000] "GET /dropbox/search?query=kropp HTTP/1.0" 200 301 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [29/Aug/2024:19:03:24 +0000] "GET /dropbox/file/66cf503ad345ef7a5d62534d HTTP/1.0" 200 5825 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [29/Aug/2024:21:51:44 +0000] "GET /robots.txt HTTP/1.0" 404 149 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::1 - - [29/Aug/2024:21:51:48 +0000] "GET / HTTP/1.0" 200 45845 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::ffff:127.0.0.1 - - [29/Aug/2024:23:34:22 +0000] "GET /robots.txt HTTP/1.0" 404 149 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+Token verification failed: jwt expired
+Token has expired. Returning 401 status with session expired message.
+::1 - - [30/Aug/2024:05:31:23 +0000] "GET /dropbox/search?query=stress HTTP/1.0" 401 67 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [30/Aug/2024:05:31:28 +0000] "GET /login.html?message=logged_out HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:05:31:28 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html?message=logged_out" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [30/Aug/2024:05:31:30 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html?message=logged_out" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:05:31:30 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html?message=logged_out" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [30/Aug/2024:05:31:30 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:05:31:30 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [30/Aug/2024:05:31:30 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:05:31:35 +0000] "GET /dropbox/search?query=stress HTTP/1.0" 200 600 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [30/Aug/2024:05:31:46 +0000] "GET /dropbox/md/66d1585e2f921c68e727c250.md HTTP/1.0" 200 4460 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:05:31:46 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/dropbox/md/66d1585e2f921c68e727c250.md" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [30/Aug/2024:05:46:18 +0000] "GET / HTTP/1.0" 200 45845 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::1 - - [30/Aug/2024:06:14:05 +0000] "GET /robots.txt HTTP/1.0" 404 149 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.134 Safari/537.36"
+::ffff:127.0.0.1 - - [30/Aug/2024:09:32:28 +0000] "GET /.git/HEAD HTTP/1.0" 404 148 "http://mystmkra.io/.git/HEAD" "RepoLookoutBot/v1.1.0-308-g199f8c1 (abuse reports to abuse@repo-lookout.org)"
+::1 - - [30/Aug/2024:10:04:50 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html?message=logged_out" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [30/Aug/2024:10:04:50 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Token verification failed: jwt expired
+Token has expired. Returning 401 status with session expired message.
+::ffff:127.0.0.1 - - [30/Aug/2024:10:04:50 +0000] "GET /dropbox/protected HTTP/1.0" 401 67 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:10:04:50 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:10:04:50 +0000] "GET /login.html?message=session_expired HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [30/Aug/2024:10:04:51 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:10:04:53 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [30/Aug/2024:10:04:53 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:10:04:53 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [30/Aug/2024:10:04:53 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:10:04:53 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Request received to save markdown
+Content is provided
+User ID: 6665c107e4a8ea992f1ad942
+User found: {
+  _id: new ObjectId('6665c107e4a8ea992f1ad942'),
+  username: 'torarnehave@gmail.com'
+}
+Creating new document
+Saving document to MongoDB
+FilePath is: /mystmkra/6665c107e4a8ea992f1ad942/66d1995690f25fb4d8e6071d.md
+Uploading file to Dropbox
+File uploaded successfully to Dropbox
+::ffff:127.0.0.1 - - [30/Aug/2024:10:05:11 +0000] "POST /dropbox/save-markdown HTTP/1.0" 200 145 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:10:05:20 +0000] "GET /dropbox/md/66d1995690f25fb4d8e6071d.md HTTP/1.0" 200 12958 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [30/Aug/2024:10:05:20 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/dropbox/md/66d1995690f25fb4d8e6071d.md" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:10:06:23 +0000] "POST /openai/process-text HTTP/1.0" 200 1095 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+/var/www/html/mystmkra.io/public/images/image_1725012407131.png
+::ffff:127.0.0.1 - - [30/Aug/2024:10:06:47 +0000] "POST /openai/create-image HTTP/1.0" 200 191 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:10:06:47 +0000] "GET //images/image_1725012407131.png HTTP/1.0" 200 936834 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Request received to save markdown
+Content is provided
+User ID: 6665c107e4a8ea992f1ad942
+User found: {
+  _id: new ObjectId('6665c107e4a8ea992f1ad942'),
+  username: 'torarnehave@gmail.com'
+}
+Finding existing document by ID: 66d1995690f25fb4d8e6071d
+Saving document to MongoDB
+FilePath is: /mystmkra/6665c107e4a8ea992f1ad942/66d1995690f25fb4d8e6071d.md
+Uploading file to Dropbox
+File uploaded successfully to Dropbox
+::ffff:127.0.0.1 - - [30/Aug/2024:10:07:07 +0000] "POST /dropbox/save-markdown HTTP/1.0" 200 145 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:10:07:27 +0000] "GET /dropbox/md/66d1995690f25fb4d8e6071d.md HTTP/1.0" 200 12879 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [30/Aug/2024:10:07:27 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/dropbox/md/66d1995690f25fb4d8e6071d.md" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:10:07:27 +0000] "GET //images/image_1725012407131.png HTTP/1.0" 304 - "https://mystmkra.io/dropbox/md/66d1995690f25fb4d8e6071d.md" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Request received to save markdown
+Content is provided
+User ID: 6665c107e4a8ea992f1ad942
+User found: {
+  _id: new ObjectId('6665c107e4a8ea992f1ad942'),
+  username: 'torarnehave@gmail.com'
+}
+Finding existing document by ID: 66d1995690f25fb4d8e6071d
+Saving document to MongoDB
+FilePath is: /mystmkra/6665c107e4a8ea992f1ad942/66d1995690f25fb4d8e6071d.md
+Uploading file to Dropbox
+File uploaded successfully to Dropbox
+::ffff:127.0.0.1 - - [30/Aug/2024:10:26:03 +0000] "POST /dropbox/save-markdown HTTP/1.0" 200 145 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:10:26:10 +0000] "GET /dropbox/md/66d1995690f25fb4d8e6071d.md HTTP/1.0" 200 12899 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [30/Aug/2024:10:26:10 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/dropbox/md/66d1995690f25fb4d8e6071d.md" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:12:02:11 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [30/Aug/2024:12:02:11 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Token verification failed: jwt expired
+Token has expired. Returning 401 status with session expired message.
+::ffff:127.0.0.1 - - [30/Aug/2024:12:02:11 +0000] "GET /dropbox/protected HTTP/1.0" 401 67 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:12:02:11 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:12:02:12 +0000] "GET /login.html?message=session_expired HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [30/Aug/2024:12:02:12 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:12:02:13 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [30/Aug/2024:12:02:14 +0000] "GET /index.html HTTP/1.0" 304 - "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:12:02:14 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [30/Aug/2024:12:02:14 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [30/Aug/2024:12:02:14 +0000] "GET /dropbox/protected HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [30/Aug/2024:16:19:29 +0000] "GET /login.html?message=session_expired HTTP/1.0" 200 3740 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::1 - - [30/Aug/2024:16:20:11 +0000] "GET /styles.css HTTP/1.0" 404 149 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+::ffff:127.0.0.1 - - [30/Aug/2024:17:28:53 +0000] "GET / HTTP/1.0" 200 45845 "-" "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36"
+Token verification failed: jwt expired
+Token has expired. Returning 401 status with session expired message.
+::1 - - [30/Aug/2024:19:44:49 +0000] "GET /dropbox/search?query=user HTTP/1.0" 401 67 "https://mystmkra.io/index.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:172.169.206.122 - - [30/Aug/2024:20:29:14 +0000] "GET / HTTP/1.1" 200 45845 "-" "Mozilla/5.0 zgrab/0.x"
+Hostname: srv515168
+Read from .env: srv515168
+Environment: production
+The application is running in production mode.
+REDIR = https://slowyou.net/dropbox/auth/callback
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+The application is running in production mode.
+The base URL is https://mystmkra.io/
+Server running at http://localhost:3001
+Connected to MongoDB with Mongoose
+Token verification failed: jwt malformed
+::1 - - [31/Aug/2024:10:38:13 +0000] "GET /dropbox/protected HTTP/1.0" 401 43 "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::ffff:127.0.0.1 - - [31/Aug/2024:10:38:13 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::ffff:127.0.0.1 - - [31/Aug/2024:10:38:18 +0000] "GET / HTTP/1.0" 200 47534 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::1 - - [31/Aug/2024:10:38:19 +0000] "GET /markdown.css HTTP/1.0" 200 9692 "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+Token verification failed: jwt malformed
+::1 - - [31/Aug/2024:10:38:19 +0000] "GET /dropbox/protected HTTP/1.0" 401 43 "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::ffff:127.0.0.1 - - [31/Aug/2024:10:38:19 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::ffff:127.0.0.1 - - [31/Aug/2024:10:38:25 +0000] "GET / HTTP/1.0" 200 47534 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::1 - - [31/Aug/2024:10:38:25 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+Token verification failed: jwt malformed
+::1 - - [31/Aug/2024:10:38:26 +0000] "GET /dropbox/protected HTTP/1.0" 401 43 "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::ffff:127.0.0.1 - - [31/Aug/2024:10:38:26 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::ffff:127.0.0.1 - - [31/Aug/2024:10:38:32 +0000] "GET / HTTP/1.0" 200 47534 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [31/Aug/2024:10:38:33 +0000] "GET /markdown.css HTTP/1.0" 200 9692 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+Token verification failed: jwt expired
+Token has expired. Returning 401 status with session expired message.
+::1 - - [31/Aug/2024:10:38:33 +0000] "GET /dropbox/protected HTTP/1.0" 401 67 "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [31/Aug/2024:10:38:33 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [31/Aug/2024:10:38:33 +0000] "GET /login.html?message=session_expired HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [31/Aug/2024:10:38:33 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html?message=session_expired" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [31/Aug/2024:10:38:50 +0000] "GET / HTTP/1.0" 304 - "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::1 - - [31/Aug/2024:10:38:50 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+Token verification failed: jwt malformed
+::ffff:127.0.0.1 - - [31/Aug/2024:10:38:50 +0000] "GET /dropbox/protected HTTP/1.0" 401 43 "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::1 - - [31/Aug/2024:10:38:50 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::ffff:127.0.0.1 - - [31/Aug/2024:10:38:50 +0000] "GET / HTTP/1.0" 304 - "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::1 - - [31/Aug/2024:10:38:50 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+Token verification failed: jwt malformed
+::1 - - [31/Aug/2024:10:38:51 +0000] "GET /dropbox/protected HTTP/1.0" 401 43 "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::ffff:127.0.0.1 - - [31/Aug/2024:10:38:51 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::ffff:127.0.0.1 - - [31/Aug/2024:10:39:18 +0000] "GET / HTTP/1.0" 304 - "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::1 - - [31/Aug/2024:10:39:18 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+Token verification failed: jwt malformed
+::ffff:127.0.0.1 - - [31/Aug/2024:10:39:18 +0000] "GET /dropbox/protected HTTP/1.0" 401 43 "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::1 - - [31/Aug/2024:10:39:18 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::ffff:127.0.0.1 - - [31/Aug/2024:10:39:18 +0000] "GET / HTTP/1.0" 304 - "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::1 - - [31/Aug/2024:10:39:18 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+Token verification failed: jwt malformed
+::1 - - [31/Aug/2024:10:39:18 +0000] "GET /dropbox/protected HTTP/1.0" 401 43 "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::ffff:127.0.0.1 - - [31/Aug/2024:10:39:18 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::ffff:127.0.0.1 - - [31/Aug/2024:10:39:20 +0000] "GET /login.html HTTP/1.0" 200 3740 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::1 - - [31/Aug/2024:10:39:20 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"
+::ffff:127.0.0.1 - - [31/Aug/2024:10:39:34 +0000] "GET /login.html HTTP/1.0" 200 3740 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::1 - - [31/Aug/2024:10:39:34 +0000] "GET /styles.css HTTP/1.0" 404 149 "https://mystmkra.io/login.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::ffff:127.0.0.1 - - [31/Aug/2024:10:40:02 +0000] "POST /a/login HTTP/1.0" 400 29 "https://mystmkra.io/login.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::1 - - [31/Aug/2024:10:40:15 +0000] "POST /a/login HTTP/1.0" 400 29 "https://mystmkra.io/login.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::ffff:127.0.0.1 - - [31/Aug/2024:10:40:17 +0000] "POST /a/login HTTP/1.0" 400 29 "https://mystmkra.io/login.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::1 - - [31/Aug/2024:10:40:28 +0000] "POST /a/login HTTP/1.0" 200 58 "https://mystmkra.io/login.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::ffff:127.0.0.1 - - [31/Aug/2024:10:40:28 +0000] "GET /index.html HTTP/1.0" 200 47534 "https://mystmkra.io/login.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::1 - - [31/Aug/2024:10:40:28 +0000] "GET /markdown.css HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::ffff:127.0.0.1 - - [31/Aug/2024:10:40:28 +0000] "GET /md/snippets HTTP/1.0" 304 - "https://mystmkra.io/index.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+::1 - - [31/Aug/2024:10:40:28 +0000] "GET /dropbox/protected HTTP/1.0" 200 86 "https://mystmkra.io/index.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+Request received to save markdown
+Content is provided
+User ID: 666605dc63d7487c9304906e
+User found: {
+  _id: new ObjectId('666605dc63d7487c9304906e'),
+  username: 'msneeggen@gmail.com'
+}
+Creating new document
+Saving document to MongoDB
+FilePath is: /mystmkra/666605dc63d7487c9304906e/66d2f346fd26005d75f77581.md
+Uploading file to Dropbox
+File uploaded successfully to Dropbox
+::ffff:127.0.0.1 - - [31/Aug/2024:10:41:12 +0000] "POST /dropbox/save-markdown HTTP/1.0" 200 145 "https://mystmkra.io/index.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"
+Request received to save markdown
+Content is provided
+User ID: 666605dc63d7487c9304906e
+User found: {
+  _id: new ObjectId('666605dc63d7487c9304906e'),
+  username: 'msneeggen@gmail.com'
+}
+Finding existing document by ID: 66d2f346fd26005d75f77581
+Saving document to MongoDB
+FilePath is: /mystmkra/666605dc63d7487c9304906e/66d2f346fd26005d75f77581.md
+Uploading file to Dropbox
+File uploaded successfully to Dropbox
+::1 - - [31/Aug/2024:10:42:27 +0000] "POST /dropbox/save-markdown HTTP/1.0" 200 145 "https://mystmkra.io/index.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15"

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Mystmkra.io</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .dashboard-container {
+            margin-top: 50px;
+        }
+        .dashboard-sidebar {
+            background-color: #343a40;
+            color: #fff;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+        }
+        .dashboard-sidebar a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .dashboard-sidebar a:hover {
+            background-color: #495057;
+        }
+        .dashboard-content {
+            padding: 20px;
+        }
+        .card-header {
+            font-weight: bold;
+        }
+        .card-body .list-group-item {
+            border: none;
+            padding: 5px 0;
+        }
+        .progress-bar-container {
+            height: 5px;
+            background-color: #e9ecef;
+        }
+        .progress-bar {
+            height: 5px;
+            background-color: #28a745;
+            width: 0;
+        }
+        .budget-remaining {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #28a745;
+        }
+        .budget-spent {
+            font-size: 1em;
+            color: #dc3545;
+        }
+        .usage-history table {
+            width: 100%;
+        }
+        .usage-history table th, .usage-history table td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row dashboard-container">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 dashboard-sidebar d-md-block bg-dark">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">
+                                <i class="bi bi-person-circle"></i> Profile Overview
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-gear"></i> User Settings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-bar-chart-line"></i> Statistics & Analytics
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-folder"></i> File Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-cloud-arrow-down"></i> Dropbox Integration
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-journal-code"></i> Markdown Files
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-shield-lock"></i> Security & Access Control
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-question-circle"></i> Help & Support
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4 dashboard-content">
+                <div class="row">
+                    <!-- Profile Overview -->
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="bi bi-person-circle"></i> Profile Overview
+                            </div>
+                            <div class="card-body">
+                                <img src="profile-picture.jpg" alt="Profile Picture" class="img-fluid rounded-circle mb-3">
+                                <h5>Username</h5>
+                                <p>Email: user@example.com</p>
+                                <p>Account Type: Premium</p>
+                                <p>Last Login: 2024-08-30 12:34 PM</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Statistics & Analytics -->
+                    <div class="col-md-8">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="bi bi-bar-chart-line"></i> Statistics & Analytics
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <p>Files Uploaded: 150</p>
+                                        <p>Storage Used: 10 GB / 50 GB</p>
+                                        <p>Dropbox Folders: 5</p>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p>Most Active File: Project.md</p>
+                                        <p>Tags Used: #AI, #SelfCare</p>
+                                        <p>Last Activity: Editing markdown files</p>
+                                    </div>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" style="width: 20%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OpenAI Budget Overview and Usage History -->
+                <div class="row">
+                    <!-- Budget Overview -->
+                    <div class="col-md-12">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="bi bi-wallet2"></i> OpenAI Budget Overview
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <p class="budget-remaining">Remaining Budget: $25.50</p>
+                                        <p class="budget-spent">Total Spent: $74.50</p>
+                                        <p>Total Budget: $100.00</p>
+                                    </div>
+                                    <div class="col-sm-8">
+                                        <div class="progress-bar-container">
+                                            <div class="progress-bar" style="width: 25%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <h5>Recent Usage</h5>
+                                <ul class="list-group">
+                                    <li class="list-group-item">QTEXT used - Cost: $1.00 <span class="badge badge-primary">2024-08-31 12:34 PM</span></li>
+                                    <li class="list-group-item">CIMG generated - Cost: $5.00 <span class="badge badge-primary">2024-08-31 11:20 AM</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Detailed Usage History -->
+                    <div class="col-md-12">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="bi bi-list-ul"></i> OpenAI Usage History
+                            </div>
+                            <div class="card-body usage-history">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Command</th>
+                                            <th>Tokens Used</th>
+                                            <th>Cost</th>
+                                            <th>Remaining Budget</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>2024-08-31 12:34 PM</td>
+                                            <td>QTEXT</td>
+                                            <td>500</td>
+                                            <td>$1.00</td>
+                                            <td>$25.50</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2024-08-31 11:20 AM</td>
+                                            <td>CIMG</td>
+                                            <td>-</td>
+                                            <td>$5.00</td>
+                                            <td>$26.50</td>
+                                        </tr>
+                                        <!-- More rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Recent Files -->
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="bi bi-clock-history"></i> Recent Files
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group">
+                                    <li class="list-group-item">Project.md <span class="badge badge-primary">Edited</span></li>
+                                    <li class="list-group-item">Offer.md <span class="badge badge-secondary">Viewed</span></li>
+                                    <li class="list-group-item">ImageCollection.md <span class="badge badge-success">Shared</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings -->
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="bi bi-gear"></i> User Settings
+                            </div>
+                            <div class="card-body">
+                                <a href="#" class="btn btn-primary btn-block mb-2">Change Password</a>
+                                <a href="#" class="btn btn-primary btn-block mb-2">Manage Notifications</a>
+                                <a href="#" class="btn btn-primary btn-block mb-2">Language & Localization</a>
+                                <a href="#" class="btn btn-primary btn-block mb-2">Privacy Settings</a>
+                                <a href="#" class="btn btn-primary btn-block">Connected Devices</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Dropbox Integration -->
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="bi bi-cloud-arrow-down"></i> Dropbox Integration
+                            </div>
+                            <div class="card-body">
+                                <p>Sync Status: <span class="text-success">Connected</span></p>
+                                <a href="#" class="btn btn-outline-primary btn-block">Manage Dropbox Integration</a>
+                                <a href="#" class="btn btn-outline-primary btn-block">Backup & Restore</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Help & Support -->
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="bi bi-question-circle"></i> Help & Support
+                            </div>
+                            <div class="card-body">
+                                <a href="#" class="btn btn-outline-primary btn-block">Knowledge Base</a>
+                                <a href="#" class="btn btn-outline-primary btn-block">Contact Support</a>
+                                <a href="#" class="btn btn-outline-primary btn-block">Community Forum</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/api/budget/overview')
+                .then(response => response.json())
+                .then(data => {
+                    document.querySelector('.budget-remaining').textContent = `Remaining Budget: $${data.remaining_budget}`;
+                    document.querySelector('.budget-spent').textContent = `Total Spent: $${data.total_spent}`;
+                    document.querySelector('.progress-bar').style.width = `${(data.total_spent / data.total_budget) * 100}%`;
+
+                    const recentUsageList = document.querySelector('.card-body .list-group');
+                    data.recent_usage.forEach(usage => {
+                        const listItem = document.createElement('li');
+                        listItem.classList.add('list-group-item');
+                        listItem.innerHTML = `${usage.command_type} used - Cost: $${usage.cost} <span class="badge badge-primary">${new Date(usage.timestamp).toLocaleString()}</span>`;
+                        recentUsageList.appendChild(listItem);
+                    });
+                });
+
+            fetch('/api/budget/usage-history')
+                .then(response => response.json())
+                .then(data => {
+                    const usageHistoryTable = document.querySelector('.usage-history table tbody');
+                    data.usage_history.forEach(entry => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${new Date(entry.timestamp).toLocaleString()}</td>
+                            <td>${entry.command_type}</td>
+                            <td>${entry.tokens_used || '-'}</td>
+                            <td>$${entry.cost}</td>
+                            <td>$${entry.remaining_budget}</td>
+                        `;
+                        usageHistoryTable.appendChild(row);
+                    });
+                });
+        });
+    </script>
+</body>
+</html>

@@ -14,9 +14,13 @@
     
     <div class="headermenu">
         <div class="logo"><p>MystMkra.io - [BETA TEST]</p></div>
-        <div class="loggedin" id="loggedinas"></div>
-        <button class="btn btn-secondary btn-sm" id="logoutButton">Logout</button>
+        <div class="loggedin" id="loggedinas">Logged in as User123</div>
+        <div class="button-container">
+            <button class="btn btn-secondary btn-sm" id="DashboardButton">Dashboard</button>
+            <button class="btn btn-secondary btn-sm" id="logoutButton">Logout</button>
+        </div>
     </div>
+    
 
     
 
@@ -178,7 +182,17 @@ function logout() {
 
         document.getElementById('logoutButton').addEventListener('click', logout);
 
+        function dashboard() {
+            // Clear the token from local storage
+            
+            
+            // Optionally, you might want to clear other user data stored in local storage
+            // Redirect to the login page
+            window.location.href = '/dashboard.html?user=userid';
+        }
 
+
+        document.getElementById('DashboardButton').addEventListener('click', dashboard);
 
 // Call this function when the page loads
 document.addEventListener('DOMContentLoaded', updateLoggedInStatus);
