@@ -804,6 +804,13 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
                 ${imageTag}
             </div>
             <div class="container">
+<!-- Facebook Share Button -->
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fullUrl)}" target="_blank" class="btn btn-primary">
+                        Share on Facebook
+                    </a>
+                </div>
+
                 ${htmlContent}
 
                 <!-- Facebook Share Button -->
@@ -816,7 +823,10 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
             
             <!-- Footer -->
             <footer style="text-align: center; margin-top: 20px;">
-                <img src="https://cdn.midjourney.com/3fa18eeb-2dd5-4e1d-b801-c71f3b0648e0/0_2.png" alt="Footer Image" class="img-fluid footer-image" style="max-width: 100%; height: auto;">
+                <a href="http://mystmkra.io" target="_blank">
+    <img src="https://cdn.midjourney.com/3fa18eeb-2dd5-4e1d-b801-c71f3b0648e0/0_2.png" alt="Footer Image" class="img-fluid footer-image" style="max-width: 100%; height: auto;">
+</a>
+
             </footer>
 
             </body>
