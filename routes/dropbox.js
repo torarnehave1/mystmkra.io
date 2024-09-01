@@ -16,7 +16,7 @@ import { join } from 'path';
 import { mkdirSync, writeFileSync, readFileSync } from 'fs';
 import { appendFile } from 'fs';
 import fs from 'fs';
-import ENVconfig from './config/config.js';
+import ENVconfig from '../config/config.js';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import User from '../models/User.js';
@@ -743,7 +743,7 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
     }
   });
  
-  const ENVconfig = require('./config'); // Ensure you're requiring your configuration
+  
 
 router.get('/blog/:userFolder/:filename', async (req, res) => {
     const userFolder = req.params.userFolder;
@@ -751,7 +751,7 @@ router.get('/blog/:userFolder/:filename', async (req, res) => {
 
     const filePath = `/mystmkra/${userFolder}/${filename}`;
     
-    console.log(`The base URL is ${ENVconfig.BASE_URL}`);
+   
 
     const dbx = new Dropbox({
         accessToken: accessToken,
