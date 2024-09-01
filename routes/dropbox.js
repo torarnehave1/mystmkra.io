@@ -742,6 +742,7 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
       });
     }
   });
+ 
   router.get('/blog/:userFolder/:filename', async (req, res) => {
     const userFolder = req.params.userFolder;
     const filename = req.params.filename;
@@ -761,21 +762,30 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
         const imageRegex = /!\[.*?\]\((.*?)\)/;
         const imageMatch = fileContent.match(imageRegex);
         const imageUrlFromMarkdown = imageMatch ? imageMatch[1] : '';
-        const imageTag = `<img src="${imageUrlFromMarkdown}" alt="${filename}" class="img-fluid header-image">`;
+
+        // Determine the base URL (either localhost or production)
+        const protocol = req.protocol === 'https' ? 'https' : 'http';
+        const host = req.get('host');
+        const baseUrl = `${protocol}://${host}`;
+        
+        // Construct the full image URL
+        const fullImageUrl = imageUrlFromMarkdown.startsWith('http') 
+            ? imageUrlFromMarkdown 
+            : `${baseUrl}${imageUrlFromMarkdown}`;
+
+        const imageTag = `<img src="${fullImageUrl}" alt="${filename}" class="img-fluid header-image">`;
         const contentWithoutImage = fileContent.replace(imageRegex, '');
 
         const htmlContent = marked(contentWithoutImage);
 
         // Ensure the URL is HTTPS
-        const protocol = req.protocol === 'https' ? 'https' : 'http';
-        const host = req.get('host');
-        const fullUrl = `https://${host}${req.originalUrl}`;
+        const fullUrl = `${protocol}://${host}${req.originalUrl}`;
 
         const html = `
             <!DOCTYPE html>
             <html>
             <head>
-            <meta property="og:image" content="${imageUrlFromMarkdown}" />
+                <meta property="og:image" content="${fullImageUrl}" />
                 <title>SlowYou™ Blog</title>
                 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
                 <link rel="stylesheet" href="/markdown.css">
@@ -811,6 +821,7 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
         });
     }
 });
+
 
   // Endpoint to fetch and render a markdown file
   router.get('/md/:filename', isAuthenticated , ensureValidToken, async (req, res) => {
