@@ -766,12 +766,12 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
         let imageUrlFromMarkdown = imageMatch ? imageMatch[1] : '';
 
         // Use the base URL from the configuration
-        let baseUrl = ENVconfig.BASE_URL;
+        const baseUrl = ENVconfig.BASE_URL;
 
-        // If in production, ensure image URL is HTTPS
+        // Ensure image URL is correctly set for production
         if (process.env.NODE_ENV === 'production') {
-            if (imageUrlFromMarkdown.startsWith('http://')) {
-                imageUrlFromMarkdown = imageUrlFromMarkdown.replace('http://', 'https://');
+            if (imageUrlFromMarkdown.includes('localhost')) {
+                imageUrlFromMarkdown = imageUrlFromMarkdown.replace('http://localhost:3001', baseUrl);
             }
         }
 
