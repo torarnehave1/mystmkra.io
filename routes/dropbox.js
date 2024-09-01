@@ -770,13 +770,13 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
         const descriptionMatch = fileContent.match(descriptionRegex);
         const description = descriptionMatch ? descriptionMatch[1].trim() : 'Default Description';
 
-        // Use the base URL from the configuration
-        const baseUrl = ENVconfig.BASE_URL;
-
         // Extract image URL from the markdown content (if any)
         const imageRegex = /!\[.*?\]\((.*?)\)/;
         const imageMatch = fileContent.match(imageRegex);
         let imageUrlFromMarkdown = imageMatch ? imageMatch[1] : '';
+
+        // Use the base URL from the configuration
+        const baseUrl = ENVconfig.BASE_URL;
 
         // Ensure image URL is correctly set for production
         if (process.env.NODE_ENV === 'production') {
@@ -790,11 +790,6 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
             ? imageUrlFromMarkdown
             : `${baseUrl}${imageUrlFromMarkdown}`;
 
-        const imageTag = `<img src="${fullImageUrl}" alt="${filename}" class="img-fluid header-image">`;
-        const contentWithoutImage = fileContent.replace(imageRegex, '');
-
-        const htmlContent = marked(contentWithoutImage);
-
         // Construct the full URL of the blog post
         const fullUrl = `${baseUrl}${req.originalUrl}`;
 
@@ -802,11 +797,16 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
             <!DOCTYPE html>
             <html>
             <head>
-                <meta property="og:image" content="${fullImageUrl}" />
-                <meta property="og:description" content="${description}" />
+                <!-- Facebook Open Graph Meta Tags -->
                 <meta property="og:title" content="${title}" />
-
-                <title>MystMkra.io Blog</title>
+                <meta property="og:description" content="${description}" />
+                <meta property="og:image" content="${fullImageUrl}" />
+                <meta property="og:url" content="${fullUrl}" />
+                <meta property="og:type" content="article" />
+                <meta property="og:site_name" content="MystMkra.io" />
+                <meta property="fb:app_id" content="YOUR_APP_ID" /> <!-- Replace with your actual Facebook App ID -->
+                
+                <title>${title}</title>
                 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
                 <link rel="stylesheet" href="/markdown.css">
             </head>
@@ -814,16 +814,10 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
             
             <div id="menu-container"></div> 
             <div style="text-align: center;">
-             <!-- Facebook Share Button -->
-                <div style="text-align: center; margin-top: 20px;">
-                    <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fullUrl)}" target="_blank" class="btn btn-primary">
-                        Share on Facebook
-                    </a>
-                </div>
-                ${imageTag}
+                <img src="${fullImageUrl}" alt="${filename}" class="img-fluid header-image">
             </div>
             <div class="container">
-                ${htmlContent}
+                ${marked(contentWithoutImage)}
 
                 <!-- Facebook Share Button -->
                 <div style="text-align: center; margin-top: 20px;">
@@ -854,6 +848,7 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
         });
     }
 });
+
 
 
 
