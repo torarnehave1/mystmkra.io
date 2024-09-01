@@ -775,6 +775,9 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
         const imageMatch = fileContent.match(imageRegex);
         let imageUrlFromMarkdown = imageMatch ? imageMatch[1] : '';
 
+        // Remove the image markdown to get content without image for rendering
+        const contentWithoutImage = fileContent.replace(imageRegex, '');
+
         // Use the base URL from the configuration
         const baseUrl = ENVconfig.BASE_URL;
 
