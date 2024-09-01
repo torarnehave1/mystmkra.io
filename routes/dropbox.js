@@ -828,7 +828,24 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
             <!-- Footer -->
             <footer style="text-align: center; margin-top: 20px;">
                 <a href="http://mystmkra.io" target="_blank">
-                    <img src="https://cdn.midjourney.com/3fa18eeb-2dd5-4e1d-b801-c71f3b0648e0/0_2.png" alt="Footer
+                    <img src="https://cdn.midjourney.com/3fa18eeb-2dd5-4e1d-b801-c71f3b0648e0/0_2.png" alt="Footer Image" class="img-fluid footer-image" style="max-width: 100%; height: auto;">
+                </a>
+            </footer>
+
+            </body>
+            
+            </html>
+        `;
+
+        res.send(html);
+    } catch (error) {
+        console.error('Error fetching file from Dropbox:', error);
+        res.status(500).json({
+            message: 'Error fetching file from Dropbox',
+            error: error.error ? error.error.error_summary : error.message
+        });
+    }
+});
 
 
 
