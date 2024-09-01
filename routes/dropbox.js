@@ -745,13 +745,11 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
  
   
 
-router.get('/blog/:userFolder/:filename', async (req, res) => {
+  router.get('/blog/:userFolder/:filename', async (req, res) => {
     const userFolder = req.params.userFolder;
     const filename = req.params.filename;
 
     const filePath = `/mystmkra/${userFolder}/${filename}`;
-    
-   
 
     const dbx = new Dropbox({
         accessToken: accessToken,
@@ -765,10 +763,17 @@ router.get('/blog/:userFolder/:filename', async (req, res) => {
         // Extract image URL from the markdown content
         const imageRegex = /!\[.*?\]\((.*?)\)/;
         const imageMatch = fileContent.match(imageRegex);
-        const imageUrlFromMarkdown = imageMatch ? imageMatch[1] : '';
+        let imageUrlFromMarkdown = imageMatch ? imageMatch[1] : '';
 
         // Use the base URL from the configuration
-        const baseUrl = ENVconfig.BASE_URL;
+        let baseUrl = ENVconfig.BASE_URL;
+
+        // If in production, ensure image URL is HTTPS
+        if (process.env.NODE_ENV === 'production') {
+            if (imageUrlFromMarkdown.startsWith('http://')) {
+                imageUrlFromMarkdown = imageUrlFromMarkdown.replace('http://', 'https://');
+            }
+        }
 
         // Construct the full image URL
         const fullImageUrl = imageUrlFromMarkdown.startsWith('http') 
@@ -823,6 +828,7 @@ router.get('/blog/:userFolder/:filename', async (req, res) => {
         });
     }
 });
+
 
 
 
