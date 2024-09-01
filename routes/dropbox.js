@@ -768,7 +768,12 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
         // Extract the first paragraph after the title (o:description)
         const descriptionRegex = /(?:^#\s+.*$)\s+([\s\S]+?)(?:\n\s*\n|\n$)/m;
         const descriptionMatch = fileContent.match(descriptionRegex);
-        const description = descriptionMatch ? descriptionMatch[1].trim() : 'Default Description';
+        let description = descriptionMatch ? descriptionMatch[1].trim() : 'Default Description';
+
+        // Limit the description to 100 characters
+        if (description.length > 100) {
+            description = description.substring(0, 100) + '...';
+        }
 
         // Extract image URL from the markdown content (if any)
         const imageRegex = /!\[.*?\]\((.*?)\)/;
@@ -807,7 +812,7 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
                 <meta property="og:url" content="${fullUrl}" />
                 <meta property="og:type" content="article" />
                 <meta property="og:site_name" content="MystMkra.io" />
-                <meta property="fb:app_id" content="YOUR_APP_ID" /> <!-- Replace with your actual Facebook App ID -->
+                <meta property="fb:app_id" content="303190016195319" /> <!-- Replace with your actual Facebook App ID -->
                 
                 <title>${title}</title>
                 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -830,7 +835,12 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
                 </div>
             </div>
             
-           
+            <!-- Footer -->
+            <footer style="text-align: center; margin-top: 20px;">
+                <a href="http://mystmkra.io" target="_blank">
+                    <img src="https://cdn.midjourney.com/3fa18eeb-2dd5-4e1d-b801-c71f3b0648e0/0_2.png" alt="Footer Image" class="img-fluid footer-image" style="max-width: 100%; height: auto;">
+                </a>
+            </footer>
 
             </body>
             
