@@ -745,7 +745,7 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
  
   
 
-  router.get('/blog/:userFolder/:filename',ensureValidToken, async (req, res) => {
+  router.get('/blog/:userFolder/:filename', ensureValidToken, async (req, res) => {
     const userFolder = req.params.userFolder;
     const filename = req.params.filename;
 
@@ -765,6 +765,16 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
         const imageMatch = fileContent.match(imageRegex);
         let imageUrlFromMarkdown = imageMatch ? imageMatch[1] : '';
 
+        // Extract o:tittel from the markdown content
+        const titleRegex = /o:tittel\s+(.*)/;
+        const titleMatch = fileContent.match(titleRegex);
+        const title = titleMatch ? titleMatch[1].trim() : 'Default Title';
+
+        // Extract o:description from the markdown content
+        const descriptionRegex = /o:description\s+(.*)/;
+        const descriptionMatch = fileContent.match(descriptionRegex);
+        const description = descriptionMatch ? descriptionMatch[1].trim() : 'Default Description';
+
         // Use the base URL from the configuration
         const baseUrl = ENVconfig.BASE_URL;
 
@@ -776,8 +786,8 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
         }
 
         // Construct the full image URL
-        const fullImageUrl = imageUrlFromMarkdown.startsWith('http') 
-            ? imageUrlFromMarkdown 
+        const fullImageUrl = imageUrlFromMarkdown.startsWith('http')
+            ? imageUrlFromMarkdown
             : `${baseUrl}${imageUrlFromMarkdown}`;
 
         const imageTag = `<img src="${fullImageUrl}" alt="${filename}" class="img-fluid header-image">`;
@@ -793,7 +803,8 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
             <html>
             <head>
                 <meta property="og:image" content="${fullImageUrl}" />
-                <title>MystMkra.io ™ Blog</title>
+                <meta name="description" content="${description}" />
+                <title>${title}</title>
                 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
                 <link rel="stylesheet" href="/markdown.css">
             </head>
@@ -804,13 +815,6 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
                 ${imageTag}
             </div>
             <div class="container">
-<!-- Facebook Share Button -->
-                <div style="text-align: center; margin-top: 20px;">
-                    <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fullUrl)}" target="_blank" class="btn btn-primary">
-                        Share on Facebook
-                    </a>
-                </div>
-
                 ${htmlContent}
 
                 <!-- Facebook Share Button -->
@@ -824,9 +828,8 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
             <!-- Footer -->
             <footer style="text-align: center; margin-top: 20px;">
                 <a href="http://mystmkra.io" target="_blank">
-    <img src="https://cdn.midjourney.com/3fa18eeb-2dd5-4e1d-b801-c71f3b0648e0/0_2.png" alt="Footer Image" class="img-fluid footer-image" style="max-width: 100%; height: auto;">
-</a>
-
+                    <img src="https://cdn.midjourney.com/3fa18eeb-2dd5-4e1d-b801-c71f3b0648e0/0_2.png" alt="Footer Image" class="img-fluid footer-image" style="max-width: 100%; height: auto;">
+                </a>
             </footer>
 
             </body>
