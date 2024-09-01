@@ -812,6 +812,12 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
             
             <div id="menu-container"></div> 
             <div style="text-align: center;">
+             <!-- Facebook Share Button -->
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fullUrl)}" target="_blank" class="btn btn-primary">
+                        Share on Facebook
+                    </a>
+                </div>
                 ${imageTag}
             </div>
             <div class="container">
