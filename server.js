@@ -95,7 +95,11 @@ app.use((err, req, res, next) => {
 
 // Start server
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  if (process.env.NODE_ENV === 'production') {
+    console.log(`Server running at ${process.env.SYSTEM_PRODUCTION_URL}`);
+  } else {
+    console.log(`Server running at http://localhost:${port}`);
+  }
 });
 
 export default app;
