@@ -775,7 +775,7 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
             <!DOCTYPE html>
             <html>
             <head>
-            <meta property="og:image" content="${fullUrl}" />
+            <meta property="og:image" content="${imageUrlFromMarkdown}" />
                 <title>SlowYou™ Blog</title>
                 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
                 <link rel="stylesheet" href="/markdown.css">
