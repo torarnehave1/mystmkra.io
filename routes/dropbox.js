@@ -745,7 +745,7 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
  
   
 
-  router.get('/blog/:userFolder/:filename', async (req, res) => {
+  router.get('/blog/:userFolder/:filename',ensureValidToken, async (req, res) => {
     const userFolder = req.params.userFolder;
     const filename = req.params.filename;
 
