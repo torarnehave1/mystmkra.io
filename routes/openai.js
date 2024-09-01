@@ -96,7 +96,7 @@ router.post('/process-text', async (req, res) => {
 
     const systemMessages = {
         'answer-question': "You will answer back in a professional way with markdown format and titles where it is appropriate.",
-        'spellcheck-rewrite': "You will spellcheck and rewrite the following text, keeping it as close to the original as possible while fixing any grammatical or typographical errors. You will answer back in a professional way with markdown format and titles where it is appropriate. If the main title of the text is missing, come up with your own suggestion based on the text content.",
+        'spellcheck-rewrite': "You will spellcheck and rewrite the following text, keeping it as close to the original as possible while fixing any grammatical or typographical errors. You will answer back in a professional way with markdown format and titles where it is appropriate. If the main title of the text is missing, come up with your own suggestion on a title based on the text content. Create an abstract as a intro chapter.",
         'generate-image-prompt': "You are an AI that generates creative and descriptive prompts for generating images based on provided text content. Please generate an image prompt that best represents the key themes or scenes from the following content."
     };
 
