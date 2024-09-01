@@ -424,6 +424,20 @@ router.get('/test', ensureValidToken, async (req, res) => {
 });
 
 
+router.get('/get-user-id', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('_id'); // Only select the user ID
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({ userId: user._id });
+  } catch (ex) {
+    console.error(ex);
+    res.status(500).json({ message: 'An error occurred while processing your request.' });
+  }
+});
+
+
 router.post('/add-tag-to-file', isAuthenticated, ensureValidToken, async (req, res) => {
   const foldername = req.user.id;
   const templateId = 'ptid:_ujB2H4nu48AAAAAAAE20g';
@@ -728,7 +742,75 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
       });
     }
   });
-  
+  router.get('/blog/:userFolder/:filename', async (req, res) => {
+    const userFolder = req.params.userFolder;
+    const filename = req.params.filename;
+
+    const filePath = `/mystmkra/${userFolder}/${filename}`;
+    
+    const dbx = new Dropbox({
+        accessToken: accessToken,
+        fetch: fetch,
+    });
+
+    try {
+        const response = await dbx.filesDownload({ path: filePath });
+        const fileContent = response.result.fileBinary.toString('utf-8');
+
+        // Extract image URL from the markdown content
+        const imageRegex = /!\[.*?\]\((.*?)\)/;
+        const imageMatch = fileContent.match(imageRegex);
+        const imageUrlFromMarkdown = imageMatch ? imageMatch[1] : '';
+        const imageTag = `<img src="${imageUrlFromMarkdown}" alt="${filename}" class="img-fluid header-image">`;
+        const contentWithoutImage = fileContent.replace(imageRegex, '');
+
+        const htmlContent = marked(contentWithoutImage);
+
+        // Ensure the URL is HTTPS
+        const protocol = req.protocol === 'https' ? 'https' : 'http';
+        const host = req.get('host');
+        const fullUrl = `https://${host}${req.originalUrl}`;
+
+        const html = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>SlowYou™ Blog</title>
+                <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+                <link rel="stylesheet" href="/markdown.css">
+            </head>
+            <body>
+            
+            <div id="menu-container"></div> 
+            <div style="text-align: center;">
+                ${imageTag}
+            </div>
+            <div class="container">
+                ${htmlContent}
+
+                <!-- Facebook Share Button -->
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fullUrl)}" target="_blank" class="btn btn-primary">
+                        Share on Facebook
+                    </a>
+                </div>
+            </div>
+                
+            </body>
+            
+            </html>
+        `;
+
+        res.send(html);
+    } catch (error) {
+        console.error('Error fetching file from Dropbox:', error);
+        res.status(500).json({
+            message: 'Error fetching file from Dropbox',
+            error: error.error ? error.error.error_summary : error.message
+        });
+    }
+});
+
   // Endpoint to fetch and render a markdown file
   router.get('/md/:filename', isAuthenticated , ensureValidToken, async (req, res) => {
     const filename = req.params.filename;

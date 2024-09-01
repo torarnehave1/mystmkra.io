@@ -102,8 +102,8 @@
                 <label for="markdownTextarea">Markdown Content:</label>
                 <textarea class="form-control" id="markdownTextarea" rows="10"></textarea>
             </div>
-            <a class="ReturnfileURL" href="https://mystmkra.io/dropbox/md/" target="_blank" rel="noopener">https://mystmkra.io/dropbox/md/</a>
-            <div class="ReturnfileURL" data-url="https://mystmkra.io/dropbox/md/"></div>
+            <a class="ReturnfileURL" href="https://mystmkra.io/dropbox/blog/" target="_blank" rel="noopener">https://mystmkra.io/dropbox/blog/</a>
+            <div class="ReturnfileURL" data-url="https://mystmkra.io/dropbox/blog/"></div>
             
             <label for="preview">Preview:</label>
             <div class="preview" id="preview">
@@ -118,14 +118,47 @@
     import { marked } from 'https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js';
 
     
-
-   
-   
-   
-   
     document.addEventListener('DOMContentLoaded', () => {
+        fetchUserId();
         updateSaveToPdfButton();
     });
+
+    async function fetchUserId() {
+    try {
+        const response = await fetch('/dropbox/get-user-id', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            setUserId(data.userId); // Store the user ID using the previously defined function
+        } else if (response.status === 401) {
+            // Handle unauthorized access, e.g., redirect to login
+            window.location.href = '/login.html?message=session_expired';
+        } else {
+            console.error('Failed to fetch user ID');
+        }
+    } catch (error) {
+        console.error('Error fetching user ID:', error);
+    }
+}
+
+function setUserId(userId) {
+    if (!userId) {
+        console.error('No user ID provided');
+        return;
+    }
+    localStorage.setItem('userId', userId);
+    console.log(`User ID set to: ${userId}`);
+}
+   
+   
+   
+   
+    
 
     document.getElementById('DroboxButton').addEventListener('click', function() {
                         window.open('/sharedropboxfolder.html', '_blank');
@@ -1039,6 +1072,13 @@ function applyGridClasses() {
         return;
     }
 
+    // Retrieve the user ID from local storage
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        alert('User ID not found. Please log in again.');
+        return;
+    }
+
     saveButton.disabled = true;
 
     try {
@@ -1055,14 +1095,20 @@ function applyGridClasses() {
             console.log('File saved successfully:', result.id, result.filePath);
             alert('File saved successfully');
             currentDocumentId = result.id; // Update the current document ID
+
+            // Construct the file URL with the user ID
+            const fileUrl = `https://mystmkra.io/dropbox/blog/${userId}/${result.id}.md`;
+
+            // Update the return file URL in the DOM
             const returnfileURL = document.querySelector('.ReturnfileURL');
-            returnfileURL.href = 'https://mystmkra.io/dropbox/md/' + result.id + '.md';
-            returnfileURL.text = 'https://mystmkra.io/dropbox/md/' + result.id + '.md';
-            returnfileURL.setAttribute('data-url', 'https://mystmkra.io/dropbox/md/' + result.id + '.md');
+            returnfileURL.href = fileUrl;
+            returnfileURL.text = fileUrl;
+            returnfileURL.setAttribute('data-url', fileUrl);
             isChanged = false;
 
+            // Update the PDF save button with the correct file name
             const saveToPdfButton = document.getElementById('SaveasPDFButton');
-            saveToPdfButton.setAttribute('data-filename', result.id + '.md');
+            saveToPdfButton.setAttribute('data-filename', `${result.id}.md`);
             updateSaveToPdfButton();
         } else {
             const errorText = await response.text();
@@ -1133,6 +1179,13 @@ function applyGridClasses() {
             function displaySearchResults(results) {
     fileListfromSearch.innerHTML = ''; // Clear previous results
 
+    // Retrieve the user ID from local storage
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        alert('User ID not found. Please log in again.');
+        return;
+    }
+
     if (results.length === 0) {
         fileListfromSearch.innerHTML = '<p>No results found.</p>';
         paginationControls.innerHTML = '';
@@ -1146,7 +1199,7 @@ function applyGridClasses() {
         card.style.width = '18rem';
         card.innerHTML = `
             <div class="card-body">
-                <p class="card-text"><a href="https://mystmkra.io/dropbox/md/${result.id}.md" target="_blank">${result.abs}</a></p>
+                <p class="card-text"><a href="https://mystmkra.io/dropbox/blog/${userId}/${result.id}.md" target="_blank">${result.abs}</a></p>
                 <button class="btn btn-primary open-content-button" data-id="${result.id}">Open</button>
                 <button class="btn btn-primary insert-content-button" data-id="${result.id}">Insert Content</button>
                 <button class="btn btn-primary delete-content-button" data-id="${result.id}">Delete Content</button>
@@ -1186,6 +1239,13 @@ async function openContent(id) {
         return;
     }
 
+    // Retrieve the user ID from local storage
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        alert('User ID not found. Please log in again.');
+        return;
+    }
+
     try {
         const response = await fetch(`/dropbox/file/${id}`, {
             headers: {
@@ -1209,10 +1269,14 @@ async function openContent(id) {
 
             // Update the current document ID
             currentDocumentId = id;
+            
+            // Construct the file URL with the user ID
+            const fileUrl = `https://mystmkra.io/dropbox/blog/${userId}/${currentDocumentId}.md`;
+
             const returnfileURL = document.querySelector('.ReturnfileURL');
-            returnfileURL.href = 'https://mystmkra.io/dropbox/md/' + currentDocumentId + '.md';
-            returnfileURL.text = 'https://mystmkra.io/dropbox/md/' + currentDocumentId + '.md';
-            returnfileURL.setAttribute('data-url', 'https://mystmkra.io/dropbox/md/' + currentDocumentId + '.md');
+            returnfileURL.href = fileUrl;
+            returnfileURL.text = fileUrl;
+            returnfileURL.setAttribute('data-url', fileUrl);
             isChanged = true;
 
             alert('Document loaded successfully.');
@@ -1225,6 +1289,7 @@ async function openContent(id) {
         alert('Error fetching document');
     }
 }
+
 
 
 
