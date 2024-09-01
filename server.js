@@ -32,8 +32,7 @@ app.use(limiter);
 const logger = morgan('combined');
 app.use(logger);
 
-console.log(`The application is running in ${ENVconfig.NODE_ENV} mode.`);
-console.log(`The base URL is ${ENVconfig.BASE_URL}`);
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

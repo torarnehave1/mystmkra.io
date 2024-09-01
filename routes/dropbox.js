@@ -16,7 +16,7 @@ import { join } from 'path';
 import { mkdirSync, writeFileSync, readFileSync } from 'fs';
 import { appendFile } from 'fs';
 import fs from 'fs';
-
+import ENVconfig from './config/config.js';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import User from '../models/User.js';
@@ -743,12 +743,16 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
     }
   });
  
-  router.get('/blog/:userFolder/:filename', async (req, res) => {
+  const ENVconfig = require('./config'); // Ensure you're requiring your configuration
+
+router.get('/blog/:userFolder/:filename', async (req, res) => {
     const userFolder = req.params.userFolder;
     const filename = req.params.filename;
 
     const filePath = `/mystmkra/${userFolder}/${filename}`;
     
+    console.log(`The base URL is ${ENVconfig.BASE_URL}`);
+
     const dbx = new Dropbox({
         accessToken: accessToken,
         fetch: fetch,
@@ -763,11 +767,9 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
         const imageMatch = fileContent.match(imageRegex);
         const imageUrlFromMarkdown = imageMatch ? imageMatch[1] : '';
 
-        // Determine the base URL (either localhost or production)
-        const protocol = req.protocol === 'https' ? 'https' : 'http';
-        const host = req.get('host');
-        const baseUrl = `${protocol}://${host}`;
-        
+        // Use the base URL from the configuration
+        const baseUrl = ENVconfig.BASE_URL;
+
         // Construct the full image URL
         const fullImageUrl = imageUrlFromMarkdown.startsWith('http') 
             ? imageUrlFromMarkdown 
@@ -778,8 +780,8 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
 
         const htmlContent = marked(contentWithoutImage);
 
-        // Ensure the URL is HTTPS
-        const fullUrl = `${protocol}://${host}${req.originalUrl}`;
+        // Construct the full URL of the blog post
+        const fullUrl = `${baseUrl}${req.originalUrl}`;
 
         const html = `
             <!DOCTYPE html>
@@ -821,6 +823,7 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
         });
     }
 });
+
 
 
   // Endpoint to fetch and render a markdown file
