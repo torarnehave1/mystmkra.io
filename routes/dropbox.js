@@ -760,23 +760,23 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
         const response = await dbx.filesDownload({ path: filePath });
         const fileContent = response.result.fileBinary.toString('utf-8');
 
-        // Extract image URL from the markdown content
-        const imageRegex = /!\[.*?\]\((.*?)\)/;
-        const imageMatch = fileContent.match(imageRegex);
-        let imageUrlFromMarkdown = imageMatch ? imageMatch[1] : '';
-
-        // Extract o:tittel from the markdown content
-        const titleRegex = /o:tittel\s+(.*)/;
+        // Extract the first title from the markdown content (o:tittel)
+        const titleRegex = /^#\s+(.*)$/m;
         const titleMatch = fileContent.match(titleRegex);
         const title = titleMatch ? titleMatch[1].trim() : 'Default Title';
 
-        // Extract o:description from the markdown content
-        const descriptionRegex = /o:description\s+(.*)/;
+        // Extract the first paragraph after the title (o:description)
+        const descriptionRegex = /(?:^#\s+.*$)\s+([\s\S]+?)(?:\n\s*\n|\n$)/m;
         const descriptionMatch = fileContent.match(descriptionRegex);
         const description = descriptionMatch ? descriptionMatch[1].trim() : 'Default Description';
 
         // Use the base URL from the configuration
         const baseUrl = ENVconfig.BASE_URL;
+
+        // Extract image URL from the markdown content (if any)
+        const imageRegex = /!\[.*?\]\((.*?)\)/;
+        const imageMatch = fileContent.match(imageRegex);
+        let imageUrlFromMarkdown = imageMatch ? imageMatch[1] : '';
 
         // Ensure image URL is correctly set for production
         if (process.env.NODE_ENV === 'production') {
@@ -828,24 +828,8 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
             <!-- Footer -->
             <footer style="text-align: center; margin-top: 20px;">
                 <a href="http://mystmkra.io" target="_blank">
-                    <img src="https://cdn.midjourney.com/3fa18eeb-2dd5-4e1d-b801-c71f3b0648e0/0_2.png" alt="Footer Image" class="img-fluid footer-image" style="max-width: 100%; height: auto;">
-                </a>
-            </footer>
+                    <img src="https://cdn.midjourney.com/3fa18eeb-2dd5-4e1d-b801-c71f3b0648e0/0_2.png" alt="Footer
 
-            </body>
-            
-            </html>
-        `;
-
-        res.send(html);
-    } catch (error) {
-        console.error('Error fetching file from Dropbox:', error);
-        res.status(500).json({
-            message: 'Error fetching file from Dropbox',
-            error: error.error ? error.error.error_summary : error.message
-        });
-    }
-});
 
 
 
