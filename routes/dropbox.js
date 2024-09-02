@@ -411,7 +411,7 @@ router.get('/get-shared-folder-id', isAuthenticated, ensureValidToken, async (re
 router.get('/protected', isAuthenticated, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('fullName username');
-    res.send(`Innlogget Bruker: ${user.fullName} (${user.username}) - ID: ${user.id}`);
+    res.send(`${user.fullName}`);
   } catch (ex) {
     console.error(ex);
     res.status(500).send('An error occurred while processing your request.');

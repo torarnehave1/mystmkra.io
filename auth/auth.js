@@ -7,6 +7,20 @@ dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET; // Ensure this is set in your .env file
 
+// Function to generate JWT token with an expiration time of 24 hours
+export function generateToken(user) {
+  return jwt.sign(
+    {
+      id: user._id,
+      email: user.username,
+    },
+    JWT_SECRET,
+    {
+      expiresIn: '24h', // Token will expire in 24 hours
+    }
+  );
+}
+
 export function isAuthenticated(req, res, next) {
   try {
     // Check for token in cookies or Authorization header
