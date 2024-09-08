@@ -11,6 +11,12 @@ const MdFilesSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+
+  URL: {
+    type: String,
+    required: false
+  },
+
   User_id:{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

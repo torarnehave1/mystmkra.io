@@ -1431,7 +1431,7 @@ router.post('/save-markdown', isAuthenticated, ensureValidToken, async (req, res
   console.log('Request received to save markdown');
 
   const { content, documentId } = req.body;  // Use documentId here
-  const userid = req.user.id
+  const userid = req.user.id;
 
   if (!content) {
       console.log('No content provided');
@@ -1443,11 +1443,10 @@ router.post('/save-markdown', isAuthenticated, ensureValidToken, async (req, res
   console.log('Content is provided');
 
   try {
-      const userId = req.user.id;
-      console.log('User ID:', userId);
+      console.log('User ID:', userid);
 
       // Get the current user from the database
-      const user = await User.findById(userId).select('username');
+      const user = await User.findById(userid).select('username');
 
       if (!user) {
           console.log('User not found');
@@ -1485,8 +1484,17 @@ router.post('/save-markdown', isAuthenticated, ensureValidToken, async (req, res
       // Save to MongoDB
       await fileDoc.save();
 
+      // Construct the full URL
+      const fullURL = `https://mystmkra.io/dropbox/blog/${userid}/${fileDoc._id}.md`;
+
+      // Update the document with the full URL
+      fileDoc.URL = fullURL;
+      await fileDoc.save();
+
+      console.log('Full URL saved to document:', fullURL);
+
       // Define the file path in the user's folder
-      const foldername = user.id; // Use the user's ID as the folder name
+      const foldername = userid; // Use the user's ID as the folder name
       const filename = `${fileDoc._id}.md`;
       const filePath = `/mystmkra/${foldername}/${filename}`;
 
@@ -1511,7 +1519,8 @@ router.post('/save-markdown', isAuthenticated, ensureValidToken, async (req, res
       res.status(200).json({
           message: 'File saved successfully',
           id: fileDoc._id,
-          filePath: filePath  // Ensure this variable is correctly passed
+          filePath: filePath,  // Ensure this variable is correctly passed
+          url: fullURL         // Return the full URL in the response
       });
   } catch (error) {
       console.error('Error saving file to Dropbox or MongoDB:', error);
@@ -1521,6 +1530,7 @@ router.post('/save-markdown', isAuthenticated, ensureValidToken, async (req, res
       });
   }
 });
+
 
 
 
