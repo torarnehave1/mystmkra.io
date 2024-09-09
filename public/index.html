@@ -683,7 +683,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const matchQuestion = value.match(/^\s*\/\/\s*QTEXT\s*(.+?)\s*\?$/im);
             const matchRewrite = value.match(/^\s*\/\/\s*QRW\s*$/im);
             const matchWriteImgPrompt = value.match(/^\s*\/\/\s*AIMG\s*$/im);
-            const matchNIBIQuestion = value.match(/^\s*\/\/\s*NIBI\s*(.+?)\s*\?$/im); // New pattern for NIBI questions
+            const matchNIBIQuestion = value.match(/^\s*\/\/\s*SYOU\s*(.+?)\s*\?$/im); // New pattern for NIBI questions
             const matchTag = value.match(/\/\/TAG:(.+)!/); // Updated pattern to handle //TAG:TAGNAME!
 
             try {
