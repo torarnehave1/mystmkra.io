@@ -369,7 +369,7 @@ router.get('/create-thread-res', async (req, res) => {
     }
 });
 
-router.post('/create-thread-msg-post', async (req, res) => {
+router.post('/ask-assistant', async (req, res) => {
     const openai = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
     });
