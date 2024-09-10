@@ -1,4 +1,9 @@
 @media (max-width: 768px) {
+    
+    p {
+        font-size: 1.2em;
+    }
+    
     .gridcontainer {
         display: grid;
         grid-template-columns: repeat(8, 1fr);
