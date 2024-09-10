@@ -25,7 +25,7 @@
 /* Media Query for Mobile Phone (max-width: 412px) */
 @media (max-width: 412px) {
     .container p {
-        font-size: 1.2em;
+        font-size: 1.5em;
         line-height: 1.4;
         padding: 8px;
     }
