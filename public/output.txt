@@ -1,0 +1,7 @@
+This is test data
+This is test data 2
+This is test data 3
+
+This is test data 3
+Dette er en linje
+Dette er en annen linje

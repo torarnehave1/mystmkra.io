@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SlowYou.net Calendar</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="d-flex flex-column pt-5 hero-background">
+
+    <div id="menu-container"></div> <!-- Placeholder for the menu -->
+
+    <!-- Google Calendar Appointment Scheduling begin -->
+    <div class="container mt-4">
+        <iframe src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ396_x5dWn5R_iPWI4WflHf_2GUHNiCRvzfUvogGv7Ea17VbOQk9c4Qc86ypezWvxI3dEx9mso1?gv=true" title="Google Calendar" width="100%" height="600" frameborder="0"></iframe>
+    </div>
+    <!-- end Google Calendar Appointment Scheduling -->
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function loadLanguage(language) {
+            fetch(`/languages/${language}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('navHome').innerText = data.navHome;
+                    document.getElementById('navFeatures').innerText = data.navFeatures;
+                    document.getElementById('navPricing').innerText = data.navPricing;
+                    document.getElementById('navFAQs').innerText = data.navFAQs;
+                    document.getElementById('navAbout').innerText = data.navAbout;
+                    document.getElementById('loginButton').innerText = data.loginButton;
+                    document.getElementById('signupButton').innerText = data.signupButton;
+                    document.getElementById('titlelanguage').innerText = data.titlelanguage;
+                });
+        }
+
+        function initializeLanguageSelector() {
+            console.log("Initializing language selector");
+            document.getElementById('languageSelector').addEventListener('change', function() {
+                const selectedLanguage = this.value;
+                localStorage.setItem('preferredLanguage', selectedLanguage);
+                loadLanguage(selectedLanguage);
+            });
+
+            const preferredLanguage = localStorage.getItem('preferredLanguage') || 'en';
+            document.getElementById('languageSelector').value = preferredLanguage;
+            loadLanguage(preferredLanguage);
+        }
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        function checkAuthStatus() {
+            console.log("Checking auth status");
+            const token = getCookie('jwtToken');
+            console.log('Token found:', token);
+
+            if (token) {
+                document.getElementById('auth-buttons').classList.add('d-none');
+                document.getElementById('logout-buttons').classList.remove('d-none');
+                document.getElementById('logoutButton').addEventListener('click', () => {
+                    document.cookie = 'jwtToken=; Max-Age=0; path=/; SameSite=Lax;'; // Clear the cookie
+                    location.reload();
+                });
+            } else {
+                document.getElementById('auth-buttons').classList.remove('d-none');
+                document.getElementById('logout-buttons').classList.add('d-none');
+            }
+        }
+
+        function loadMenu() {
+            fetch('./menu.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('menu-container').innerHTML = data;
+                    initializeLanguageSelector(); // Initialize the language selector after loading the menu
+                    checkAuthStatus(); // Check auth status after loading the menu
+                })
+                .catch(error => console.error('Error loading menu:', error));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM fully loaded and parsed");
+            loadMenu();
+        });
+    </script>
+
+</body>
+</html>

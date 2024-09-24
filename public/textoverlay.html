@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Text to Image</title>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        @media only screen and (max-width: 600px) {
+            /* Styles for mobile devices */
+        }
+
+        @media only screen and (min-width: 601px) and (max-width: 1024px) {
+            /* Styles for tablets */
+        }
+
+        @media only screen and (min-width: 1025px) {
+            /* Styles for laptops and desktops */
+
+            /* Existing styles */
+           
+
+
+            #image-container, #image-container2 {
+                position: relative;
+               
+                border: var(--frame-width, 0px) solid var(--frame-color, black);
+                width: 100%;
+                height: 100vh; /* Ensure the container takes the full height of the viewport */
+               
+            }
+
+            #image-container img, #image-container2 img {
+                width: 100%;
+                height: 100%;
+                /* Ensure the image fits within the container */
+            }
+
+            .image-text {
+                position: absolute;
+                color: var(--font-color, black);
+                text-align: center;
+                cursor: move;
+                transform: translate(-50%, -50%); /* Center the text */
+                top: 50%;
+                left: 50%;
+            }
+            .quote {
+                text-align: center;
+                font-family: "Rajdhani", sans-serif;
+                font-weight: 400;
+                font-style: normal;
+                font-size: var(--font-size);
+            }
+            .quote-author, .quote-timeperiod {
+                font-size: large;
+                color: var(--font-color, black);
+            }
+            .watermark {
+                position: absolute;
+                bottom: 10px;
+                right: 50px;
+                font-family: "Rajdhani", sans-serif;
+                font-weight: 400;
+                font-style: normal;
+                font-size: 32px;
+                color: rgba(166, 183, 33, 0.768);
+            }
+            .gridcontainer {
+                display: grid;
+                grid-template-columns: repeat(8, 1fr);
+                grid-template-rows: minmax(0, 100px) repeat(8, 1fr);
+                gap: 1px;
+                background-color: aquamarine;
+                width: 100%;
+            }
+            .item {
+               
+               
+                background-color: rgba(255, 255, 255, 0.856);
+               
+                min-height: 20px;
+            }
+            .images-container {
+                overflow-y: scroll;
+           
+               
+                background-color: rgba(255, 255, 255, 0.841);
+                padding: 10px;
+                height: 100vh;
+            }
+            .image-item {
+                width: 100%;
+                height: auto;
+                cursor: pointer;
+            }
+            .images-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 12px;
+                padding-left: 10%;
+            }
+            .item-imagelist {
+                grid-column-start: 7;
+                grid-column-end: 9;
+                grid-row-start: 2;
+                grid-row-end: 4;
+                background-color: rgba(255, 255, 255, 0.841);
+                height: 100vh;
+            }
+            .modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                justify-content: center;
+                align-items: center;
+                text-align: center; /* Center the contents horizontally */
+            }
+            .modal img {
+                max-width: 100%;
+                max-height: 100%;
+                
+                display: block;
+            }
+            
+            #closeModal {
+                position: relative;
+                border: none;
+                padding: 10px;
+                cursor: pointer;
+            }
+            .grid-menu-left {
+                display: grid;
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+    align-items: top;
+    justify-items: center;
+    grid-row-start: 2;
+    grid-column-start: 1;
+    gap: 2px;
+    grid-row-end: 3;
+    grid-column-end: 3;
+    border: 1px solid rgb(0, 0, 0);
+    background-color: rgba(255, 255, 255, 0.841);
+   
+            }
+            .item-ai-gen-social-post {
+                grid-column-start: 1;
+                grid-column-end: 3;
+                grid-row-start: 2;
+                grid-row-end: 3;
+                background-color: rgba(255, 255, 255, 0.841);
+            }
+            .grid-menu-one {
+                display: grid;
+                grid-template-rows: repeat(1, 1fr);
+                grid-template-columns: repeat(8, 1fr);
+                align-items: Left;
+                justify-items: Left;
+                grid-gap: 2px;
+                grid-row-start: 1;
+                grid-column-start: 1;
+                grid-row-end: 2;
+                grid-column-end: 9;
+                border: 1px solid rgb(0, 0, 0);
+                background-color: rgba(255, 255, 255, 0.841);
+              
+                max-height: 100px;
+                
+            }
+            .test {
+                grid-column-start: 3;
+                grid-column-end: 7;
+                grid-row-start: 2;
+                grid-row-end: 3;
+                background-color: rosybrown;
+            }
+            .test2 {
+                grid-column-start: 3;
+                grid-column-end: 7;
+                grid-row-start: 3;
+                grid-row-end: 5;
+                background-color: rgb(193, 31, 34);
+              
+                
+            }
+            .item-quote-form {
+                grid-column-start: 1;
+                grid-column-end: 3;
+                grid-row-start: 1;
+                grid-row-end: 2;
+                background-color: rgba(255, 255, 255, 0.841);
+            }
+            .item-author-select {
+                max-width: 170px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="gridcontainer">
+        <div class="grid-menu-one">
+            <div class="item-add-text-to-image">
+                <button class="btn btn-primary action-button" data-action="addTextToImage">Add Text to Image</button>
+            </div>
+            <div class="item-author-select">
+                <select id="author-select" class="form-control" title="Author Select">
+                    <option value="">Select an author</option>
+                </select>
+            </div>
+            <div class="item-watermark">
+                <label for="watermark">Watermark:</label>
+                <input type="text" class="form-control" id="watermark" placeholder="Enter your watermark" title="Watermark" />
+            </div>
+            <div class="item-font-size">
+                <label for="font-size">Font Size:</label>
+                <input type="range" class="form-control-range" id="font-size" min="20" max="100" value="50" step="1" oninput="document.documentElement.style.setProperty('--font-size', `${this.value}px`)" title="Font Size" />
+            </div>
+            <div class="item-font-color">
+                <label for="font-color">Font Color:</label>
+                <input type="color" class="form-control" id="frame-color" value="#000000" oninput="document.documentElement.style.setProperty('--font-color', this.value)" title="Frame Color" />
+            </div>
+            <div class="item-frame-width">
+                <label for="frame-width">Frame Width:</label>
+                <input type="range" class="form-control-range" id="frame-width" min="0" max="50" value="10" step="1" oninput="document.documentElement.style.setProperty('--frame-width', `${this.value}px`)" title="Frame Width" />
+            </div>
+            <div class="item-frame-color">
+                <label for="frame-color">Frame Color:</label>
+                <input type="color" class="form-control" id="frame-color" value="#000000" oninput="document.documentElement.style.setProperty('--frame-color', this.value)" title="Frame Color" />
+            </div>
+            <div class="item-load-rand-quote">
+                <button class="btn btn-secondary action-button" data-action="loadRandomQuote">Load Random quote</button>
+            </div>
+        </div>
+        <div class="grid-menu-left">
+            <div class="item-ai-gen-form bg-white rounded p-3">
+                <h4 class="mb-3">AI Generate Social Media Post</h4>
+                <form id="ai-gen-form">
+                    <div class="form-group">
+                        <div class="item-ai-gen-social-post">
+                            <textarea class="form-control" id="ai-gen-soscial-post" rows="3" title="AI-generated Social Post"></textarea>
+                        </div>
+                    </div>
+                </form>
+                <div class="text-right">
+                    <button class="btn btn-success" id="ai-gen-button">Generate AI text</button>
+                </div>
+            </div>
+            <div class="item-quote-form bg-white rounded p-3">
+                
+                <h4 class="mb-3">Quote Information</h4>
+                <form id="quote-form">
+                    <div class="form-group">
+                        <label for="customquote">Quote:</label>
+                        <textarea id="customquote" rows="3" cols="50" maxlength="400" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="customauthor">Author:</label>
+                        <input id="customauthor" type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="customtimeperiod">Timeperiod:</label>
+                        <input id="customtimeperiod" type="text" class="form-control">
+                    </div>
+                </form>
+                <div class="text-right">
+                    <button class="btn btn-success" id="save-quote-button">Save this quote</button>
+                </div>
+            </div>
+           
+        </div>
+        <div class="item-imagelist">
+            <div class="images-container">
+                <h3 class="text-center">SlowYou™ Image Gallery</h3>
+                <div id="imagesList" class="images-grid"></div>
+            </div>
+        </div>
+        <div class="test">
+            <div id="image-container">
+                <img id="source-image" src="./images/6667e42bddb09a11a9f4046e/1719773672781.png" alt="Source Image">
+                <div id="draggable" class="image-text">
+                    <div class="quote">
+                        <div id="quote"></div>
+                        <div id="author" class="quote-author"></div>
+                        <div id="timeperiod" class="quote-timeperiod"></div>
+                    </div>
+                </div>
+                <div class="watermark">@slowyou</div>
+            </div>
+        </div>
+        <div class="test2">
+            <div id="image-container2">
+                <img id="resultimg" alt="Result Image">
+            </div>
+        </div>
+        <div>
+            <a id="download-link" class="btn btn-success mt-2">Download Image</a>
+        </div>
+    </div>
+    <div class="modal" id="imageModal">
+        <img id="modalImage" src="" alt="Full Size Image">
+        <button id="closeModal" class="btn btn-danger">Close</button>
+        <button id="saveImage" class="btn btn-success">Save Image</button>
+    </div>
+   
+    <script type="module">
+
+
+document.getElementById('saveImage').addEventListener('click', async () => {
+    const modalImage = document.getElementById('modalImage').src;
+    const socialPostContent = document.getElementById('ai-gen-soscial-post').value;
+    await saveImageToServer(modalImage, socialPostContent);
+   
+});
+
+        const aiGenButton = document.getElementById('ai-gen-button');
+        const aiGenTextarea = document.getElementById('ai-gen-soscial-post');
+
+        aiGenButton.addEventListener('click', async () => {
+            // Get the current quote value inside the event listener
+            const quoteText = document.getElementById('quote');
+            const currentQuote = quoteText.textContent;
+            const authorText = document.getElementById('author');
+            const currentAuthor = authorText.textContent;
+            const timeperiodText = document.getElementById('timeperiod');
+            const currentTimeperiod = timeperiodText.textContent;
+
+            const inputText = `${currentQuote} ${currentAuthor} ${currentTimeperiod}`;
+            console.log(inputText);
+
+            const options = {
+                method: 'POST',
+                headers: {
+                    accept: 'application/json',
+                    'content-type': 'application/json',
+                    authorization: 'Bearer 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'
+                },
+                body: JSON.stringify({
+                    model: 'llama-3-sonar-small-32k-online',
+                    messages: [
+                        { role: 'system', content: 'Be precise and concise.' },
+                        { role: 'user', content: `Use this text :'${inputText}' and create creative post for social media. Add the text '${inputText}' include Hashtags #slowyou #alivenesslab #movemetime Add your own suggestions for hastags also relevant to the topic and author . Add @alivenesslab @slowyou` }
+                    ],
+                    temperature: 0
+                })
+            };
+
+            fetch('https://api.perplexity.ai/chat/completions', options)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); // Log the entire response object
+                    document.getElementById('ai-gen-soscial-post').value = data.choices[0].message.content;
+                    console.log(data.choices[0].message.content); // Log the content to the console
+                })
+                .catch(err => console.error(err));
+        });
+
+        document.getElementById('customquote').addEventListener('input', updateQuote);
+        document.getElementById('quote-form').addEventListener('input', function(event) {
+            if (event.target.tagName === 'INPUT') {
+                updateQuote();
+            }
+        });
+
+        function updateQuote() {
+            const quote = document.getElementById('customquote').value || '';
+            const author = document.getElementById('customauthor').value || '';
+            const timeperiod = document.getElementById('customtimeperiod').value || '';
+            const quoteElement = document.getElementById('quote');
+            const authorElement = document.getElementById('author');
+            const timeperiodElement = document.getElementById('timeperiod');
+            quoteElement.textContent = quote;
+            authorElement.textContent = `- ${author}`;
+            timeperiodElement.textContent = timeperiod ? `(${timeperiod})` : '';
+        }
+
+        //Når jeg danser kan jeg kjenner bevegelsen mellom det som er tilstivnet og det som er mykt og godt i meg. Jeg danser i kontraster.
+
+        import loadRandomQuote from '../globalfunctions/quotes.js';
+
+        // Run the function on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadRandomQuote();
+        });
+
+        // add an eventlistener for the <button class="btn btn-success" id="save-quote-button">Save this quote</button>
+        document.getElementById('save-quote-button').addEventListener('click', addQuote);
+
+        function addQuote() {
+            const customquote = document.getElementById('customquote').value;
+            const customauthor = document.getElementById('customauthor').value;
+            const customtimeperiod = document.getElementById('customtimeperiod').value;
+
+            fetch('/json/addquote', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    quote: customquote,
+                    author: customauthor,
+                    timeperiode: customtimeperiod
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('Failed to add quote');
+                }
+            })
+            .then(message => {
+                console.log(message);
+                loadRandomQuote();
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        }
+
+        let quotes = [];
+        let authors = [];
+
+        async function fetchQuotes() {
+            try {
+                const response = await fetch('/quotes/quotes.json');
+                const data = await response.json();
+                quotes = data.quotes;
+                authors = [...new Set(quotes.map(quote => quote.Author))];
+                populateAuthorDropdown();
+            } catch (error) {
+                console.error('Error fetching quotes:', error);
+            }
+        }
+
+        function populateAuthorDropdown() {
+            const authorSelect = document.getElementById('author-select');
+            authors.forEach(author => {
+                const option = document.createElement('option');
+                option.value = author;
+                option.textContent = author;
+                authorSelect.appendChild(option);
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchQuotes();
+
+            const authorSelect = document.getElementById('author-select');
+            authorSelect.addEventListener('change', () => {
+                const selectedAuthor = authorSelect.value;
+                if (selectedAuthor) {
+                    const filteredQuotes = quotes.filter(quote => quote.Author === selectedAuthor);
+                    const limitedQuotes = filteredQuotes.slice(0, 10);
+                    loadQuote(limitedQuotes[0]);
+                }
+            });
+
+            document.querySelectorAll('.action-button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const action = event.target.getAttribute('data-action');
+                    if (action === 'addTextToImage') {
+                        addTextToImage();
+                    } else if (action === 'loadQuote') {
+                        const selectedAuthor = authorSelect.value;
+                        if (selectedAuthor) {
+                            const filteredQuotes = quotes.filter(quote => quote.Author === selectedAuthor);
+                            const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
+                            loadQuote(filteredQuotes[randomIndex]);
+                        }
+                    }
+                });
+            });
+
+            const watermarkInput = document.getElementById('watermark');
+            watermarkInput.addEventListener('input', () => {
+                const watermark = watermarkInput.value;
+                const watermarkElement = document.querySelector('.watermark');
+                watermarkElement.textContent = watermark;
+            });
+        });
+
+        function loadQuote(quote) {
+            if (quote) {
+                const quoteElement = document.getElementById('quote');
+                const authorElement = document.getElementById('author');
+                const timeperiodElement = document.getElementById('timeperiod');
+                quoteElement.textContent = quote.Quote;
+                authorElement.textContent = `- ${quote.Author}`;
+                timeperiodElement.textContent = quote.TimePeriod ? `(${quote.TimePeriod})` : '';
+            }
+        }
+
+        async function addTextToImage() {
+            try {
+                const imageContainer = document.getElementById('image-container');
+                const canvas = await html2canvas(imageContainer);
+                const dataURL = canvas.toDataURL('image/png');
+
+                const resultImage = document.getElementById('resultimg');
+                const downloadLink = document.getElementById('download-link');
+                resultImage.src = dataURL;
+                downloadLink.href = dataURL;
+
+                // Open the modal and display the image
+                const modal = document.getElementById('imageModal');
+                const modalImage = document.getElementById('modalImage');
+                modalImage.src = dataURL;
+                modal.style.display = 'flex';
+            } catch (error) {
+                console.error('Error generating image:', error);
+            }
+        }
+
+
+        async function saveImageToServer(dataURL, textContent) {
+    try {
+        const response = await fetch('/img/save-image', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ image: dataURL, text: textContent })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Image and text saved successfully:', data);
+        } else {
+            console.error('Failed to save image and text:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error saving image and text:', error);
+    }
+}
+
+        // Close modal when clicking the close button
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('imageModal').style.display = 'none';
+        });
+
+        function loadImages() {
+            fetch('/img/images', {
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                const imagesList = document.getElementById('imagesList');
+                imagesList.innerHTML = '';
+                data.forEach(filename => {
+                    const imageUrl = '/images/6667e42bddb09a11a9f4046e/' + filename;
+                    const img = document.createElement('img');
+                    img.src = imageUrl;
+                    img.alt = filename;
+                    img.className = 'image-item img-thumbnail';
+                    img.loading = 'lazy'; // Enable lazy loading
+                    img.addEventListener('click', () => {
+                        document.getElementById('source-image').src = img.src;
+                        openModal(imageUrl);
+                    });
+                    imagesList.appendChild(img);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function openModal(imageUrl) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = imageUrl;
+            modal.style.display = 'flex';
+        }
+
+        document.addEventListener('DOMContentLoaded', loadImages);
+
+        document.getElementById('imageModal').addEventListener('click', () => {
+            document.getElementById('imageModal').style.display = 'none';
+        });
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const draggable = document.getElementById('draggable');
+            let offsetX = 0;
+            let offsetY = 0;
+
+            draggable.addEventListener('mousedown', (e) => {
+                offsetX = e.clientX - draggable.getBoundingClientRect().left;
+                offsetY = e.clientY - draggable.getBoundingClientRect().top;
+                document.addEventListener('mousemove', moveAt);
+                document.addEventListener('mouseup', drop);
+            });
+
+            function moveAt(e) {
+                draggable.style.left = `${e.clientX - offsetX}px`;
+                draggable.style.top = `${e.clientY - offsetY}px`;
+            }
+
+            function drop() {
+                document.removeEventListener('mousemove', moveAt);
+                document.removeEventListener('mouseup', drop);
+            }
+        });
+    </script>
+</body>
+</html>

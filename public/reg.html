@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>User Registration</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Optional: Custom styles for form -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.4.6/css/flag-icon.min.css">
+    
+
+
+</head>
+<body class="d-flex flex-column pt-5 hero-background">
+    <div id="menu-container"></div> <!-- Placeholder for the menu -->
+    
+    <section id="hero" class="mt-4">
+    <div class="container">
+        <h2 class="text-center my-4" id="pageTitleUserReg">User Registration</h2>
+        <form id="registrationForm" action="/a/register" method="post" class="form-container" onsubmit="event.preventDefault(); registerUser();">
+            <input type="hidden" id="fromPage" name="fromPage" value="">
+            <div class="form-group">
+                <label for="fullName" id="fullNameLabel">Full Name:</label>
+                <input type="text" class="form-control" id="fullName" name="fullName" required>
+            </div>
+            <div class="form-group">
+                <label for="username" id="emailLabel">Email:</label>
+                <input type="email" class="form-control" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password" id="passwordLabel">Password:</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword" id="confirmPasswordLabel">Confirm Password:</label>
+                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            <div class="alert alert-info" role="alert" id="securityMessage">
+                Your password is not stored as plain text. Instead, it is transformed using strong encryption techniques, making it unreadable and ensuring it is stored securely. This means that even if someone gains access to the stored data, they cannot see your actual password.
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" id="signupButton">Register</button>
+            <div id="message" class="message"></div>
+        </form>
+        
+    </div>
+    </section>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Menu and Language Script -->
+    <script>
+
+function loadLanguage(language) {
+        fetch(`/languages/${language}.json`)
+            .then(response => response.json())
+            .then(data => {
+             
+                document.getElementById('pageTitleUserReg').innerText = data.pageTitleUserReg;
+                document.getElementById('fullNameLabel').innerText = data.fullNameLabel;
+                document.getElementById('emailLabel').innerText = data.emailLabel;
+                document.getElementById('passwordLabel').innerText = data.passwordLabel;
+                document.getElementById('confirmPasswordLabel').innerText = data.confirmPasswordLabel;
+                document.getElementById('signupButton').innerText = data.signupButton;
+                document.getElementById('securityMessage').innerText = data.securityMessage;
+
+            });
+    }
+        function initializeLanguageSelector() {
+            document.getElementById('languageSelector').addEventListener('change', function() {
+                const selectedLanguage = this.value;
+                localStorage.setItem('preferredLanguage', selectedLanguage);
+                loadLanguage(selectedLanguage);
+            });
+
+            const preferredLanguage = localStorage.getItem('preferredLanguage') || 'en';
+            document.getElementById('languageSelector').value = preferredLanguage;
+            loadLanguage(preferredLanguage);
+        }
+
+        function loadMenu() {
+            fetch('./menu.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('menu-container').innerHTML = data;
+                    initializeLanguageSelector();
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMenu();
+
+            const queryParams = new URLSearchParams(window.location.search);
+        const fromPageValue = queryParams.get('fromPage'); // Get the 'fromPage' parameter
+
+        // Check if the 'fromPage' parameter exists
+        if (fromPageValue) {
+            // Set the value of the hidden input field
+            document.getElementById('fromPage').value = fromPageValue;
+        }
+    
+        });
+
+        function validatePassword() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return false;
+            }
+            return true;
+        }
+
+        async function registerUser() {
+            if (!validatePassword()) return;
+
+            const form = document.getElementById('registrationForm');
+            const formData = new FormData(form);
+            const messageDiv = document.getElementById('message');
+
+            try {
+                const baseUrl = window.location.protocol + '//' + window.location.host;
+                const response = await fetch(baseUrl + '/a/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        fullName: formData.get('fullName'),
+                        username: formData.get('username'),
+                        password: formData.get('password'),
+                        fromPage: formData.get('fromPage')
+                    })
+                });
+
+                const responseData = await response.json(); // Parse JSON response
+
+                if (response.ok) {
+                    messageDiv.textContent = responseData.message;
+                    messageDiv.classList.remove('error');
+                    messageDiv.classList.add('success');
+                    // Optionally, you can redirect the user to another page upon successful registration
+                    // window.location.href = '/success.html';
+                } else {
+                    handleServerError(response, responseData);
+                }
+            } catch (err) {
+                console.error('Network error occurred:', err);
+                messageDiv.textContent = 'A network error occurred while registering. Please try again later.';
+                messageDiv.classList.add('error');
+                messageDiv.classList.remove('success');
+            }
+        }
+
+        function handleServerError(response, responseData) {
+            const messageDiv = document.getElementById('message');
+            if (response.status === 400) {
+                messageDiv.textContent = 'Validation error: ' + responseData.message;
+            } else if (response.status === 500) {
+                messageDiv.textContent = 'Server error: Please try again later.';
+            } else {
+                messageDiv.textContent = 'An unexpected error occurred: ' + responseData.message;
+            }
+            messageDiv.classList.add('error');
+            messageDiv.classList.remove('success');
+        }
+    </script>
+</body>
+</html>

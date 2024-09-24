@@ -1,0 +1,23 @@
+body.hero-background {
+    background: url('./images/admin.png') no-repeat center center fixed;
+    background-size: cover;
+}
+
+.quote {
+    font-style: italic;
+    border-left: 5px solid #ccc;
+    padding-left: 10px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    font-size: large;
+  }
+  .quote-author {
+    font-size: 0.8rem;
+    font-style: italic;
+    color: #666;
+  }
+  .quote-timeperiod {
+    font-size: 0.8rem;
+    font-style: italic;
+    color: #666;
+  }

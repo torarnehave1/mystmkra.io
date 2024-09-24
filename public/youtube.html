@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Transcript</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5">
+    <h1 class="text-center">YouTube Transcript</h1>
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <form id="inputForm" class="mt-5">
+          <div class="form-group">
+            <input type="text" id="inputField" class="form-control" placeholder="Enter YouTube URL" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Submit</button>
+        </form>
+      </div>
+    </div>
+    <div id="content" class="mt-5">
+      <!-- The content will be inserted here -->
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('inputForm').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const url = document.getElementById('inputField').value;
+  const encodedUrl = encodeURIComponent(url);
+  const response = await fetch(`/t/extract-id/${encodedUrl}`, {
+    method: 'GET',
+  });
+  const redirectUrl = await response.text();
+  console.log('Redirect URL:', redirectUrl);
+
+  // Fetch the HTML content of the 'you-tldr' view
+  const response2 = await fetch(redirectUrl);
+  const htmlContent = await response2.text();
+
+  // Update a part of the page with the HTML content
+  document.getElementById('content').innerHTML = htmlContent;
+});
+  </script>
+</body>
+</html>

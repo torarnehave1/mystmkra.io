@@ -1,0 +1,132 @@
+document.getElementById('inputForm').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const url = document.getElementById('inputField').value;
+  const encodedUrl = encodeURIComponent(url);
+  const response = await fetch(`/t/extract-id/${encodedUrl}`, {
+    method: 'GET',
+  });
+  const redirectUrl = await response.text();
+  console.log('Redirect URL:', redirectUrl);
+
+  // Fetch the HTML content of the 'you-tldr' view
+  const response2 = await fetch(redirectUrl);
+  const htmlContent = await response2.text();
+
+  // Update a part of the page with the HTML content
+  document.getElementById('content').innerHTML = htmlContent;
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('inputForm');
+      form.addEventListener('submit', async function(event) {
+        event.preventDefault();  // Prevent the default form submission action
+        const contentDiv = document.getElementById('content');
+        const url = document.getElementById('inputField').value;
+        const encodedUrl = encodeURIComponent(url);
+
+        contentDiv.innerHTML = '<p>Loading...</p>'; // Display loading text
+
+        try {
+          const response = await fetch(`/t/extract-id/${encodedUrl}`, {
+            method: 'GET'
+          });
+
+          if (!response.ok) {
+            throw new Error('Network response was not ok.');
+          }
+
+          const redirectUrl = await response.text();
+          const response2 = await fetch(redirectUrl);
+
+          if (!response2.ok) {
+            throw new Error('Network response was not ok for the second fetch.');
+          }
+
+          const htmlContent = await response2.text();
+          contentDiv.innerHTML = htmlContent; // Display fetched content
+        } catch (error) {
+          console.error('Error:', error);
+          contentDiv.innerHTML = '<p>Error loading content. Please try again.</p>'; // Display error message
+        }
+      });
+    });
+
+
+
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>YouTube Transcript Viewer</title>
+  <!-- Include Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1>Transcript</h1>
+    <!-- Form to submit new YouTube video ID -->
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" id="videoInput" placeholder="Enter YouTube video ID" aria-label="YouTube video ID" aria-describedby="video-button-addon">
+      <button class="btn btn-outline-secondary" type="button" id="video-button-addon" onclick="submitVideoId()">Submit</button>
+    </div>
+    <!-- Display transcripts -->
+    <% transcript.forEach(item => { %>
+      <p><%= item.text %></p>
+    <% }); %>
+  </div>
+  <!-- Include Bootstrap JS and dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+  <script>
+    function submitVideoId() {
+      const videoId = document.getElementById('videoInput').value;
+      window.location.href = `/run-script/${videoId}`;
+    }
+  </script>
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>My Page Title</title>
+  <!-- Include Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1>Transcript</h1>
+    <!-- Bootstrap Search Bar -->
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" id="searchInput" placeholder="Search..." aria-label="Search" aria-describedby="button-addon">
+      <button class="btn btn-outline-secondary" type="button" id="button-addon" onclick="searchAndHighlight()">Search</button>
+    </div>
+     <% transcript.forEach(item => { %>
+    <p><%= item.text %></p>
+  <% }); %>
+  </div>
+  <!-- Include Bootstrap JS and dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+  <script>
+    function searchAndHighlight() {
+      const searchInput = document.getElementById('searchInput');
+      const searchTerm = searchInput.value.toLowerCase();
+      const paragraphs = document.querySelectorAll('p');
+      
+      paragraphs.forEach(paragraph => {
+        const text = paragraph.textContent.toLowerCase();
+        const highlightedText = text.replace(new RegExp(searchTerm, 'gi'), `<span class="highlight">$&</span>`);
+        paragraph.innerHTML = highlightedText;
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,245 @@
+/* Reset some default browser styles and set global defaults */
+body, h1, form, div, button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    position: relative;
+}
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #edf2f7;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding-top: 54px; /* Compensate for fixed navbar height */
+}
+
+
+/* Content area */
+.content {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+
+
+
+/* Text and form styling */
+h1 {
+    color: #2b2d42;
+    text-align: center;
+    margin-bottom: 20px;
+}
+form {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+    margin: auto;
+}
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #4a4e69;
+}
+
+/* Input fields */
+input[type="text"],
+input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    font-size: 16px;
+    color: #495057;
+}
+input[type="text"]:focus,
+input[type="number"]:focus {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Button styling, including list buttons */
+button, #personerList button {
+    cursor: pointer;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+}
+button:hover, #personerList button:hover {
+    background-color: #0056b3;
+}
+
+/* Person list styling */
+#personerList {
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    margin: 0 auto; /* Center the list */
+    width: 100%; /* Full width but respects the max-width */
+}
+
+#personerList ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+#personerList li {
+    background-color: #f0f0f0;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    form {
+        padding: 15px;
+        margin: 10px;
+    }
+    body {
+        padding-top: 54px;
+    }
+}
+/* Continue from your previous CSS, then add or modify the following */
+
+
+.flex-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    margin-left: auto; /* Auto-adjust margins to center */
+    margin-right: auto; /* Auto-adjust margins to center */
+}
+
+.person-name {
+    flex-grow: 1; /* Allows the name to take up any available space */
+    white-space: nowrap; /* Prevents the text from wrapping */
+    overflow: hidden; /* Hides overflow content */
+    text-overflow: ellipsis; /* Adds an ellipsis to indicate text has been truncated */
+}
+
+.beta {
+    position: fixed; /* Changes from absolute to fixed to stick to the viewport */
+    top: 10px; /* Provides a little top margin to ensure it's not flush against the edge */
+    right: 10px; /* Provides a right margin to ensure it's not flush against the edge */
+    background-color: red; /* Red background for high visibility */
+    color: white; /* White text for contrast */
+    padding: 5px 10px; /* Padding around the text */
+    border-radius: 0 0 0 5px; /* Rounded bottom-left corner to soften the design */
+    display: flex; /* Using Flexbox for centering content */
+    align-items: center; /* Vertically centers the content */
+    justify-content: center; /* Horizontally centers the content */
+    font-weight: bold; /* Bold font for emphasis */
+    font-size: 0.9em; /* Adjusted font size for clarity */
+    z-index: 1000; /* Ensures it stays above other content */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Optional: adds shadow for better legibility over varying backgrounds */
+}
+
+/* Additional styling for responsiveness and appearance */
+@media (max-width: 600px) {
+    .beta {
+        font-size: 0.8em; /* Smaller font size for small devices */
+        padding: 3px 7px; /* Smaller padding for small devices */
+    }
+}
+
+.update-btn, .delete-btn {
+    margin-left: 10px; /* Adds space between the buttons if needed */
+}
+
+
+
+
+/* Keep the rest of your button styles unchanged */
+button {
+    cursor: pointer;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.hero-story {
+    background-color: rgba(96, 96, 96, 0.6); /* Semi-transparent grey background */
+    color: white; /* White text color for better readability */
+    padding: 20px; /* Adequate padding around the text */
+    border-radius: 8px; /* Rounded corners for the text box */
+    width: 80%; /* Set the width of the text box */
+    max-width: 600px; /* Maximum width to maintain readability */
+    text-align: center; /* Center the text horizontally */
+    margin: 20px auto; /* Center the box horizontally in the container and add vertical spacing */
+    display: flex; /* Use flexbox to align children */
+    justify-content: center; /* Center content horizontally in the flex container */
+    align-items: center; /* Center content vertically in the flex container */
+    flex-direction: column; /* Stack children vertically */
+    height: auto; /* Adjust height automatically based on content */
+    min-height: 200px; /* Minimum height to maintain aesthetics */
+    overflow: hidden; /* Hide any overflow content */
+}
+
+/* Ensure the entire section is responsive and looks good on all devices */
+@media (max-width: 768px) {
+    .hero-story {
+        width: 90%; /* Increase width on smaller screens for better readability */
+        padding: 15px; /* Slightly reduce padding for space efficiency */
+        min-height: 150px; /* Adjust minimum height for smaller devices */
+    }
+}
+
+
+
+#hero {
+    background: url('hero.png') no-repeat center center/cover;
+    height: 100vh; /* 100% of the viewport height */
+    color: white; /* Text color */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .hero-content h1 {
+    font-size: 2.5rem;
+    margin-top: 120px;
+  }
+  
+  .hero-content p {
+    margin: 20px 0;
+    font-size: 1.25rem;
+  }
+  
+  .hero-content .btn {
+    display: inline-block;
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .hero-content .btn:hover {
+    background: #0056b3;
+  }
+  

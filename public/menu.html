@@ -1,0 +1,58 @@
+<!-- menu.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <header class="d-flex flex-wrap align-items-center justify-content-between py-3 mb-4 border-bottom">
+            <div class="d-flex align-items-center">
+                <div class="me-4">
+                    <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
+                        <svg class="bi" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"/></svg>
+                    </a>
+                </div>
+      
+                <div class="text-left my-2">
+                    <span class="display-8 fw-bold" id="titlelanguage"></span>
+                </div>
+                <div class="text-left my-2">
+                    
+                    <select id="languageSelector" class="form-control w-60 d-inline" title="Select Language">
+                        <option value="en">English</option>
+                        <option value="nb">Norsk</option>
+                    </select>
+                        
+                    
+                </div>
+            </div>
+            
+            <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="/index.html" class="nav-link px-2 link-secondary" id="navHome">Home</a></li>
+                <li><a href="/w/blog" class="nav-link px-2" id="navBlog">Blog</a></li>
+                <li><a href="/Calender.html" class="nav-link px-2" id="navCalender">SlowYou Calender</a></li>
+                <li><a href="/w/slowgpt" class="nav-link px-2" id="navSlowGPT">SlowYou GPT</a></li>
+                <li><a href="#" class="nav-link px-2" id="navFAQs">FAQs</a></li>
+                <li><a href="#" class="nav-link px-2" id="navAbout">About</a></li>
+            </ul>
+            
+            <div class="text-end" id="auth-buttons">
+                <a href="/login.html"><button type="button" class="btn btn-outline-primary me-2" id="loginButton">Login</button></a>
+                <a href="/reg.html"><button type="button" class="btn btn-primary" id="signupButton">Sign-up</button></a>
+            </div>
+      
+            <div class="text-end d-none" id="logout-buttons">
+                <button type="button" class="btn btn-primary" id="logoutButton">Logout</button>
+                <a href="/dashboard.html"> <button type="button" class="btn btn-primary" id="dashboard">Dashboard</button></a>
+            </div>
+        </header>
+      </div>
+      
+</body>
+</html>
+
