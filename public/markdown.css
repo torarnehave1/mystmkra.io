@@ -92,7 +92,7 @@ body {
 /* Grid Container */
 .gridcontainer {
     position: absolute;
-    top: 0;
+    top: -50;
     left: 0;
     width: 100%;
     background-color: rgba(255, 255, 255, 0.5); /* 50% opacity */
@@ -436,7 +436,7 @@ tr:hover {
 
     /* Adjust positioning if needed */
     .gridcontainer {
-        position: absolute;
+        position: relative;
         top: 0;
         left: 0;
         width: 100%;
