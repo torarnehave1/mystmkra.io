@@ -1069,22 +1069,51 @@ function applyGridClasses() {
 
         // Ensure event listeners are only added once
         function attachEventListeners() {
-            console.log('attachEventListeners called');
-            document.getElementById('insertHashTaglist').addEventListener('click', insertHashTaglist);
-            document.getElementById('insertHeading1').addEventListener('click', insertHeading1);
-            document.getElementById('insertHeading2').addEventListener('click', insertHeading2);
-            document.getElementById('insertHeading3').addEventListener('click', insertHeading3);
-            document.getElementById('insertHeading4').addEventListener('click', insertHeading4);
-            document.getElementById('insertBold').addEventListener('click', insertBold);
-            document.getElementById('insertItalic').addEventListener('click', insertItalic);
-            document.getElementById('insertLink').addEventListener('click', insertLink);
-            document.getElementById('insertImage').addEventListener('click', insertImage);
-            document.getElementById('insertOrderedList').addEventListener('click', insertOrderedList);
-            document.getElementById('insertUnorderedList').addEventListener('click', insertUnorderedList);
-            document.getElementById('insertCode').addEventListener('click', insertCode);
-            document.getElementById('insertHorizontalRule').addEventListener('click', insertHorizontalRule);
-            document.getElementById('saveButton').addEventListener('click', saveMarkdownContent);
-        }
+    const hashTagButton = document.getElementById('insertHashTaglist');
+    const heading1Button = document.getElementById('insertHeading1');
+    const heading2Button = document.getElementById('insertHeading2');
+    const heading3Button = document.getElementById('insertHeading3');
+    const heading4Button = document.getElementById('insertHeading4');
+    const boldButton = document.getElementById('insertBold');
+    const italicButton = document.getElementById('insertItalic');
+    const linkButton = document.getElementById('insertLink');
+    const imageButton = document.getElementById('insertImage');
+    const orderedListButton = document.getElementById('insertOrderedList');
+    const unorderedListButton = document.getElementById('insertUnorderedList');
+    const codeButton = document.getElementById('insertCode');
+    const hrButton = document.getElementById('insertHorizontalRule');
+    const saveButton = document.getElementById('saveButton');
+    
+    // Add search button
+    const searchButton = document.querySelector('.btn[type="submit"]'); // Add search button here
+
+    // Ensure elements exist before adding event listeners
+    if (hashTagButton) hashTagButton.addEventListener('click', insertHashTaglist);
+    if (heading1Button) heading1Button.addEventListener('click', insertHeading1);
+    if (heading2Button) heading2Button.addEventListener('click', insertHeading2);
+    if (heading3Button) heading3Button.addEventListener('click', insertHeading3);
+    if (heading4Button) heading4Button.addEventListener('click', insertHeading4);
+    if (boldButton) boldButton.addEventListener('click', insertBold);
+    if (italicButton) italicButton.addEventListener('click', insertItalic);
+    if (linkButton) linkButton.addEventListener('click', insertLink);
+    if (imageButton) imageButton.addEventListener('click', insertImage);
+    if (orderedListButton) orderedListButton.addEventListener('click', insertOrderedList);
+    if (unorderedListButton) unorderedListButton.addEventListener('click', insertUnorderedList);
+    if (codeButton) codeButton.addEventListener('click', insertCode);
+    if (hrButton) hrButton.addEventListener('click', insertHorizontalRule);
+    if (saveButton) saveButton.addEventListener('click', saveMarkdownContent);
+
+    // Add search button event listener
+    if (searchButton) {
+        searchButton.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent form submission
+            performSearch(); // Call the search function
+        });
+    } else {
+        console.error('Search button not found in the DOM.');
+    }
+}
+
 
         let currentDocumentId = null; // Store the current document ID
 
