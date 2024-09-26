@@ -1,32 +1,355 @@
-/* CSS Variables for Consistency and Maintainability */
-:root {
-    --primary-color: #a19999;
-    --secondary-color: #8c8888;
-    --font-color: #000000;
-    --background-color: #ffffff;
-    --accent-color: #d6e7cc;
-    --error-color: red;
-    --button-padding: 5px 10px;
-    --border-radius: 5px;
+
+/* Default Styles for Normal Computer */
+.container p, 
+.container h1, 
+.container h2 {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: justify;
 }
 
-/* Global Styles and Reset */
-*, *::before, *::after {
-    box-sizing: border-box;
+.container h1 {
+    font-size: 2.5em;
+    margin-top: 20px;
 }
 
-body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    background-color: var(--background-color);
-    color: var(--font-color);
+.container h2 {
+    font-size: 2em;
+    margin-top: 15px;
 }
 
-/* Header Menu Styles */
+#snippetlist {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  #snippetlist .list-group-item {
+    flex: 1 1 calc(33.333% - 10px); /* Adjust for 3 items per row */
+    margin: 5px; /* Optional: add spacing between items */
+    box-sizing: border-box; /* Ensures padding/margin don't affect item width */
+  }
+  
+
+/* Media Query for iPad (max-width: 768px) */
+
+/* Media Query for Mobile Phone (max-width: 412px) */
+@media (max-width: 412px) {
+    .container p {
+        font-size: 1.5em;
+        line-height: 1.4;
+        padding: 8px;
+    }
+
+    .container h1 {
+        font-size: 2em;
+        margin-top: 15px;
+    }
+
+    .container h2 {
+        font-size: 1.6em;
+        margin-top: 10px;
+    }
+}
+
+
+
+
+
+
+
+@media (max-width: 768px) {
+    
+  
+    
+    .gridcontainer {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        grid-template-rows: minmax(0, 100px) repeat(8, 1fr);
+        gap: 10px;
+        background-color: aquamarine;
+        width: 100%;
+    }
+    .container {
+        max-width: 700px;
+        padding: 10px;
+        background-color: #ac8484c7;
+        font-size: 1.2em;
+    }
+    .preview {
+        margin-top: 10px;
+    }
+    .preview img {
+        max-width: 100%;
+        height: auto;
+        border-color: #ddd;
+        border-style: solid;
+        border-width: 1px;
+        border-radius: 5px;
+        padding: 5px;
+    }
+
+    .mdmenu {
+        display: flex; /* Use flexbox for layout */
+        flex-wrap: wrap; /* Allow items to wrap */
+        justify-content: flex-start; /* Align items to the start */
+        align-items: center;
+        gap: 5px; /* Adjust the gap between items */
+        margin-top: 10px;
+        grid-row-start: unset; /* Unset grid properties that are not needed */
+        grid-column-start: unset;
+    }
+    .mdmenu .btn {
+        flex: 1 1 calc(50% - 10px); /* Two buttons per row */
+        max-width: calc(50% - 10px); /* Ensure they don't exceed half the width */
+    }
+
+    .topmenu {
+        display: flex;
+        flex-wrap: wrap; /* Enable wrapping */
+        justify-content: space-between; /* Adjust spacing */
+        gap: 5px; /* Increase gap for mobile readability */
+    }
+
+    .topmenu .btn {
+        flex: 1 1 calc(50% - 10px); /* Two buttons per row */
+        max-width: calc(50% - 10px); /* Prevent buttons from exceeding half the width */
+    }
+
+    .griditem table {
+        width: 100%;
+        display: block;
+        overflow-x: auto;
+    }
+    .griditem th, .griditem td {
+        display: block;
+        text-align: right;
+    }
+    .griditem th {
+        text-align: left;
+    }
+
+}
+
+.container p {
+    font-size: 1.5em;
+    line-height: 1.5;
+    padding: 10px;
+}
+
+.container h1 {
+    font-size: 2.2em;
+    margin-top: 18px;
+}
+
+.container h2 {
+    font-size: 1.8em;
+    margin-top: 13px;
+}
+
+.gridcontainer {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: minmax(0, 100px) repeat(8, 1fr);
+    gap: 10px;
+    background-color: rgb(111, 116, 114);
+    width: 100%;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffffc7;
+    grid-column-start: 1;
+    grid-column-end: 9;
+    grid-row-start: 1;
+    grid-row-end: 9;
+    margin-top: 50px;
+    border-radius: 10px;
+    z-index: 1;
+    gap: 10px;
+}
+
+.previewgrid {
+    display: grid;
+    gap: 1px;
+    grid-template-columns: 10px repeat(5, 1fr);
+}
+
+.preview {
+    background-color: #ffffff;
+    max-width: 100%;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    overflow: auto;
+}
+
+.griditemimg {
+    grid-column: span 4;
+    grid-column-start: 2;
+    grid-column-end: 6;
+}
+
+.griditemcode{
+    grid-column-start: 2;
+    grid-column-end: 6;
+    margin-bottom: 10px;
+    background-color: #d6e7cc;
+    margin-left: 10px;
+    padding: 20 20 20 20;
+}
+
+
+.delete-content-button
+{
+    background-color: red;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+
+}
+
+.searchbar{
+    display: flex;
+
+}
+
+.language-javascript{
+    background-color: #d6ead6;
+    font-size: medium;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    color: black;
+    padding: 5px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    grid-column-start: 2;
+    grid-column-end: 6;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 90%;
+    text-align: center;
+    display: flex;
+}
+
+.language-markdown{
+    background-color: #b44343;
+    font-size: medium;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    color: black;
+    padding: 5px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    grid-column-start: 2;
+    grid-column-end: 6;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 90%;
+    text-align: center;
+    display: flex;
+}
+
+
+.griditem {
+    grid-column-start: 2;
+    grid-column-end: 6;
+}
+
+.blockquote {
+    background-color: #cac7c7;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    
+}
+
+iframe{
+    grid-column-start: 2;
+    grid-column-end: 6;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.preview img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    grid-column: span 2;
+}
+
+.btn btn-primary{
+    background-color: #a19999;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+.mdmenu {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 2px;
+    grid-row-start: 4;
+    grid-column-start: 1;
+    flex-direction: row;
+    margin-top: 10px;
+}
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.language-markdown {
+    background-color: #b44343;
+    font-size: medium;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    color: black;
+}
+
+.header-container {
+    display: grid;
+    gap: 1px;
+    grid-template-columns: 100px repeat(3, 1fr);
+    grid-template-rows: 60px repeat(1, 1fr);
+}
+
+.imgheader img {
+    width: 100%;
+    border-radius: 10px;
+    border-bottom: #ddd solid 2px;
+    grid-column: 1 / -1;
+    grid-row: 1 / 2;
+}
+
+.imgheader {
+    width: 100%;
+    border-radius: 10px;
+    border-bottom: #ddd solid 2px;
+    grid-column: 1 / -1;
+}
+
+
+
+
 .headermenu {
-    position: relative;
-    z-index: 2; /* Ensure it stays above the gridcontainer */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -44,7 +367,7 @@ body {
     flex: 3;
     text-align: center;
     font-size: 16px;
-    color: var(--font-color);
+    color: #100e0e;
     font-weight: bold;
     background-color: #d2d5d2;
 }
@@ -53,154 +376,125 @@ body {
     flex: 2;
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
+    gap: 10px; /* Space between buttons */
 }
 
-.dashboard-button,
-.logout-button {
-    background-color: var(--primary-color);
+#DashboardButton, #logoutButton {
+    background-color: #a19999;
     color: white;
-    border-radius: var(--border-radius);
+    border-radius: 5px;
     border: none;
-    padding: var(--button-padding);
+    padding: 5px 10px;
     font-size: 14px;
     cursor: pointer;
 }
 
-.dashboard-button:hover,
-.logout-button:hover {
-    background-color: var(--secondary-color);
+/* Optional: Additional hover effect */
+#DashboardButton:hover, #logoutButton:hover {
+    background-color: #8c8888;
 }
 
-/* Header Container */
-.header-container {
-    position: relative;
-}
 
-/* Image Header */
-.imgheader {
-    position: relative;
-    width: 100%;
-}
 
-.imgheader img {
-    width: 100%;
-    height: auto;
-    display: block;
-}
-
-/* Grid Container */
-.gridcontainer {
-    position: absolute;
-    top: -50;
-    left: 0;
-    width: 100%;
-    background-color: rgba(255, 255, 255, 0.5); /* 50% opacity */
-    z-index: 1;
-    /* Existing gridcontainer styles */
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    grid-template-rows: minmax(0, 100px) repeat(8, 1fr);
-    gap: 10px;
-    /* Adjust other styles as necessary */
-}
-
-/* Container Inside Gridcontainer */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    /* Adjust background color if necessary */
-    background-color: rgba(255, 255, 255, 0.78);
-    border-radius: var(--border-radius);
-}
-
-/* Typography */
-.container p,
-.container h1,
-.container h2 {
-    font-size: 1rem;
-    line-height: 1.5;
-    margin-bottom: 1rem;
-    text-align: justify;
-}
-
-.container h1 {
-    font-size: 2rem;
-    margin-top: 1.5rem;
-}
-
-.container h2 {
-    font-size: 1.75rem;
-    margin-top: 1.25rem;
-}
-
-/* Preview Styles */
-.preview {
-    margin-top: 1rem;
-    overflow: auto;
-}
-
-.preview img {
-    max-width: 100%;
-    height: auto;
-    border: 1px solid #ddd;
-    border-radius: var(--border-radius);
-    padding: 0.5rem;
-}
-
-/* Button Styles */
-button {
-    background-color: var(--primary-color);
-    color: var(--font-color);
-    border: none;
-    border-radius: var(--border-radius);
-    padding: var(--button-padding);
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: var(--secondary-color);
-}
-
-.mdmenu {
+.pagination {
+    margin-top: 10px;
+    margin-left: 20px;
+    grid-column: 2 / 4;
+    justify-items: center;
     display: flex;
-    flex-wrap: wrap;
     justify-content: flex-start;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 1rem;
+    list-style: none;
 }
 
-/* Snippet List Styles */
-#snippetlist {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 10px;
-    width: 100%;
-    margin-bottom: 20px;
+.bulletpoint{
+    list-style-type: disc;
+    color: aqua;
 }
 
-#snippetlist .list-group-item {
+.pagination li {
+    margin: 0 5px;
+}
+
+.FileListfromSearch {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 10px;
-    background-color: #f8f9fa;
+    flex-wrap: wrap; /* Allow wrapping */
+    gap: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+    width: 90%;
+    grid-column: 1 / -1;
+    grid-row: 2 / 3;
+}
+
+.card {
+    flex: 1 1 18rem; /* Allow flexibility */
+}
+
+
+
+.card-body .stripe-button {
+display: flex;
+justify-content: center;
+margin-top: 1rem;
+}
+
+.list-group {
+    display: flex;
+    height:250px;
+    
+
+}
+
+.list-group-item {
+display: flex;
+flex-wrap: wrap;
+margin: 10px 0; /* Add margin to create space between rows of list-group-items */
+padding: 10px;
+background-color: #f8f9fa;
+border: 1px solid #dee2e6;
+border-radius: 5px;
+box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+transition: background-color 0.3s ease;
+}
+.list-item {
+color: #000000;
+text-decoration: none;
+transition: background-color 0.3s ease;
+padding: 10px;
+border-radius: 5px;
+background-color: #d6e7cc;
+border: 1px solid #dee2e6;
+margin: 5px; /* Add margin to create space between items */
+flex: 1 1 calc(50% - 10px); /* Ensure the items are responsive and have space between them */
+box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+.list-group-item a.list-item {
+    
+    margin-bottom: 5px;
+    padding: 5px 5px 5px 5px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #d6e7cc;
     border: 1px solid #dee2e6;
-    border-radius: var(--border-radius);
+    color: #000000;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
 }
 
-#snippetlist .list-group-item button {
-    margin-top: 5px;
+
+.list-group-item a.list-item:hover {
+    background-color: #d6d8db;
 }
 
-/* Progress Bar Styles */
+
 .progress-bar-container {
     width: 100%;
     height: 4px;
     background-color: #f0f0f0;
+    
     display: none;
 }
 
@@ -218,20 +512,52 @@ button:hover {
     100% { width: 100%; }
 }
 
-/* Table Styles */
-table {
+/* General table styling */
+.griditem {
+    margin: 20px 0;
+    overflow-x: auto; /* Ensures the table is scrollable on small screens */
+}
+
+.griditem table {
     width: 100%;
     border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
     background-color: #f9f9f9;
 }
 
-th {
-    background-color: #7dafd0;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    background-color: #f9f9f9;
+}
+
+/* Table Header Styling */
+.griditem th {
+    background-color: #7dafd0; /* Green header background */
     color: white;
     padding: 10px;
     text-align: left;
     border-bottom: 2px solid #ddd;
 }
+
+th {
+    background-color: #7dafd0; /* Green header background */
+    color: white;
+    padding: 10px;
+    text-align: left;
+    border-bottom: 2px solid #ddd;
+
+}
+/* Table Body Styling */
+.griditem td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
 
 td {
     padding: 8px 10px;
@@ -239,221 +565,22 @@ td {
     text-align: left;
 }
 
+/* Zebra striping for rows */
+.griditem tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
 tr:nth-child(even) {
     background-color: #f2f2f2;
+}
+
+/* Hover effect for rows */
+.griditem tr:hover {
+    background-color: #f1f1f1;
 }
 
 tr:hover {
     background-color: #f1f1f1;
 }
 
-/* Code Block Styles */
-.language-markdown,
-.language-javascript {
-    background-color: #d6ead6;
-    font-size: 1rem;
-    font-family: 'Courier New', Courier, monospace;
-    color: var(--font-color);
-    padding: 5px;
-    border-radius: var(--border-radius);
-    margin: 10px 0;
-    width: 100%;
-    text-align: center;
-}
-
-.language-markdown {
-    background-color: #b44343;
-}
-
-/* Grid Item Styles */
-.griditem {
-    margin: 20px 0;
-}
-
-.griditemcode {
-    background-color: #d6e7cc;
-    padding: 20px;
-    border-radius: var(--border-radius);
-    margin: 10px 0;
-}
-
-/* Blockquote Styles */
-.griditem blockquote {
-    background-color: #cac7c7;
-    border: 1px solid #ddd;
-    padding: 10px;
-    border-radius: var(--border-radius);
-    margin-bottom: 10px;
-}
-
-/* Image Styles */
-.griditem img {
-    max-width: 100%;
-    height: auto;
-    border-radius: var(--border-radius);
-}
-
-/* Form Group Styles */
-.form-group {
-    width: 100%;
-}
-
-/* Search Bar Styles */
-.searchbar {
-    display: flex;
-    gap: 5px;
-}
-
-/* Pagination Styles */
-.pagination {
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-    list-style: none;
-}
-
-.pagination li {
-    margin: 0 5px;
-}
-
-/* Card Styles */
-.card {
-    flex: 1 1 18rem;
-}
-
-.card-body .stripe-button {
-    display: flex;
-    justify-content: center;
-    margin-top: 1rem;
-}
-
-/* Delete Button Styles */
-.delete-content-button {
-    background-color: var(--error-color);
-    color: white;
-    border-radius: var(--border-radius);
-    border: none;
-    padding: var(--button-padding);
-    font-size: 14px;
-    cursor: pointer;
-    margin-left: 10px;
-}
-
-/* Material Symbols Styles */
-.material-symbols-outlined {
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
-
-/* Media Queries */
-
-/* Mobile First Styles (up to 767px) */
-@media (max-width: 767px) {
-    .container p {
-        font-size: 1rem;
-        line-height: 1.4;
-        padding: 8px;
-    }
-
-    .container h1 {
-        font-size: 1.75rem;
-        margin-top: 15px;
-    }
-
-    .container h2 {
-        font-size: 1.5rem;
-        margin-top: 10px;
-    }
-
-    .mdmenu .btn {
-        flex: 1 1 calc(50% - 10px);
-        max-width: calc(50% - 10px);
-    }
-
-    .topmenu {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        gap: 5px;
-    }
-
-    .topmenu .btn {
-        flex: 1 1 calc(50% - 10px);
-        max-width: calc(50% - 10px);
-    }
-
-    .griditem table {
-        width: 100%;
-        display: block;
-        overflow-x: auto;
-    }
-
-    .griditem th,
-    .griditem td {
-        display: block;
-        text-align: right;
-    }
-
-    .griditem th {
-        text-align: left;
-    }
-
-    /* Adjust gridcontainer positioning for mobile */
-    .gridcontainer {
-        position: relative;
-        top: 0;
-        left: 0;
-    }
-}
-
-/* Tablet and Desktop Styles (768px and up) */
-@media (min-width: 768px) {
-    .container {
-        max-width: 700px;
-        padding: 10px;
-    }
-
-    .container p {
-        font-size: 1.2rem;
-        line-height: 1.6;
-    }
-
-    .container h1 {
-        font-size: 2.5rem;
-    }
-
-    .container h2 {
-        font-size: 2rem;
-    }
-
-    /* Existing gridcontainer styles for larger screens */
-    .gridcontainer {
-        display: grid;
-        grid-template-columns: repeat(8, 1fr);
-        grid-template-rows: minmax(0, 100px) repeat(8, 1fr);
-        gap: 10px;
-        /* Adjust other styles as necessary */
-    }
-
-    /* Adjust positioning if needed */
-    .gridcontainer {
-        position: relative;
-        top: 0;
-        left: 0;
-        width: 100%;
-    }
-}
-
-/* Additional Styles */
-/* Ensure images in .preview maintain aspect ratio */
-.preview img {
-    height: auto;
-}
-
-/* Adjustments for .list-group */
-.list-group {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-/* End of CSS */
+/* Responsive Design: Make sure the table is not too wide on small screens */
