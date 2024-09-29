@@ -53,6 +53,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/logo', express.static(path.join(__dirname, 'logo')));
 app.use('/images', express.static(path.join(__dirname, '../public/images')));
+app.use('/js', express.static(path.join(__dirname, '../public/js')));
 
 // Home route
 app.get('/', (req, res) => {
