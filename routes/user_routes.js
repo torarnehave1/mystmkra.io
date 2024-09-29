@@ -74,17 +74,30 @@ router.get('/test', (req, res) => {
 router.get('/register-form', (req, res) => {
     const tag = req.query.tag;  // Capture the custom tag from the query parameter
 
-    // Serve the registration form with the provided tag
+    // Serve the registration form with Bootstrap styling and information message div
     res.send(`
-        <form id="registrationForm">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required><br><br>
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+        <div class="container mt-5">
+            <h2 class="mb-4">Registration Form</h2>
+            <form id="registrationForm">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
             
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required><br><br>
-            
-            <button type="submit">Submit</button>
-        </form>
+            <!-- Information message div to display the result -->
+            <div id="infoMessage" class="mt-3"></div>
+        </div>
+
         <script>
             document.getElementById('registrationForm').addEventListener('submit', async function(event) {
                 event.preventDefault();
@@ -101,15 +114,20 @@ router.get('/register-form', (req, res) => {
                     body: JSON.stringify(formData),
                 });
 
+                const infoMessageDiv = document.getElementById('infoMessage');
+
                 if (response.ok) {
-                    alert('Registration successful!');
+                    // Show success message in the information div
+                    infoMessageDiv.innerHTML = '<div class="alert alert-success">Registration successful!</div>';
                 } else {
-                    alert('Error in registration!');
+                    // Show error message in the information div
+                    infoMessageDiv.innerHTML = '<div class="alert alert-danger">Error in registration! Please try again.</div>';
                 }
             });
         </script>
     `);
 });
+
 
 router.get('/download-excel', async (req, res) => {
     try {
