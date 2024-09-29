@@ -71,7 +71,7 @@ router.get('/test', (req, res) => {
     res.send('Test endpoint is working!');
 });
 
-app.get('/register-form', (req, res) => {
+router.get('/register-form', (req, res) => {
     const tag = req.query.tag;  // Capture the custom tag from the query parameter
 
     // Serve the registration form with the provided tag

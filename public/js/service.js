@@ -17,13 +17,23 @@
 
     // Automatically execute when the script is loaded
     document.addEventListener("DOMContentLoaded", function () {
-        // Get script tag with src="myservice.js"
-        var scriptTag = document.querySelector('script[src*="myservice.js"]');
-        
+        // Use document.querySelector to find the script tag by its src
+        var scriptTag = document.querySelector('script[src*="service.js"]');
+
+        if (!scriptTag) {
+            console.error("Current script not found.");
+            return;
+        }
+
         // Get custom attributes from the script tag (e.g., serviceUrl, containerId, and tag)
         var serviceUrl = scriptTag.getAttribute('data-service-url') || 'https://mystmkra.io';
         var containerId = scriptTag.getAttribute('data-container-id') || 'formContainer';
         var tag = scriptTag.getAttribute('data-tag') || 'defaultTag';
+
+        if (!serviceUrl || !containerId) {
+            console.error("Missing required attributes in the script tag.");
+            return;
+        }
 
         // Load the form into the specified container
         loadForm(serviceUrl, containerId, tag);
