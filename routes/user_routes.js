@@ -71,7 +71,45 @@ router.get('/test', (req, res) => {
     res.send('Test endpoint is working!');
 });
 
+app.get('/register-form', (req, res) => {
+    const tag = req.query.tag;  // Capture the custom tag from the query parameter
 
+    // Serve the registration form with the provided tag
+    res.send(`
+        <form id="registrationForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required><br><br>
+            
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required><br><br>
+            
+            <button type="submit">Submit</button>
+        </form>
+        <script>
+            document.getElementById('registrationForm').addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                const formData = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    tag: '${tag}'  // Send the custom tag with the form submission
+                };
+
+                const response = await fetch('/submit-registration', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData),
+                });
+
+                if (response.ok) {
+                    alert('Registration successful!');
+                } else {
+                    alert('Error in registration!');
+                }
+            });
+        </script>
+    `);
+});
 
 router.get('/download-excel', async (req, res) => {
     try {
