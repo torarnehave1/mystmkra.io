@@ -12,6 +12,7 @@ import ExcelJS from 'exceljs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { join } from 'path';
+import fs from 'fs';
 
 // /test
 // A simple test endpoint to verify that the route is working.
@@ -56,6 +57,10 @@ dotenv.config()
 
 
 const router = express.Router();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const filePath = path.resolve(__dirname, '..', '..');
 const JWT_SECRET = process.env.JWT_SECRET; // Replace with your secret key
 
 // In your Node.js routes file
@@ -80,7 +85,7 @@ router.get('/download-excel', async (req, res) => {
         // Step 3: Add column headers
         worksheet.columns = [
             { header: 'Full Name', key: 'fullName', width: 30 },
-            { header: 'Email', key: 'username', width: 30 },
+            { header: 'Email', key: 'email', width: 30 },
           
         ];
 
