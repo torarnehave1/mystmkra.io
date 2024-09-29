@@ -8,6 +8,10 @@ import nodemailer from 'nodemailer';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import ExcelJS from 'exceljs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { join } from 'path';
 
 // /test
 // A simple test endpoint to verify that the route is working.
@@ -61,6 +65,55 @@ const JWT_SECRET = process.env.JWT_SECRET; // Replace with your secret key
 router.get('/test', (req, res) => {
     res.send('Test endpoint is working!');
 });
+
+
+
+router.get('/download-excel', async (req, res) => {
+    try {
+        // Step 1: Fetch data from MongoDB
+        const users = await User.find();
+
+        // Step 2: Create a new workbook and worksheet
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Users');
+
+        // Step 3: Add column headers
+        worksheet.columns = [
+            { header: 'Full Name', key: 'fullName', width: 30 },
+            { header: 'Email', key: 'username', width: 30 },
+          
+        ];
+
+        // Step 4: Add rows of data
+        users.forEach(user => {
+            worksheet.addRow({
+                fullName: user.fullName,
+                email: user.username,
+            
+            });
+        });
+
+        // Step 5: Set file path to save the Excel file temporarily
+        const filePath = path.join(__dirname, 'users.xlsx');
+
+        // Step 6: Write the Excel file to disk
+        await workbook.xlsx.writeFile(filePath);
+
+        // Step 7: Send the file for download
+        res.download(filePath, 'users.xlsx', err => {
+            if (err) {
+                console.error('Error downloading the file:', err);
+            }
+            // Optionally, delete the file after sending it
+            fs.unlinkSync(filePath);
+        });
+
+    } catch (err) {
+        res.status(500).send('Error generating Excel file');
+        console.error(err);
+    }
+});
+
 
 router.delete('/users/:id', async (req, res) => {
     try {
