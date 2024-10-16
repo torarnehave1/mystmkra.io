@@ -762,6 +762,7 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
 
         // Extract the first title from the markdown content (o:tittel)
         const titleRegex = /^#\s+(.*)$/m;
+        
         const titleMatch = fileContent.match(titleRegex);
         const title = titleMatch ? titleMatch[1].trim() : 'Default Title';
 
