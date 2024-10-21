@@ -129,6 +129,93 @@ router.get('/register-form', (req, res) => {
 });
 
 
+
+// Route to serve the comment form
+router.get('/comment-form', (req, res) => {
+    const tag = req.query.tag;  // Capture the custom tag from the query parameter (represents the blog post/article)
+
+    // Serve the comment form with Bootstrap styling
+    res.send(`
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+        <div class="container mt-5">
+            <h2 class="mb-4">Leave a Comment</h2>
+            <form id="commentForm">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="comment">Comment:</label>
+                    <textarea class="form-control" id="comment" name="comment" rows="4" placeholder="Write your comment..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit Comment</button>
+            </form>
+            
+            <!-- Information message div to display the result -->
+            <div id="infoMessage" class="mt-3"></div>
+        </div>
+
+        <script>
+            document.getElementById('commentForm').addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                const formData = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    comment: document.getElementById('comment').value,
+                    tag: '${tag}'  // Send the custom tag with the form submission (to identify the blog post)
+                };
+
+                const response = await fetch('/submit-comment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData),
+                });
+
+                const infoMessageDiv = document.getElementById('infoMessage');
+
+                if (response.ok) {
+                    // Show success message in the information div
+                    infoMessageDiv.innerHTML = '<div class="alert alert-success">Comment submitted successfully!</div>';
+                } else {
+                    // Show error message in the information div
+                    infoMessageDiv.innerHTML = '<div class="alert alert-danger">Error in submitting comment! Please try again.</div>';
+                }
+            });
+        </script>
+    `);
+});
+
+// Route to handle comment submission (save to database)
+router.post('/submit-comment', async (req, res) => {
+    const { name, email, comment, tag } = req.body;
+
+    try {
+        // Simulate database insert operation (replace with actual database logic)
+        const newComment = { name, email, comment, tag, timestamp: new Date() };
+
+        // Insert the comment into your database (e.g., MongoDB, PostgreSQL, etc.)
+        // await CommentModel.create(newComment);  // Example using a MongoDB model
+
+        console.log('New Comment:', newComment); // Log the comment for debugging
+
+        // Respond with a success message
+        res.status(200).json({ message: 'Comment submitted successfully' });
+    } catch (error) {
+        console.error('Error submitting comment:', error);
+        res.status(500).json({ message: 'Error submitting comment' });
+    }
+});
+
+
 router.get('/download-excel', async (req, res) => {
     try {
         // Step 1: Fetch data from MongoDB
