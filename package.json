@@ -24,6 +24,7 @@
     "express": "^4.19.2",
     "express-rate-limit": "^7.4.0",
     "highlight.js": "^11.10.0",
+    "imapflow": "^1.0.164",
     "jsonwebtoken": "^9.0.2",
     "marked": "^14.1.2",
     "mongoose": "^8.5.3",
