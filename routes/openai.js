@@ -48,22 +48,24 @@ let currentThreadId = null;  // In-memory store for the current thread ID
  * @param {string} text - The text content to generate embeddings for
  * @returns {Array} - The generated embedding
  */
-const generateEmbedding = async (text) => {
-    try {
-      const response = await openai.embeddings.create({
-        model: 'text-embedding-ada-002',
-        input: [text],
-      });
-      return response.data[0].embedding;
-    } catch (error) {
-      console.error('Error generating embedding:', error.message);
-      throw error;
+async function generateEmbedding(text) {
+    if (!text || typeof text !== 'string') {
+        throw new Error('Input text is required and must be a non-empty string.');
     }
-  };
+    try {
+        const response = await openai.embeddings.create({
+            model: 'text-embedding-ada-002',
+            input: text,
+        });
+        return response.data[0].embedding;
+    } catch (error) {
+        console.error('Error generating embedding:', error.message);
+        throw error;
+    }
+}
+
   
-  /**
- * Endpoint to search documents using natural language query
- */
+
 router.get('/search-documents', async (req, res) => {
     const { query } = req.query;
   
@@ -117,41 +119,9 @@ router.get('/search-documents', async (req, res) => {
       res.status(500).json({ message: 'Error searching documents', error: err.message });
     }
   });
-
-router.get('/generate-embeddings', async (req, res) => {
-    try {
-      // Find all documents without embeddings
-      const documents = await Mdfiles.find({ embeddings: { $exists: false } });
-      if (documents.length === 0) {
-        return res.status(200).json({ message: 'No documents without embeddings found.' });
-      }
   
-      // Process each document to generate embeddings
-      for (const doc of documents) {
-        try {
-          // Assume generateEmbedding is a function that returns a promise resolving to an array of numbers
-          const embedding = await generateEmbedding(doc.content);
-          console.log(`Generated embedding for document ${doc._id}:`, embedding);
   
-          // Validate the embedding format
-          if (Array.isArray(embedding) && embedding.every(item => typeof item === 'number')) {
-            // Update only the embeddings field
-            await Mdfiles.updateOne({ _id: doc._id }, { $set: { embeddings: embedding } });
-            console.log(`Successfully updated embeddings for document ${doc._id}`);
-          } else {
-            console.error(`Invalid embedding format for document ${doc._id}:`, embedding);
-          }
-        } catch (err) {
-          console.error(`Error generating embedding for document ${doc._id}:`, err);
-        }
-      }
-  
-      res.status(200).json({ message: 'Embeddings generated and updated successfully.' });
-    } catch (err) {
-      console.error('Error processing documents:', err);
-      res.status(500).json({ message: 'Error processing documents', error: err.message });
-    }
-  });
+ 
 
   
 
