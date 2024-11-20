@@ -3,6 +3,8 @@ import OpenAI from 'openai';
 import dotenv from 'dotenv';
 import multer from 'multer';
 import util from 'util';
+import mongoose from 'mongoose';
+import Mdfiles from '../models/Mdfiles.js';
 
 
 import FormData from 'form-data';
@@ -458,6 +460,60 @@ router.post('/ask-assistant', async (req, res) => {
         if (!res.headersSent) {
             res.status(500).json({ success: false, error: error.message });
         }
+    }
+});
+
+// Create an Express.js endpoint to generate an embedding for a document in the "mdfiles" collection in MongoDB.
+// The document is selected using `req.params.docid` from the URL.
+// Use the OpenAI model "text-embedding-ada-002" to generate an embedding from the "content" field of the document.
+// Add the generated embedding to the "embeddings" field of the same document.
+// Return a success message or an error message in JSON format.
+
+router.get('/emb/:docid', async (req, res) => {
+    const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+    });
+   
+    try {
+        const docid = req.params.docid;
+
+        // Convert docid to ObjectId
+        if (!mongoose.Types.ObjectId.isValid(docid)) {
+            return res.status(400).json({ error: 'Invalid document ID format' });
+        }
+
+        const doc = await Mdfiles.findOne({ _id: docid });
+        if (!doc) {
+            return res.status(404).json({ error: 'Document not found' });
+        }
+
+        // Check if content exists and is non-empty
+        if (!doc.content || doc.content.trim() === '') {
+            return res.status(400).json({ error: 'Document content is empty or invalid' });
+        }
+
+        // Generate embeddings
+        const response = await openai.embeddings.create({
+            model: 'text-embedding-ada-002',
+            input: [doc.content], // Single document embedding
+        });
+
+        const embeddings = response.data[0].embedding;
+
+        // Update the document with the new embeddings
+        const updatedDoc = await Mdfiles.updateOne(
+            { _id: docid },
+            { $set: { embeddings } }
+        );
+
+        if (updatedDoc.modifiedCount === 1) {
+            return res.json({ success: true, message: 'Embedding generated successfully' });
+        } else {
+            return res.status(500).json({ error: 'Failed to update the document with embeddings' });
+        }
+    } catch (error) {
+        console.error('Error generating embedding:', error.message);
+        return res.status(500).json({ error: 'Internal server error' });
     }
 });
 

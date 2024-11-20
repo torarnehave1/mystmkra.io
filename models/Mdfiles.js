@@ -54,6 +54,12 @@ const MdFilesSchema = new mongoose.Schema({
   ImgURL:{
     type: String,
     required: false
+  },
+
+  embeddings: {
+    type: [Number], // Array of numbers for embeddings
+    required: false,
+    default: [] // Default to an empty array
   }
 
 });
