@@ -61,7 +61,62 @@ const generateEmbedding = async (text) => {
     }
   };
   
+  /**
+ * Endpoint to search documents using natural language query
+ */
+router.get('/search-documents', async (req, res) => {
+    const { query } = req.query;
   
+    try {
+      // Generate embedding for the query
+      const queryEmbedding = await generateEmbedding(query);
+  
+      // Ensure the embedding is valid
+      if (!Array.isArray(queryEmbedding) || !queryEmbedding.every(item => typeof item === 'number')) {
+        return res.status(400).json({ message: 'Invalid query embedding format.' });
+      }
+  
+      // Find documents with similar embeddings
+      const documents = await Mdfiles.aggregate([
+        {
+          $addFields: {
+            similarity: {
+              $let: {
+                vars: {
+                  queryVector: queryEmbedding,
+                  docVector: '$embeddings'
+                },
+                in: {
+                  $reduce: {
+                    input: { $range: [0, { $size: '$$queryVector' }] },
+                    initialValue: 0,
+                    in: {
+                      $add: [
+                        '$$value',
+                        {
+                          $multiply: [
+                            { $arrayElemAt: ['$$queryVector', '$$this'] },
+                            { $arrayElemAt: ['$$docVector', '$$this'] }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        { $sort: { similarity: -1 } },
+        { $limit: 10 } // Limit to top 10 most similar documents
+      ]);
+  
+      res.status(200).json(documents);
+    } catch (err) {
+      console.error('Error searching documents:', err);
+      res.status(500).json({ message: 'Error searching documents', error: err.message });
+    }
+  });
 
 router.get('/generate-embeddings', async (req, res) => {
     try {
