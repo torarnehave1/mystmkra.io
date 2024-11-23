@@ -75,6 +75,19 @@ router.post('/webhook/:botToken', (req, res) => {
     if (botToken === process.env.TELEGRAM_BOT1_TOKEN) {
         console.log('Bot 1 triggered');
         // Add your bot 1-specific logic here
+
+        if (payload.message && payload.message.text === "Hvordan har du det?") {
+            const chatId = payload.message.chat.id;
+            const reply = "Jeg har det som et mirakel!";
+
+            // Send the reply back to the user
+            axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                chat_id: chatId,
+                text: reply,
+            })
+            .then(() => console.log('Reply sent: "Jeg har det som et mirakel!"'))
+            .catch(err => console.error('Error sending reply:', err));
+        }
     } else if (botToken === process.env.TELEGRAM_BOT2_TOKEN) {
         console.log('Bot 2 triggered');
         // Add your bot 2-specific logic here
@@ -84,6 +97,7 @@ router.post('/webhook/:botToken', (req, res) => {
 
     res.status(200).send('OK'); // Respond to Telegram
 });
+
 
 router.get('/search-documents', async (req, res) => {
     const { query } = req.query;
