@@ -76,17 +76,35 @@ router.post('/webhook/:botToken', (req, res) => {
         console.log('Bot 1 triggered');
         // Add your bot 1-specific logic here
 
-        if (payload.message && payload.message.text === "Hvordan har du det?") {
+        if (payload.message) {
             const chatId = payload.message.chat.id;
-            const reply = "Jeg har det som et mirakel!";
+            const text = payload.message.text;
+            const chatType = payload.message.chat.type; // Detect group or private chat
 
-            // Send the reply back to the user
-            axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                chat_id: chatId,
-                text: reply,
-            })
-            .then(() => console.log('Reply sent: "Jeg har det som et mirakel!"'))
-            .catch(err => console.error('Error sending reply:', err));
+            // Handle private or group chat
+            if (chatType === 'private' && text === "Hvordan har du det?") {
+                const reply = "Jeg har det som et mirakel!";
+                // Send the reply back to the user
+                axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    chat_id: chatId,
+                    text: reply,
+                })
+                .then(() => console.log('Reply sent: "Jeg har det som et mirakel!"'))
+                .catch(err => console.error('Error sending reply:', err));
+            } else if (chatType === 'group' || chatType === 'supergroup') {
+                console.log(`Message detected in a group (${chatType}): "${text}"`);
+
+                // Optional: Respond to group messages
+                if (text && text.includes("?")) { // Example: Respond to questions in groups
+                    const groupReply = "Det er et godt spørsmål!";
+                    axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                        chat_id: chatId,
+                        text: groupReply,
+                    })
+                    .then(() => console.log(`Reply sent to group: "Det er et godt spørsmål!"`))
+                    .catch(err => console.error('Error sending reply to group:', err));
+                }
+            }
         }
     } else if (botToken === process.env.TELEGRAM_BOT2_TOKEN) {
         console.log('Bot 2 triggered');
@@ -97,6 +115,7 @@ router.post('/webhook/:botToken', (req, res) => {
 
     res.status(200).send('OK'); // Respond to Telegram
 });
+
 
 
 router.get('/search-documents', async (req, res) => {
