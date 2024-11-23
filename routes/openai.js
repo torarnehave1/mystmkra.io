@@ -64,7 +64,26 @@ async function generateEmbedding(text) {
     }
 }
 
-  
+router.post('/webhook/:botToken', (req, res) => {
+    const botToken = req.params.botToken; // Extract bot token from the URL
+    const payload = req.body;
+
+    console.log(`Received webhook for bot: ${botToken}`);
+    console.log('Payload:', payload);
+
+    // Handle logic for each bot
+    if (botToken === process.env.TELEGRAM_BOT1_TOKEN) {
+        console.log('Bot 1 triggered');
+        // Add your bot 1-specific logic here
+    } else if (botToken === process.env.TELEGRAM_BOT2_TOKEN) {
+        console.log('Bot 2 triggered');
+        // Add your bot 2-specific logic here
+    } else {
+        console.log('Unknown bot');
+    }
+
+    res.status(200).send('OK'); // Respond to Telegram
+});
 
 router.get('/search-documents', async (req, res) => {
     const { query } = req.query;

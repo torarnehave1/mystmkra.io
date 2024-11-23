@@ -1,0 +1,331 @@
+.code-block {
+    position: relative; /* To position the copy button */
+    background-color: #000000; /* Light gray background */
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    font-family: 'Courier New', monospace; /* Use a monospace font */
+    font-size: 14px;
+    overflow-x: auto; /* Handle long code lines */
+}
+
+/* Style the copy button */
+.copy-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.copy-button:hover {
+    background-color: #155ab6;
+}
+
+/* Style each individual line in the code block */
+.code-line {
+    padding: 2px 0;
+    white-space: pre-wrap; /* Preserve white space and line breaks */
+    word-wrap: break-word;
+}
+
+/* Style for functions and class declarations */
+.code-line.function {
+    color: #e4e860; /* Reddish color */
+    font-weight: bold;
+}
+
+/* Style for comments */
+.code-line.comment {
+    color: #119011; /* Gray color for comments */
+    font-style: italic;
+}
+
+/* Style for variable declarations (const, let, var) */
+.code-line.variable {
+    color: #7bc4ee; /* Green color for variables */
+}
+
+/* General line styles for other code */
+.code-line {
+    color: #ffffff; /* Default dark text color */
+}
+
+/* Optional: Add a hover effect to code lines */
+.code-line:hover {
+    background-color: #e8e8e8; /* Light gray on hover */
+}
+
+
+        /* Main container grid layout */
+   /* Google Contacts Style for Sidebar */
+
+   #sidebar {
+    background-color: #ffffff;
+    padding: 20px;
+    border-right: 1px solid #e0e0e0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+    box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    overflow-x: hidden;
+    justify-items: center;
+}
+
+.sidebar-hidden {
+    transform: translateX(-100%);
+}
+
+/* Main container grid layout */
+.main-container {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    grid-template-columns: 250px 1fr;
+    min-height: 100vh; /* Full viewport height */
+    height: auto; /* Allow height to grow */
+    overflow-y: visible; 
+    
+
+}
+
+.top-menu {
+    grid-row: 1; /* Place the top menus in the first row */
+    grid-column: 1 / -1; /* Span across all columns */
+    width: 100%; /* Ensure the menu fills the entire width */
+    padding: 10px;
+    background-color: #333; /* Adjust as needed */
+    color: #fff;
+    border-bottom: 1px solid #e0e0e0; /* Optional: Add a bottom border */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow */
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-y: scroll; /* Ensure the page can scroll vertically */
+}
+
+
+
+.top-menus {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.top-menus .top-menu {
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 5px; /* Add space between rows */
+}
+
+.navbar-brand {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-left: 20px;
+}
+
+.navbar-nav .nav-link {
+    color: #5f6368;
+    font-size: 16px;
+    margin-left: 10px;
+    transition: color 0.3s ease;
+    height: 50px;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #1a73e8;
+}
+
+.content-area {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #fafafa;
+    min-height: 100%; /* Allow the content area to grow with the page */
+    
+}
+
+.markdown-editor {
+    flex: 1;
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.textarea-full {
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    resize: vertical;
+    border: none;
+    outline: none;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    color: #5f6368;
+    background-color: transparent;
+   
+}
+
+.preview {
+    flex: 1;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+   
+    
+}
+
+.preview h3 {
+    font-size: 18px;
+    color: #202124;
+    margin-bottom: 15px;
+}
+
+.preview #previewContent {
+    color: #5f6368;
+    font-family: 'Roboto', sans-serif;
+    
+}
+
+#previewContent .griditemimg img {
+    max-width: 100%; /* Ensure the image is responsive and does not exceed its container width */
+    height: auto;    /* Maintain the aspect ratio of the image */
+    display: block;  /* Remove any inline spacing around the image */
+    margin: 0 auto;  /* Center the image horizontally, if desired */
+}
+
+/* Sidebar Links */
+#sidebar .nav-link {
+    font-size: 16px;
+    color: #202124;
+    padding: 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#sidebar .nav-box {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    margin-top: 10px;
+    width: 210px;
+}
+
+#sidebar .nav-link:hover {
+    background-color: #e8f0fe;
+    color: #1a73e8;
+}
+
+/* Sidebar active state */
+#sidebar .nav-link.active {
+    background-color: #e8f0fe;
+    color: #1a73e8;
+    font-weight: bold;
+}
+
+/* Background image for header */
+
+
+/* Sidebar toggle button */
+.toggle-btn {
+    position: absolute;
+    top: 30px;
+    left: 20px;
+    cursor: pointer;
+    font-size: 32px;
+    color: #feffff;
+    z-index: 1000;
+}
+
+
+
+
+        /* Default layout when the sidebar is visible */
+.content-area {
+    margin-left: 0; /* Matches the width of the sidebar */
+    transition: margin-left 0.3s ease; /* Smooth transition when margin changes */
+}
+
+/* When the sidebar is hidden */
+.content-expanded {
+    margin-left: -200px; /* Content expands to fill the space when the sidebar is hidden */
+}
+
+.background-image {
+    width: 100%;
+    height: 200px;
+    background-image: url('https://cdn.midjourney.com/f7c1a775-d0ca-48f4-9e53-c80d9c6762c4/0_1.png'); /* Replace with your image path */
+    background-size: cover; /* Ensure the image covers the entire div */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+}
+
+.search-bar {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    width: 100%;
+}
+
+.search-box
+{
+    width: 100%;
+    height: 100%;
+    border: none;
+    background-color: #000000;
+    color: white;
+    font-size: 1.5em;
+    padding: 10px;
+    resize: none;
+    
+}
+
+
+
+.search-box::placeholder {
+    font-style: italic; /* Makes the placeholder text italic */
+    color: #d3cfcf; /* Placeholder text color */
+    font-size: 1.5em; /* Adjusts the font size */
+
+}
+
+
+/* Responsive Layout */
+@media (max-width: 768px) {
+    .main-container {
+        grid-template-columns: 0 1fr;
+    }
+
+    .sidebar-hidden {
+        transform: translateX(0);
+    }
+
+    .content-area {
+        margin-left: 0;
+    }
+
+    .top-menus {
+        flex-direction: column;
+    }
+}
