@@ -64,7 +64,7 @@ async function generateEmbedding(text) {
     }
 }
 
-router.post('/webhook/:botToken', (req, res) => {
+router.post('/webhook/:botToken', async (req, res) => {
     const botToken = req.params.botToken; // Extract bot token from the URL
     const payload = req.body;
 
@@ -81,29 +81,45 @@ router.post('/webhook/:botToken', (req, res) => {
             const text = payload.message.text;
             const chatType = payload.message.chat.type; // Detect group or private chat
 
-            // Handle private or group chat
-            if (chatType === 'private' && text === "Hvordan har du det?") {
-                const reply = "Jeg har det som et mirakel!";
-                // Send the reply back to the user
-                axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                    chat_id: chatId,
-                    text: reply,
-                })
-                .then(() => console.log('Reply sent: "Jeg har det som et mirakel!"'))
-                .catch(err => console.error('Error sending reply:', err));
-            } else if (chatType === 'group' || chatType === 'supergroup') {
-                console.log(`Message detected in a group (${chatType}): "${text}"`);
-
-                // Optional: Respond to group messages
-                if (text && text.includes("?")) { // Example: Respond to questions in groups
-                    const groupReply = "Det er et godt spørsmål!";
-                    axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+            try {
+                // Handle private or group chat
+                if (chatType === 'private' && text === "Hvordan har du det?") {
+                    const reply = "Jeg har det som et mirakel!";
+                    // Send the reply back to the user
+                    await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                         chat_id: chatId,
-                        text: groupReply,
-                    })
-                    .then(() => console.log(`Reply sent to group: "Det er et godt spørsmål!"`))
-                    .catch(err => console.error('Error sending reply to group:', err));
+                        text: reply,
+                    });
+                    console.log('Reply sent: "Jeg har det som et mirakel!"');
+                } else if (chatType === 'group' || chatType === 'supergroup') {
+                    console.log(`Message detected in a group (${chatType}): "${text}"`);
+
+                    if (text && text.includes("?")) { // Example: Respond to questions in groups
+                        console.log(`Sending question to OpenAI: "${text}"`);
+
+                        // Use OpenAI's API to process the question
+                        const completion = await openai.chat.completions.create({
+                            model: "gpt-4",
+                            messages: [
+                                { role: "system", content: "You are a professional assistant. Respond in markdown with appropriate titles." },
+                                { role: "user", content: text },
+                            ],
+                        });
+
+                        const groupReply = completion.choices[0].message.content;
+
+                        // Send the OpenAI-generated response back to the group
+                        await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                            chat_id: chatId,
+                            text: groupReply,
+                            parse_mode: "Markdown", // Ensure the message is formatted as Markdown
+                        });
+
+                        console.log(`Reply sent to group: "${groupReply}"`);
+                    }
                 }
+            } catch (err) {
+                console.error('Error processing message:', err);
             }
         }
     } else if (botToken === process.env.TELEGRAM_BOT2_TOKEN) {
