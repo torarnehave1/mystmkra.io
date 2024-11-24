@@ -17,6 +17,8 @@ import sharp from 'sharp';
 
 import config from '../config/config.js';
 
+import { logMessage } from '../services/logMessage.js';
+
 // List of Endpoints:
 // - /ask: Test endpoint to verify OpenAI connection
 // - /translate-audio: Endpoint to translate audio files using the Whisper model
@@ -77,6 +79,7 @@ router.post('/webhook/:botToken', async (req, res) => {
         // Add your bot 1-specific logic here
 
         if (payload.message) {
+            await logMessage(payload.message); // Log the message to MongoDB
             const chatId = payload.message.chat.id;
             const text = payload.message.text;
             const chatType = payload.message.chat.type; // Detect group or private chat
