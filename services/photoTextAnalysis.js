@@ -26,12 +26,31 @@ export default async function analyzePhotoAndText(botToken, message) {
         const imageUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
 
         // Step 2: Prepare the text content (if any)
-        const textContent = message.caption || "Analyser dette bilde og gi en tilbake medling på hvir mange kalorier det er i det måltidet eller den maten du ser på bildet, dersom det ikk er noe mat på bildet så svarer du at det ikke er noe mat å analysere";
+        const textContent = message.caption || "";
 
-        // Step 3: Call OpenAI for analysis
+        // Step 3: Check for the required phrase
+        if (!textContent.includes("Livskraft på Tallerken")) {
+            console.log("The required phrase 'Livskraft på Tallerken' is missing. Skipping analysis.");
+            return `"Livskraft på Tallerken" må være en del av meldingen for å utføre analysen. Vennligst legg til dette i bildeteksten din.`;
+        }
+
+        // Step 4: Call OpenAI for analysis
         const response = await openai.chat.completions.create({
             model: "gpt-4o",
             messages: [
+                {
+                    role: "system",
+                    content: `Du er en ernæringsfaglig assistent som lager omfattende rapporter for måltider. Strukturer rapporten basert på denne malen:
+                    - Tittel og Introduksjon
+                    - Beskrivelse av Retten
+                    - Næringsanalyse
+                    - Retten Fordeler
+                    - Muligheter for Forbedring
+                    - Klarhet og Livskraft
+                    - Refleksjon og Brukeropplevelse
+                    - Utforsking og Neste Steg
+                    Inkluder detaljer om næringsinnhold, kalorier, og balanse mellom ingredienser.`,
+                },
                 {
                     role: "user",
                     content: [
@@ -42,11 +61,19 @@ export default async function analyzePhotoAndText(botToken, message) {
             ],
         });
 
-        // Step 4: Extract and return OpenAI's analysis
-        return response.choices[0].message.content;
+        // Step 5: Extract the OpenAI analysis and append the closing statement
+        const analysisContent = response.choices[0].message.content;
+
+        const closingStatement = `
+        "Livskraft på Tallerkenen" handler om å velge mat og drikke som gir næring til både kropp, sinn og sjel.
+        Takk for at du deler med oss i AlivenessLAβ Klarhet og Livskraft Challenge!`;
+
+        // Combine the analysis and the closing statement
+        return `${analysisContent}\n\n${closingStatement}`;
 
     } catch (error) {
         console.error("Error analyzing photo and text:", error.message || error.response?.data);
         throw new Error("Failed to analyze the image and text.");
     }
 }
+
