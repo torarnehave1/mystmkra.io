@@ -26,7 +26,7 @@ export default async function analyzePhotoAndText(botToken, message) {
         const imageUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
 
         // Step 2: Prepare the text content (if any)
-        const textContent = message.caption || "Analyze this image.";
+        const textContent = message.caption || "Analyser dette bilde og gi en tilbake medling på hvir mange kalorier det er i det måltidet eller den maten du ser på bildet, dersom det ikk er noe mat på bildet så svarer du at det ikke er noe mat å analysere";
 
         // Step 3: Call OpenAI for analysis
         const response = await openai.chat.completions.create({
