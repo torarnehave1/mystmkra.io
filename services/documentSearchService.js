@@ -42,44 +42,51 @@ export default async function searchDocuments(query) {
         // Find documents with similar embeddings
         const documents = await Mdfiles.aggregate([
             {
-                $addFields: {
-                    similarity: {
-                        $let: {
-                            vars: {
-                                queryVector: queryEmbedding,
-                                docVector: '$embeddings'
-                            },
-                            in: {
-                                $reduce: {
-                                    input: { $range: [0, { $size: '$$queryVector' }] },
-                                    initialValue: 0,
-                                    in: {
-                                        $add: [
-                                            '$$value',
-                                            {
-                                                $multiply: [
-                                                    { $arrayElemAt: ['$$queryVector', '$$this'] },
-                                                    { $arrayElemAt: ['$$docVector', '$$this'] }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                }
+              $addFields: {
+                similarity: {
+                  $let: {
+                    vars: {
+                      queryVector: queryEmbedding,
+                      docVector: '$embeddings'
+                    },
+                    in: {
+                      $reduce: {
+                        input: { $range: [0, { $size: '$$queryVector' }] },
+                        initialValue: 0,
+                        in: {
+                          $add: [
+                            '$$value',
+                            {
+                              $multiply: [
+                                { $arrayElemAt: ['$$queryVector', '$$this'] },
+                                { $arrayElemAt: ['$$docVector', '$$this'] }
+                              ]
                             }
+                          ]
                         }
+                      }
                     }
+                  }
                 }
+              }
             },
             { $sort: { similarity: -1 } },
-            { $limit: 10 }, // Limit to top 10 most similar documents
+            { $limit: 10 },
             {
-                $project: {
-                    contentSnippet: { $substr: ['$content', 0, 100] },
-                    similarity: 1,
-                    // Include other fields as needed
-                }
+              $project: {
+                contentSnippet: {
+                  $substr: [
+                    { $toString: { $ifNull: ['$content', ''] } },
+                    0,
+                    100
+                  ]
+                },
+                similarity: 1,
+                // Include other fields as needed
+              }
             }
-        ]);
+          ]);
+          
 
         return documents;
     } catch (error) {
