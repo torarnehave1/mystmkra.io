@@ -75,11 +75,15 @@ export default async function searchDocuments(query) {
             {
               $project: {
                 contentSnippet: {
-                  $cond: {
-                    if: { $or: [{ $eq: ['$content', null] }, { $eq: ['$content', ''] }] },
-                    then: 'No content available.',
-                    else: { $substr: ['$content', 0, 100] }
-                  }
+                  $substr: [
+                    {
+                      $toString: {
+                        $ifNull: ['$content', 'No content available.']
+                      }
+                    },
+                    0,
+                    100
+                  ]
                 },
                 similarity: 1,
                 content: 1, // Ensure the original content field is included
@@ -87,6 +91,7 @@ export default async function searchDocuments(query) {
               }
             }
           ]);
+          
           
           
 
