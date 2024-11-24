@@ -27,6 +27,9 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 2000 // limit each IP to 2000 requests per windowMs
 });
+
+app.set('trust proxy', true);
+
 app.use(limiter);
 
 // Set up logging

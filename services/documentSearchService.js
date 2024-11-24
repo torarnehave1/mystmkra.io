@@ -82,12 +82,11 @@ export default async function searchDocuments(query) {
                       }
                     },
                     0,
-                    100
+                    50
                   ]
                 },
                 similarity: 1,
-                content: 1, // Ensure the original content field is included
-                // Include other fields as needed
+                
               }
             }
           ]);

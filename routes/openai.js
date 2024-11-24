@@ -119,8 +119,13 @@ router.post('/webhook/:botToken', async (req, res) => {
                     } else {
                         // Format the response with the top results
                         const responseMessage = documents
-                            .map((doc, index) => `${index + 1}. ${doc.title} (Similarity: ${(doc.similarity * 100).toFixed(2)}%)`)
-                            .join('\n');
+                        .map((doc, index) => {
+                          const snippet = doc.content
+                            ? doc.content.substring(0, 100) + (doc.content.length > 100 ? '...' : '')
+                            : 'No content available.';
+                          return `${index + 1}. ${doc.title || 'Untitled'} (Similarity: ${(doc.similarity * 100).toFixed(2)}%)\nSnippet: ${snippet}`;
+                        })
+                        .join('\n\n');
 
                         await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                             chat_id: chatId,
