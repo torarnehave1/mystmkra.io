@@ -17,7 +17,7 @@ import sharp from 'sharp';
 
 import config from '../config/config.js';
 
-import { logMessage } from '../services/logMessage.js';
+import logMessage  from '../services/logMessage.js';
 
 // List of Endpoints:
 // - /ask: Test endpoint to verify OpenAI connection

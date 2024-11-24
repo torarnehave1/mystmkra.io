@@ -19,7 +19,7 @@
 
 // Solution
 // services/logMessage.js
-import TelegramLog from './models/telegramLog.js';
+import TelegramLog from '../models/telegramlog.js';
 
 const logMessage = async (message) => {
     try {
