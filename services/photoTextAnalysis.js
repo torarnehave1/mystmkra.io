@@ -15,7 +15,6 @@ const openai = new OpenAI();
 
 export default async function analyzePhotoAndText(botToken, message) {
     try {
-        // Step 1: Extract the photo URL from Telegram
         const fileId = message.photo?.[message.photo.length - 1]?.file_id;
         if (!fileId) {
             throw new Error("No image found in the message.");
@@ -25,16 +24,14 @@ export default async function analyzePhotoAndText(botToken, message) {
         const filePath = fileResponse.data.result.file_path;
         const imageUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;
 
-        // Step 2: Prepare the text content (if any)
-        const textContent = message.caption || "";
+        const textContent = message.caption || "Analyser dette bilde og gi en rapport på det som vises.";
 
-        // Step 3: Check for the required phrase
         if (!textContent.includes("Livskraft på Tallerken")) {
             console.log("The required phrase 'Livskraft på Tallerken' is missing. Skipping analysis.");
             return `"Livskraft på Tallerken" må være en del av meldingen for å utføre analysen. Vennligst legg til dette i bildeteksten din.`;
         }
 
-        // Step 4: Call OpenAI for analysis
+        // Updated OpenAI prompt
         const response = await openai.chat.completions.create({
             model: "gpt-4o",
             messages: [
@@ -49,7 +46,17 @@ export default async function analyzePhotoAndText(botToken, message) {
                     - Klarhet og Livskraft
                     - Refleksjon og Brukeropplevelse
                     - Utforsking og Neste Steg
-                    Inkluder detaljer om næringsinnhold, kalorier, og balanse mellom ingredienser.`,
+                    Bruk følgende kriterier for poengsetting på en skala fra 1 til 10:
+                    **Klarhet**:
+                    - Økologisk mat og gressfôrede dyr gir høyere score.
+                    - Minimalt bearbeidede råvarer gir høyere score.
+                    - Hurtigbearbeidet mat, tilsetningsstoffer (E-stoffer, søtningsstoffer) trekker ned.
+
+                    **Livskraft**:
+                    - Høy næringstetthet fra naturlige kilder (vitaminer, mineraler) gir høyere score.
+                    - Sunt fett (olivenolje, avokado), gressfôret kjøtt og ferske økologiske grønnsaker gir høyere score.
+                    - Raffinerte karbohydrater og usunt fett trekker ned.
+                    Inkluder en forklaring for hver score du setter.`,
                 },
                 {
                     role: "user",
@@ -61,14 +68,12 @@ export default async function analyzePhotoAndText(botToken, message) {
             ],
         });
 
-        // Step 5: Extract the OpenAI analysis and append the closing statement
         const analysisContent = response.choices[0].message.content;
 
         const closingStatement = `
         "Livskraft på Tallerkenen" handler om å velge mat og drikke som gir næring til både kropp, sinn og sjel.
         Takk for at du deler med oss i AlivenessLAβ Klarhet og Livskraft Challenge!`;
 
-        // Combine the analysis and the closing statement
         return `${analysisContent}\n\n${closingStatement}`;
 
     } catch (error) {
@@ -76,4 +81,5 @@ export default async function analyzePhotoAndText(botToken, message) {
         throw new Error("Failed to analyze the image and text.");
     }
 }
+
 
