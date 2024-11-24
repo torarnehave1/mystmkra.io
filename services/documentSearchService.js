@@ -71,21 +71,23 @@ export default async function searchDocuments(query) {
               }
             },
             { $sort: { similarity: -1 } },
-            { $limit: 10 },
+            { $limit: 2 },
             {
               $project: {
                 contentSnippet: {
-                  $substr: [
-                    { $toString: { $ifNull: ['$content', ''] } },
-                    0,
-                    100
-                  ]
+                  $cond: {
+                    if: { $or: [{ $eq: ['$content', null] }, { $eq: ['$content', ''] }] },
+                    then: 'No content available.',
+                    else: { $substr: ['$content', 0, 100] }
+                  }
                 },
                 similarity: 1,
+                content: 1, // Ensure the original content field is included
                 // Include other fields as needed
               }
             }
           ]);
+          
           
 
         return documents;
