@@ -20,6 +20,7 @@ import config from '../config/config.js';
 import logMessage  from '../services/logMessage.js';
 import generateOpenAIResponse  from '../services/openAIService.js';
 import analyzePhotoAndText  from '../services/photoTextAnalysis.js';
+import  searchDocuments  from '../services/documentSearchService.js';
 
 
 // List of Endpoints:
@@ -69,6 +70,8 @@ async function generateEmbedding(text) {
     }
 }
 
+
+
 router.post('/webhook/:botToken', async (req, res) => {
     const botToken = req.params.botToken; // Extract bot token from the URL
     const payload = req.body;
@@ -87,9 +90,48 @@ router.post('/webhook/:botToken', async (req, res) => {
             const chatType = payload.message.chat.type; // Detect group or private chat
 
             try {
-                if (chatType === 'private' && text === "Hvordan har du det?") {
+                if (text?.startsWith('/search')) {
+                    console.log('Search command detected.');
+
+                    // Extract the search query
+                    const searchQuery = text.replace('/search', '').trim();
+
+                    if (!searchQuery) {
+                        // If no search query provided, inform the user
+                        await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                            chat_id: chatId,
+                            text: "Please provide a search query after the /search command.",
+                        });
+                        return;
+                    }
+
+                    console.log(`Performing search for query: "${searchQuery}"`);
+
+                    // Call the searchDocuments function
+                    const documents = await searchDocuments(searchQuery);
+
+                    if (documents.length === 0) {
+                        // Inform the user if no documents were found
+                        await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                            chat_id: chatId,
+                            text: "No documents found matching your query.",
+                        });
+                    } else {
+                        // Format the response with the top results
+                        const responseMessage = documents
+                            .map((doc, index) => `${index + 1}. ${doc.title} (Similarity: ${(doc.similarity * 100).toFixed(2)}%)`)
+                            .join('\n');
+
+                        await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                            chat_id: chatId,
+                            text: `Search Results:\n\n${responseMessage}`,
+                            parse_mode: "Markdown",
+                        });
+
+                        console.log('Search results sent to user.');
+                    }
+                } else if (chatType === 'private' && text === "Hvordan har du det?") {
                     const reply = "Jeg har det som et mirakel!";
-                    // Send the reply back to the user
                     await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                         chat_id: chatId,
                         text: reply,
@@ -100,31 +142,31 @@ router.post('/webhook/:botToken', async (req, res) => {
 
                     if (payload.message.photo || payload.message.caption) {
                         console.log("Photo or caption detected in group. Sending for analysis.");
-                    
+
                         // Call the analyzePhotoAndText function
                         const analysisResult = await analyzePhotoAndText(botToken, payload.message);
-                    
+
                         // Send the analysis result back to the group
                         await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                             chat_id: chatId,
                             text: analysisResult,
                             parse_mode: "Markdown", // Ensure the message is formatted as Markdown
                         });
-                    
-                        console.log("Analysis result sent to group.");
-                    } 
 
-                    if (text && text.includes("?")) { // Example: Respond to questions in groups
+                        console.log("Analysis result sent to group.");
+                    }
+
+                    if (text && text.includes("?")) {
                         console.log(`Sending question to OpenAI: "${text}"`);
 
                         // Use OpenAI service to process the question
                         const groupReply = await generateOpenAIResponse(text);
-                    
+
                         // Send the OpenAI-generated response back to the group
                         await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                             chat_id: chatId,
                             text: groupReply,
-                            parse_mode: "Markdown", // Ensure the message is formatted as Markdown
+                            parse_mode: "Markdown",
                         });
 
                         console.log(`Reply sent to group: "${groupReply}"`);
@@ -143,6 +185,7 @@ router.post('/webhook/:botToken', async (req, res) => {
 
     res.status(200).send('OK'); // Respond to Telegram
 });
+
 
 
 
