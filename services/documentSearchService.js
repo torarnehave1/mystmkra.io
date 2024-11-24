@@ -71,7 +71,14 @@ export default async function searchDocuments(query) {
                 }
             },
             { $sort: { similarity: -1 } },
-            { $limit: 1 } // Limit to top 10 most similar documents
+            { $limit: 10 }, // Limit to top 10 most similar documents
+            {
+                $project: {
+                    contentSnippet: { $substr: ['$content', 0, 100] },
+                    similarity: 1,
+                    // Include other fields as needed
+                }
+            }
         ]);
 
         return documents;
@@ -80,3 +87,4 @@ export default async function searchDocuments(query) {
         throw new Error('Failed to search documents');
     }
 }
+
