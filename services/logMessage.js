@@ -63,6 +63,3 @@ const logMessage = async (message) => {
 };
 
 export default logMessage;
-
-
-export default logMessage;
