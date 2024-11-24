@@ -18,6 +18,7 @@ import sharp from 'sharp';
 import config from '../config/config.js';
 
 import logMessage  from '../services/logMessage.js';
+import generateOpenAIResponse  from '../services/openAIService.js';
 
 // List of Endpoints:
 // - /ask: Test endpoint to verify OpenAI connection
@@ -76,7 +77,6 @@ router.post('/webhook/:botToken', async (req, res) => {
     // Handle logic for each bot
     if (botToken === process.env.TELEGRAM_BOT1_TOKEN) {
         console.log('Bot 1 triggered');
-        // Add your bot 1-specific logic here
 
         if (payload.message) {
             await logMessage(payload.message); // Log the message to MongoDB
@@ -85,7 +85,6 @@ router.post('/webhook/:botToken', async (req, res) => {
             const chatType = payload.message.chat.type; // Detect group or private chat
 
             try {
-                // Handle private or group chat
                 if (chatType === 'private' && text === "Hvordan har du det?") {
                     const reply = "Jeg har det som et mirakel!";
                     // Send the reply back to the user
@@ -100,16 +99,8 @@ router.post('/webhook/:botToken', async (req, res) => {
                     if (text && text.includes("?")) { // Example: Respond to questions in groups
                         console.log(`Sending question to OpenAI: "${text}"`);
 
-                        // Use OpenAI's API to process the question
-                        const completion = await openai.chat.completions.create({
-                            model: "gpt-4",
-                            messages: [
-                                { role: "system", content: "You are a professional assistant. Respond in markdown with appropriate titles." },
-                                { role: "user", content: text },
-                            ],
-                        });
-
-                        const groupReply = completion.choices[0].message.content;
+                        // Use OpenAI service to process the question
+                        const groupReply = await generateOpenAIResponse(text);
 
                         // Send the OpenAI-generated response back to the group
                         await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {

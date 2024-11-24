@@ -26,6 +26,7 @@ const telegramLogSchema = new Schema({
     firstName: { type: String, required: true },
     lastName: { type: String },
     text: { type: String, required: true },
+    command: { type: String },
     timestamp: { type: Date, required: true },
     isGroup: { type: Boolean, required: true },
     });

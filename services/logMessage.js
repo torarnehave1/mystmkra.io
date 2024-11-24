@@ -33,6 +33,9 @@ const logMessage = async (message) => {
 
         const isGroup = chatType === 'group' || chatType === 'supergroup';
 
+        const command = text && text.startsWith('/') ? text.split(' ')[0] : null;
+
+
         const logEntry = new TelegramLog({
             messageId,
             chatId,
@@ -42,6 +45,7 @@ const logMessage = async (message) => {
             firstName,
             lastName,
             text,
+            command,
             timestamp: new Date(date * 1000),
             isGroup
         });
