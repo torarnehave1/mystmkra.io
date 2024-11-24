@@ -27,21 +27,14 @@ const logMessage = async (message) => {
             message_id: messageId,
             chat: { id: chatId, type: chatType },
             from: { id: userId, username, first_name: firstName, last_name: lastName },
+            text,
             date
         } = message;
 
-        // Handle text or caption
-        const text = message.text || message.caption;
-        if (!text) {
-            console.warn("No text or caption found to log.");
-            return;
-        }
-
         const isGroup = chatType === 'group' || chatType === 'supergroup';
+        const command = text && text.startsWith('/') ? text.split(' ')[0] : null;
 
-        const command = text.startsWith('/') ? text.split(' ')[0] : null;
-
-        const logEntry = new TelegramLog({
+        const logEntry = {
             messageId,
             chatId,
             chatType,
@@ -53,13 +46,19 @@ const logMessage = async (message) => {
             command,
             timestamp: new Date(date * 1000),
             isGroup
-        });
+        };
 
-        await logEntry.save();
+        await TelegramLog.findOneAndUpdate(
+            { messageId },
+            { $set: logEntry },
+            { upsert: true, new: true }
+        );
+
         console.log('Message logged successfully.');
     } catch (error) {
         console.error('Error logging message:', error);
     }
 };
+
 
 export default logMessage;
