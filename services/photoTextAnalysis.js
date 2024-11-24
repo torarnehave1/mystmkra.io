@@ -51,11 +51,15 @@ export default async function analyzePhotoAndText(botToken, message) {
                     - Økologisk mat og gressfôrede dyr gir høyere score.
                     - Minimalt bearbeidede råvarer gir høyere score.
                     - Hurtigbearbeidet mat, tilsetningsstoffer (E-stoffer, søtningsstoffer) trekker ned.
+                    - Anta at ost, leverpostei, og brød er bearbeidet.
+                    - Inkluder en forklaring for hver score du setter.
 
                     **Livskraft**:
                     - Høy næringstetthet fra naturlige kilder (vitaminer, mineraler) gir høyere score.
                     - Sunt fett (olivenolje, avokado), gressfôret kjøtt og ferske økologiske grønnsaker gir høyere score.
                     - Raffinerte karbohydrater og usunt fett trekker ned.
+                    - Sukkerholdige drikker, bearbeidet mat, og hurtigmat trekker ned.
+                    - Koffeinholdige drikker trekker ned.
                     Inkluder en forklaring for hver score du setter.`,
                 },
                 {
