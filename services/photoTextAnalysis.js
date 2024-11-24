@@ -13,7 +13,7 @@ const openai = new OpenAI();
  */
 
 
-export async function analyzePhotoAndText(botToken, message) {
+export default async function analyzePhotoAndText(botToken, message) {
     try {
         // Step 1: Extract the photo URL from Telegram
         const fileId = message.photo?.[message.photo.length - 1]?.file_id;

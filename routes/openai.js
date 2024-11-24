@@ -19,6 +19,8 @@ import config from '../config/config.js';
 
 import logMessage  from '../services/logMessage.js';
 import generateOpenAIResponse  from '../services/openAIService.js';
+import analyzePhotoAndText  from '../services/photoTextAnalysis.js';
+
 
 // List of Endpoints:
 // - /ask: Test endpoint to verify OpenAI connection
@@ -96,12 +98,28 @@ router.post('/webhook/:botToken', async (req, res) => {
                 } else if (chatType === 'group' || chatType === 'supergroup') {
                     console.log(`Message detected in a group (${chatType}): "${text}"`);
 
+                    if (payload.message.photo || payload.message.caption) {
+                        console.log("Photo or caption detected in group. Sending for analysis.");
+                    
+                        // Call the analyzePhotoAndText function
+                        const analysisResult = await analyzePhotoAndText(botToken, payload.message);
+                    
+                        // Send the analysis result back to the group
+                        await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                            chat_id: chatId,
+                            text: analysisResult,
+                            parse_mode: "Markdown", // Ensure the message is formatted as Markdown
+                        });
+                    
+                        console.log("Analysis result sent to group.");
+                    } 
+
                     if (text && text.includes("?")) { // Example: Respond to questions in groups
                         console.log(`Sending question to OpenAI: "${text}"`);
 
                         // Use OpenAI service to process the question
                         const groupReply = await generateOpenAIResponse(text);
-
+                    
                         // Send the OpenAI-generated response back to the group
                         await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                             chat_id: chatId,
