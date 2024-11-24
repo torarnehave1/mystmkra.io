@@ -26,7 +26,7 @@ const logMessage = async (message) => {
         const {
             message_id: messageId,
             chat: { id: chatId, type: chatType },
-            from: { id: userId, username, first_name: firstName, last_name },
+            from: { id: userId, username, first_name: firstName, last_name: lastName },
             text,
             date
         } = message;
