@@ -87,54 +87,45 @@ router.post('/webhook/:botToken', async (req, res) => {
         console.log('Bot 1 triggered');
 
         if (payload.message) {
-            await logMessage(payload.message); // Log the message to MongoDB
             const chatId = payload.message.chat.id;
             const text = payload.message.text;
             const chatType = payload.message.chat.type; // Detect group or private chat
 
+            // Check the current state for this chat
+            const currentState = conversationStates[chatId] || 'default';
+
             try {
-                if (text?.startsWith('/search')) {
-                    console.log('Search command detected.');
-
-                    // Extract the search query
-                    const searchQuery = text.replace('/search', '').trim();
-
-                    if (!searchQuery) {
-                        // If no search query provided, inform the user
+                // Handle different states
+                if (currentState === 'awaitingSearchQuery') {
+                    if (!text || text.trim() === '') {
+                        // Prompt user again if no valid query is provided
                         await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                             chat_id: chatId,
-                            text: "Please provide a search query after the /search command.",
+                            text: "Please provide a valid search query.",
                         });
                         return;
                     }
 
-                    console.log(`Performing search for query: "${searchQuery}"`);
+                    console.log(`Performing search for query: "${text.trim()}"`);
 
                     // Call the searchDocuments function
-                    const documents = await searchDocuments(searchQuery);
+                    const documents = await searchDocuments(text.trim());
 
                     if (documents.length === 0) {
-                        // Inform the user if no documents were found
                         await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                             chat_id: chatId,
                             text: "No documents found matching your query.",
                         });
                     } else {
-                        // Process each document using extractContentElements
-                        
-
                         const processedDocuments = documents.map((doc) => {
-
                             console.log('Document content:', doc.content || 'No content available.');
-
                             const extracted = extractContentElements(doc.content || '');
                             return {
                                 similarity: doc.similarity,
-                                ...extracted, // Include imageUrl, title, and excerpt
+                                ...extracted,
                             };
                         });
 
-                        // Format the response with the processed results
                         const responseMessage = processedDocuments
                             .map((doc, index) => {
                                 return `${index + 1}. ${doc.title || 'Untitled'} (Similarity: ${(doc.similarity * 100).toFixed(2)}%)\nImage: ${doc.imageUrl || 'No image'}\nExcerpt: ${doc.excerpt}`;
@@ -149,46 +140,59 @@ router.post('/webhook/:botToken', async (req, res) => {
 
                         console.log('Search results sent to user.');
                     }
-                } else if (chatType === 'private' && text === "Hvordan har du det?") {
-                    const reply = "Jeg har det som et mirakel!";
+
+                    // Reset state after search
+                    conversationStates[chatId] = 'default';
+                } else if (text?.startsWith('/search')) {
+                    console.log('Search command detected.');
+
+                    // Transition to 'awaitingSearchQuery' state
+                    conversationStates[chatId] = 'awaitingSearchQuery';
+
                     await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                         chat_id: chatId,
-                        text: reply,
+                        text: "What would you like to search for? Please provide a query.",
                     });
-                    console.log('Reply sent: "Jeg har det som et mirakel!"');
-                } else if (chatType === 'group' || chatType === 'supergroup') {
-                    console.log(`Message detected in a group (${chatType}): "${text}"`);
+                } else {
+                    console.log(`Message detected in state '${currentState}': "${text}"`);
 
-                    if (payload.message.photo || payload.message.caption) {
-                        console.log("Photo or caption detected in group. Sending for analysis.");
-
-                        // Call the analyzePhotoAndText function
-                        const analysisResult = await analyzePhotoAndText(botToken, payload.message);
-
-                        // Send the analysis result back to the group
+                    if (chatType === 'private' && text === "Hvordan har du det?") {
+                        const reply = "Jeg har det som et mirakel!";
                         await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                             chat_id: chatId,
-                            text: analysisResult,
-                            parse_mode: "Markdown", // Ensure the message is formatted as Markdown
+                            text: reply,
                         });
+                        console.log('Reply sent: "Jeg har det som et mirakel!"');
+                    } else if (chatType === 'group' || chatType === 'supergroup') {
+                        console.log(`Message detected in a group (${chatType}): "${text}"`);
 
-                        console.log("Analysis result sent to group.");
-                    }
+                        if (payload.message.photo || payload.message.caption) {
+                            console.log("Photo or caption detected in group. Sending for analysis.");
 
-                    if (text && text.includes("?")) {
-                        console.log(`Sending question to OpenAI: "${text}"`);
+                            const analysisResult = await analyzePhotoAndText(botToken, payload.message);
 
-                        // Use OpenAI service to process the question
-                        const groupReply = await generateOpenAIResponse(text);
+                            await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                                chat_id: chatId,
+                                text: analysisResult,
+                                parse_mode: "Markdown",
+                            });
 
-                        // Send the OpenAI-generated response back to the group
-                        await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                            chat_id: chatId,
-                            text: groupReply,
-                            parse_mode: "Markdown",
-                        });
+                            console.log("Analysis result sent to group.");
+                        }
 
-                        console.log(`Reply sent to group: "${groupReply}"`);
+                        if (text && text.includes("?")) {
+                            console.log(`Sending question to OpenAI: "${text}"`);
+
+                            const groupReply = await generateOpenAIResponse(text);
+
+                            await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                                chat_id: chatId,
+                                text: groupReply,
+                                parse_mode: "Markdown",
+                            });
+
+                            console.log(`Reply sent to group: "${groupReply}"`);
+                        }
                     }
                 }
             } catch (err) {
@@ -204,6 +208,7 @@ router.post('/webhook/:botToken', async (req, res) => {
 
     res.status(200).send('OK'); // Respond to Telegram
 });
+
 
 
 
