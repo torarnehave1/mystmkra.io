@@ -121,9 +121,12 @@ router.post('/webhook/:botToken', async (req, res) => {
                         });
                     } else {
                         // Process each document using extractContentElements
-                        console.log('Document content:', doc.content || 'No content available.');
+                        
 
                         const processedDocuments = documents.map((doc) => {
+
+                            console.log('Document content:', doc.content || 'No content available.');
+
                             const extracted = extractContentElements(doc.content || '');
                             return {
                                 similarity: doc.similarity,
