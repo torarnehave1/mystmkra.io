@@ -29,6 +29,7 @@ const telegramLogSchema = new Schema({
     command: { type: String },
     timestamp: { type: Date, required: true },
     isGroup: { type: Boolean, required: true },
+    isOutgoing: { type: Boolean, default: false },
     });
 
 telegramLogSchema.index({ chatId: 1, userId: 1 });
