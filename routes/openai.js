@@ -21,6 +21,7 @@ import logMessage  from '../services/logMessage.js';
 import generateOpenAIResponse  from '../services/openAIService.js';
 import analyzePhotoAndText  from '../services/photoTextAnalysis.js';
 import  searchDocuments  from '../services/documentSearchService.js';
+import extractContentElements from '../services/extractContentfromMarkdown.js';
 
 
 // List of Endpoints:
@@ -72,6 +73,8 @@ async function generateEmbedding(text) {
 
 
 
+
+
 router.post('/webhook/:botToken', async (req, res) => {
     const botToken = req.params.botToken; // Extract bot token from the URL
     const payload = req.body;
@@ -117,15 +120,21 @@ router.post('/webhook/:botToken', async (req, res) => {
                             text: "No documents found matching your query.",
                         });
                     } else {
-                        // Format the response with the top results
-                        const responseMessage = documents
-                        .map((doc, index) => {
-                          const snippet = doc.content
-                            ? doc.content.substring(0, 100) + (doc.content.length > 100 ? '...' : '')
-                            : 'No content available.';
-                          return `${index + 1}. ${doc.title || 'Untitled'} (Similarity: ${(doc.similarity * 100).toFixed(2)}%)\nSnippet: ${snippet}`;
-                        })
-                        .join('\n\n');
+                        // Process each document using extractContentElements
+                        const processedDocuments = documents.map((doc) => {
+                            const extracted = extractContentElements(doc.content || '');
+                            return {
+                                similarity: doc.similarity,
+                                ...extracted, // Include imageUrl, title, and excerpt
+                            };
+                        });
+
+                        // Format the response with the processed results
+                        const responseMessage = processedDocuments
+                            .map((doc, index) => {
+                                return `${index + 1}. ${doc.title || 'Untitled'} (Similarity: ${(doc.similarity * 100).toFixed(2)}%)\nImage: ${doc.imageUrl || 'No image'}\nExcerpt: ${doc.excerpt}`;
+                            })
+                            .join('\n\n');
 
                         await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                             chat_id: chatId,
@@ -194,6 +203,7 @@ router.post('/webhook/:botToken', async (req, res) => {
 
 
 
+
 router.get('/search-documents', async (req, res) => {
     const { query } = req.query;
   
@@ -247,6 +257,81 @@ router.get('/search-documents', async (req, res) => {
       res.status(500).json({ message: 'Error searching documents', error: err.message });
     }
   });
+  
+
+  
+
+router.get('/search-documents-content', async (req, res) => {
+  const { query } = req.query;
+
+  try {
+    // Generate embedding for the query
+    const queryEmbedding = await generateEmbedding(query);
+
+    // Ensure the embedding is valid
+    if (!Array.isArray(queryEmbedding) || !queryEmbedding.every(item => typeof item === 'number')) {
+      return res.status(400).json({ message: 'Invalid query embedding format.' });
+    }
+
+    // Find documents with similar embeddings
+    const documents = await Mdfiles.aggregate([
+      {
+        $addFields: {
+          similarity: {
+            $let: {
+              vars: {
+                queryVector: queryEmbedding,
+                docVector: '$embeddings',
+              },
+              in: {
+                $reduce: {
+                  input: { $range: [0, { $size: '$$queryVector' }] },
+                  initialValue: 0,
+                  in: {
+                    $add: [
+                      '$$value',
+                      {
+                        $multiply: [
+                          { $arrayElemAt: ['$$queryVector', '$$this'] },
+                          { $arrayElemAt: ['$$docVector', '$$this'] },
+                        ],
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      { $sort: { similarity: -1 } },
+      { $limit: 10 }, // Limit to top 10 most similar documents
+      {
+        $project: {
+          _id: 0, // Exclude the _id field
+          content: 1, // Include the full content for processing
+          similarity: 1, // Include similarity for sorting
+        },
+      },
+    ]);
+
+    // Process documents using extractContentElements
+    const processedDocuments = documents.map((doc) => {
+      const extracted = extractContentElements(doc.content || '');
+      return {
+        similarity: doc.similarity,
+        ...extracted, // Include imageUrl, title, and excerpt
+      };
+    });
+
+    res.status(200).json(processedDocuments);
+  } catch (err) {
+    console.error('Error searching documents:', err);
+    res.status(500).json({ message: 'Error searching documents', error: err.message });
+  }
+});
+
+  
   
   
  
