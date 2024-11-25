@@ -78,51 +78,52 @@ router.post('/webhook/:botToken', async (req, res) => {
     const payload = req.body;
 
     console.log(`Received webhook for bot: ${botToken}`);
+    console.log('Payload:', payload);
 
-    // Handle logic for each bot
-    if (botToken === process.env.TELEGRAM_BOT1_TOKEN) {
-        console.log('Bot 1 triggered');
+    if (botToken === process.env.TELEGRAM_BOT1_TOKEN || botToken === process.env.TELEGRAM_BOT2_TOKEN) {
+        console.log('Bot triggered');
 
         if (payload.message) {
             const chatId = payload.message.chat.id;
-            const text = payload.message.text;
 
-            // Check and log current state for this chat
-            const currentState = conversationStates[chatId] || 'default';
-            console.log(`Current state for chat ${chatId}: ${currentState}`);
+            // Log the received message
+            await logMessage(payload.message);
 
-            try {
-                // Send a simple "OK" message back
-                await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                    chat_id: chatId,
-                    text: "OK",
-                });
-            } catch (err) {
-                console.error('Error sending message:', err);
+            // Ensure a default state exists for the chat
+            if (!conversationStates[chatId]) {
+                conversationStates[chatId] = 'default';
             }
-        }
-    } else if (botToken === process.env.TELEGRAM_BOT2_TOKEN) {
-        console.log('Bot 2 triggered');
-
-        if (payload.message) {
-            const chatId = payload.message.chat.id;
 
             try {
-                // Send a simple "OK" message back
-                await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                // Prepare the bot's response
+                const response = {
                     chat_id: chatId,
                     text: "OK",
-                });
+                };
+
+                // Send the response
+                const botResponse = await axios.post(
+                    `https://api.telegram.org/bot${botToken}/sendMessage`,
+                    response
+                );
+
+                console.log('Message "OK" sent');
+
+                // Log the outgoing response
+                if (botResponse.data && botResponse.data.result) {
+                    await logMessage(botResponse.data.result, true); // Log as outgoing
+                }
             } catch (err) {
                 console.error('Error sending message:', err);
             }
         }
     } else {
-        console.log('Unknown bot');
+        console.log('Unknown bot token');
     }
 
     res.status(200).send('OK'); // Respond to Telegram
 });
+
 
 
 
