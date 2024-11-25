@@ -71,6 +71,7 @@ async function generateEmbedding(text) {
     }
 }
 
+const conversationStates = {};
 
 router.post('/webhook/:botToken', async (req, res) => {
     const botToken = req.params.botToken; // Extract bot token from the URL
