@@ -72,10 +72,60 @@ async function generateEmbedding(text) {
 }
 
 
-
-
-
 router.post('/webhook/:botToken', async (req, res) => {
+    const botToken = req.params.botToken; // Extract bot token from the URL
+    const payload = req.body;
+
+    console.log(`Received webhook for bot: ${botToken}`);
+
+    // Handle logic for each bot
+    if (botToken === process.env.TELEGRAM_BOT1_TOKEN) {
+        console.log('Bot 1 triggered');
+
+        if (payload.message) {
+            const chatId = payload.message.chat.id;
+            const text = payload.message.text;
+
+            // Check and log current state for this chat
+            const currentState = conversationStates[chatId] || 'default';
+            console.log(`Current state for chat ${chatId}: ${currentState}`);
+
+            try {
+                // Send a simple "OK" message back
+                await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    chat_id: chatId,
+                    text: "OK",
+                });
+            } catch (err) {
+                console.error('Error sending message:', err);
+            }
+        }
+    } else if (botToken === process.env.TELEGRAM_BOT2_TOKEN) {
+        console.log('Bot 2 triggered');
+
+        if (payload.message) {
+            const chatId = payload.message.chat.id;
+
+            try {
+                // Send a simple "OK" message back
+                await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    chat_id: chatId,
+                    text: "OK",
+                });
+            } catch (err) {
+                console.error('Error sending message:', err);
+            }
+        }
+    } else {
+        console.log('Unknown bot');
+    }
+
+    res.status(200).send('OK'); // Respond to Telegram
+});
+
+
+
+router.post('/webhook2/:botToken', async (req, res) => {
     const botToken = req.params.botToken; // Extract bot token from the URL
     const payload = req.body;
 
