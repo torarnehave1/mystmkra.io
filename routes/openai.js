@@ -48,7 +48,61 @@ const openai = new OpenAI({
 
 let currentThreadId = null;  // In-memory store for the current thread ID
 
+const performSearch = async (query) => {
+    try {
+        // Generate embedding for the query
+        const queryEmbedding = await generateEmbedding(query);
 
+        // Ensure the embedding is valid
+        if (!Array.isArray(queryEmbedding) || !queryEmbedding.every(item => typeof item === 'number')) {
+            throw new Error('Invalid query embedding format.');
+        }
+
+        // Find documents with similar embeddings
+        const documents = await Mdfiles.aggregate([
+            {
+                $addFields: {
+                    similarity: {
+                        $let: {
+                            vars: {
+                                queryVector: queryEmbedding,
+                                docVector: '$embeddings'
+                            },
+                            in: {
+                                $reduce: {
+                                    input: { $range: [0, { $size: '$$queryVector' }] },
+                                    initialValue: 0,
+                                    in: {
+                                        $add: [
+                                            '$$value',
+                                            {
+                                                $multiply: [
+                                                    { $arrayElemAt: ['$$queryVector', '$$this'] },
+                                                    { $arrayElemAt: ['$$docVector', '$$this'] }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            { $sort: { similarity: -1 } },
+            { $limit: 10 } // Limit to top 10 most similar documents
+        ]);
+
+        return documents.map(doc => ({
+            title: doc.title,
+            similarity: doc.similarity,
+            excerpt: doc.excerpt || doc.content?.slice(0, 100), // Provide an excerpt
+        }));
+    } catch (err) {
+        console.error('Error searching documents:', err);
+        throw err;
+    }
+};
 
 /**
  * Function to generate embeddings using OpenAI
@@ -85,6 +139,7 @@ router.post('/webhook/:botToken', async (req, res) => {
 
         if (payload.message) {
             const chatId = payload.message.chat.id;
+            const text = payload.message.text;
 
             // Log the received message
             await logMessage(payload.message);
@@ -95,26 +150,55 @@ router.post('/webhook/:botToken', async (req, res) => {
             }
 
             try {
-                // Prepare the bot's response
-                const response = {
-                    chat_id: chatId,
-                    text: "OK",
-                };
+                if (text.startsWith('//FIND')) {
+                    const query = text.replace('//FIND', '').trim();
 
-                // Send the response
-                const botResponse = await axios.post(
-                    `https://api.telegram.org/bot${botToken}/sendMessage`,
-                    response
-                );
+                    if (!query) {
+                        await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                            chat_id: chatId,
+                            text: "Please provide a search query after `//FIND`.",
+                        });
+                        return;
+                    }
 
-                console.log('Message "OK" sent');
+                    console.log(`Searching for documents with query: "${query}"`);
 
-                // Log the outgoing response
-                if (botResponse.data && botResponse.data.result) {
-                    await logMessage(botResponse.data.result, true); // Log as outgoing
+                    // Perform the search
+                    const documents = await performSearch(query);
+
+                    if (documents.length === 0) {
+                        await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                            chat_id: chatId,
+                            text: "No documents found matching your query.",
+                        });
+                    } else {
+                        // Prepare the response
+                        const responseMessage = documents
+                            .map((doc, index) => {
+                                return `${index + 1}. ${doc.title || 'Untitled'} (Similarity: ${(doc.similarity * 100).toFixed(2)}%)\nExcerpt: ${doc.excerpt || 'No excerpt available.'}`;
+                            })
+                            .join('\n\n');
+
+                        await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                            chat_id: chatId,
+                            text: `Search Results:\n\n${responseMessage}`,
+                            parse_mode: "Markdown",
+                        });
+                    }
+                } else {
+                    // Send a default response for testing
+                    await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                        chat_id: chatId,
+                        text: "OK",
+                    });
                 }
             } catch (err) {
-                console.error('Error sending message:', err);
+                console.error('Error processing message:', err);
+
+                await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    chat_id: chatId,
+                    text: "An error occurred while processing your request. Please try again later.",
+                });
             }
         }
     } else {
@@ -123,6 +207,7 @@ router.post('/webhook/:botToken', async (req, res) => {
 
     res.status(200).send('OK'); // Respond to Telegram
 });
+
 
 
 
