@@ -96,19 +96,21 @@ const performSearch = async (query) => {
                 $project: {
                     _id: 0, // Exclude the _id field
                     title: 1, // Include the title field
-                    URL: 1, // Include only the URL field
+                    URL: 1, // Include the URL field
                 },
             },
         ]);
 
-        // Extract and return only the URLs
-        const urls = documents.map(doc => doc.URL);
-        return urls;
+        return documents.map(doc => ({
+            title: doc.title || 'Untitled',
+            URL: doc.URL || 'No URL available',
+        }));
     } catch (err) {
         console.error('Error performing search:', err);
         throw err;
     }
 };
+
 
 
 
