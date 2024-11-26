@@ -204,18 +204,16 @@ router.post('/webhook/:botToken', async (req, res) => {
 
                         // Iterate through the documents and send each as a separate message
                         for (const doc of documents) {
-                            const message = `
-*Title*: ${doc.title || 'Untitled'}
-*Similarity*: ${(doc.similarity * 100).toFixed(2)}%
-*Excerpt*: ${doc.excerpt || 'No excerpt available.'}
-*Image URL*: ${doc.imageUrl || 'No image available'}
-                            `.trim();
+                            const responseMessage = JSON.stringify(doc, null, 2);
 
                             await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                                 chat_id: chatId,
-                                text: message,
+                                text: `Search Results:\n\n${responseMessage}`,
                                 parse_mode: "Markdown",
                             });
+
+                            // Introduce a delay between messages to avoid hitting Telegram rate limits
+                            await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
                         }
 
                         console.log('All documents sent as separate messages.');
