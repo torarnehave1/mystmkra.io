@@ -66,7 +66,7 @@ const performSearch = async (query) => {
                         $let: {
                             vars: {
                                 queryVector: queryEmbedding,
-                                docVector: '$embeddings'
+                                docVector: '$embeddings',
                             },
                             in: {
                                 $reduce: {
@@ -78,41 +78,44 @@ const performSearch = async (query) => {
                                             {
                                                 $multiply: [
                                                     { $arrayElemAt: ['$$queryVector', '$$this'] },
-                                                    { $arrayElemAt: ['$$docVector', '$$this'] }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                                                    { $arrayElemAt: ['$$docVector', '$$this'] },
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
             },
             { $sort: { similarity: -1 } },
-            { $limit: 2}, // Limit to top 10 most similar documents
+            { $limit: 2 }, // Limit to top 2 most similar documents
             {
                 $project: {
-                  _id: 0, // Exclude the _id field
-                  content: 1, // Include the full content for processing
-                  similarity: 1, // Include similarity for sorting
+                    _id: 0, // Exclude the _id field
+                    content: 1, // Include the full content for processing
+                    similarity: 1, // Include similarity for sorting
                 },
-              },
+            },
         ]);
 
+        // Process documents using extractContentElements
+        const processedDocuments = documents.map((doc) => {
+            const extracted = extractContentElements(doc.content || '');
+            return {
+                similarity: doc.similarity,
+                ...extracted, // Include extracted fields like imageUrl, title, and excerpt
+            };
+        });
 
-//ny code
-
-
-
-// Process documents using extractContentElements
-const processedDocuments = documents.map((doc) => {
-const extracted = extractContentElements(doc.content || '');
-return {
-  similarity: doc.similarity,
-  ...extracted, // Include imageUrl, title, and excerpt
+        return processedDocuments;
+    } catch (err) {
+        console.error('Error performing search:', err);
+        throw err;
+    }
 };
-});
+
 
 
 
