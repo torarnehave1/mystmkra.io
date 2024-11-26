@@ -102,10 +102,12 @@ const performSearch = async (query) => {
 
         // Process documents using extractContentElements
         const processedDocuments = documents.map((doc) => {
-            const extracted = extractContentElements(doc.content || '');
+            const extracted = extractContentElements(doc.content || ''); // Assuming this function extracts imageUrl, title, and excerpt
             return {
-                similarity: doc.similarity,
-                ...extracted, // Include extracted fields like imageUrl, title, and excerpt
+                similarity: doc.similarity, // Include similarity
+                imageUrl: extracted.imageUrl, // Extracted image URL
+                title: extracted.title, // Extracted title
+                excerpt: extracted.excerpt, // Extracted excerpt
             };
         });
 
@@ -115,6 +117,7 @@ const performSearch = async (query) => {
         throw err;
     }
 };
+
 
 
 
