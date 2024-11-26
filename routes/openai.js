@@ -191,25 +191,28 @@ router.post('/webhook/:botToken', async (req, res) => {
                             text: "No documents found matching your query.",
                         });
                     } else {
-                        // Prepare the response
-                        const responseMessage = documents
-                            .map((doc, index) => {
-                                return `${index + 1}. ${doc.title || 'Untitled'} (Similarity: ${(doc.similarity * 100).toFixed(2)}%)\nExcerpt: ${doc.excerpt || 'No excerpt available.'}`;
-                            })
-                            .join('\n\n');
-
+                        // Send the original response directly
                         await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                             chat_id: chatId,
-                            text: `Search Results:\n\n${responseMessage}`,
+                            text: `Search Results:\n\n${JSON.stringify(documents, null, 2)}`,
                             parse_mode: "Markdown",
                         });
+
+                        console.log('Search results sent to user.');
                     }
+
+                    // Return the original response to the HTTP client
+                    res.status(200).json(documents);
+                    return; // Exit after sending the HTTP response
                 } else {
                     // Send a default response for testing
                     await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                         chat_id: chatId,
                         text: "OK",
                     });
+
+                    res.status(200).send('OK'); // Respond to Telegram
+                    return;
                 }
             } catch (err) {
                 console.error('Error processing message:', err);
@@ -218,14 +221,17 @@ router.post('/webhook/:botToken', async (req, res) => {
                     chat_id: chatId,
                     text: "An error occurred while processing your request. Please try again later.",
                 });
+
+                res.status(500).json({ error: 'An error occurred while processing your request.' });
+                return;
             }
         }
     } else {
         console.log('Unknown bot token');
+        res.status(400).json({ error: 'Invalid bot token.' });
     }
-
-    res.status(200).send('OK'); // Respond to Telegram
 });
+
 
 
 
