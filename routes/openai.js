@@ -111,7 +111,8 @@ const performSearch = async (query) => {
             similarity: (doc.similarity * 100).toFixed(2) + '%', // Format similarity as percentage
 
 
-                title: `<a href="${doc.URL}" target="_blank">${doc.title}</a>`, // Clickable title with URL
+                title: doc.title, // Clickable title with URL
+                URL: doc.URL, // URL to the original document
                // imageUrl: extracted.imageUrl, // Extracted image URL
         
                 excerpt: extracted.excerpt, // Extracted excerpt
