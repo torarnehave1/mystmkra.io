@@ -167,7 +167,7 @@ router.post('/webhook/:botToken', async (req, res) => {
 
         if (payload.message) {
             const chatId = payload.message.chat.id;
-            const text = payload.message.text; // Extract the text from the message
+            const text = payload.message.text;
 
             // Log the received message
             await logMessage(payload.message);
@@ -178,7 +178,7 @@ router.post('/webhook/:botToken', async (req, res) => {
             }
 
             try {
-                if (text && text.startsWith('//FIND')) { // Check if text exists before calling startsWith
+                if (text.startsWith('//FIND')) {
                     const query = text.replace('//FIND', '').trim();
 
                     if (!query) {
@@ -200,36 +200,21 @@ router.post('/webhook/:botToken', async (req, res) => {
                             text: "No documents found matching your query.",
                         });
                     } else {
-                        console.log('Sending results to Telegram.');
+                        // Send the original response directly
+                        await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                            chat_id: chatId,
+                            text: `Search Results:\n\n${JSON.stringify(documents, null, 2)}`,
+                            parse_mode: "Markdown",
+                        });
 
-                        // Iterate through the documents and send each as a separate message
-                        for (const doc of documents) {
-                            const responseMessage = JSON.stringify(doc, null, 2);
-
-                            await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                                chat_id: chatId,
-                                text: `Search Results:\n\n${responseMessage}`,
-                                parse_mode: "Markdown",
-                            });
-
-                            // Introduce a delay between messages to avoid hitting Telegram rate limits
-                          //  await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
-                        }
-
-                        console.log('All documents sent as separate messages.');
+                        console.log('Search results sent to user.');
                     }
 
                     // Return the original response to the HTTP client
                     res.status(200).json(documents);
                     return; // Exit after sending the HTTP response
-                } else if (!text) { // Handle cases where the message has no text
-                    await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                        chat_id: chatId,
-                        text: "Sorry, I can only process text messages.",
-                    });
-                    return;
                 } else {
-                    // Send a default response for other text messages
+                    // Send a default response for testing
                     await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                         chat_id: chatId,
                         text: "OK",
@@ -255,8 +240,6 @@ router.post('/webhook/:botToken', async (req, res) => {
         res.status(400).json({ error: 'Invalid bot token.' });
     }
 });
-
-
 
 
 
