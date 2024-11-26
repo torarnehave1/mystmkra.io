@@ -200,14 +200,25 @@ router.post('/webhook/:botToken', async (req, res) => {
                             text: "No documents found matching your query.",
                         });
                     } else {
-                        // Send the original response directly
-                        await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                            chat_id: chatId,
-                            text: `Search Results:\n\n${JSON.stringify(documents, null, 2)}`,
-                            parse_mode: "Markdown",
-                        });
+                        console.log('Sending results to Telegram.');
 
-                        console.log('Search results sent to user.');
+                        // Iterate through the documents and send each as a separate message
+                        for (const doc of documents) {
+                            const message = `
+*Title*: ${doc.title || 'Untitled'}
+*Similarity*: ${(doc.similarity * 100).toFixed(2)}%
+*Excerpt*: ${doc.excerpt || 'No excerpt available.'}
+*Image URL*: ${doc.imageUrl || 'No image available'}
+                            `.trim();
+
+                            await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                                chat_id: chatId,
+                                text: message,
+                                parse_mode: "Markdown",
+                            });
+                        }
+
+                        console.log('All documents sent as separate messages.');
                     }
 
                     // Return the original response to the HTTP client
@@ -240,6 +251,7 @@ router.post('/webhook/:botToken', async (req, res) => {
         res.status(400).json({ error: 'Invalid bot token.' });
     }
 });
+
 
 
 
