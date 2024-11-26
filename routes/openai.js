@@ -160,39 +160,21 @@ router.post('/webhook/:botToken', async (req, res) => {
     const payload = req.body;
 
     console.log(`Received webhook for bot: ${botToken}`);
-    console.log('Payload:', payload);
+    console.log('Payload:', JSON.stringify(payload, null, 2));
 
     if (botToken === process.env.TELEGRAM_BOT1_TOKEN || botToken === process.env.TELEGRAM_BOT2_TOKEN) {
         console.log('Bot triggered');
 
         if (payload.message) {
             const chatId = payload.message.chat.id;
-            const text = payload.message.text;
-
-            // Log the received message
-            await logMessage(payload.message);
-
-            // Ensure a default state exists for the chat
-            if (!conversationStates[chatId]) {
-                conversationStates[chatId] = 'default';
-            }
+            const text = payload.message.text; // Extract the text from the message
 
             try {
-                if (text.startsWith('//FIND')) {
-                    const query = text.replace('//FIND', '').trim();
-
-                    if (!query) {
-                        await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                            chat_id: chatId,
-                            text: "Please provide a search query after `//FIND`.",
-                        });
-                        return;
-                    }
-
-                    console.log(`Searching for documents with query: "${query}"`);
+                if (text && text.includes('?')) {
+                    console.log(`Performing search for query: "${text}"`);
 
                     // Perform the search
-                    const documents = await performSearch(query);
+                    const documents = await performSearch(text);
 
                     if (documents.length === 0) {
                         await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
@@ -223,14 +205,11 @@ router.post('/webhook/:botToken', async (req, res) => {
                     res.status(200).json(documents);
                     return; // Exit after sending the HTTP response
                 } else {
-                    // Send a default response for testing
+                    console.log('Message does not contain a question mark.');
                     await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                         chat_id: chatId,
-                        text: "OK",
+                        text: "Please include a `?` in your message to perform a search.",
                     });
-
-                    res.status(200).send('OK'); // Respond to Telegram
-                    return;
                 }
             } catch (err) {
                 console.error('Error processing message:', err);
@@ -249,6 +228,7 @@ router.post('/webhook/:botToken', async (req, res) => {
         res.status(400).json({ error: 'Invalid bot token.' });
     }
 });
+
 
 
 
