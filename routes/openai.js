@@ -90,14 +90,37 @@ const performSearch = async (query) => {
                 }
             },
             { $sort: { similarity: -1 } },
-            { $limit: 10 } // Limit to top 10 most similar documents
+            { $limit: 2}, // Limit to top 10 most similar documents
+            {
+                $project: {
+                  _id: 0, // Exclude the _id field
+                  content: 1, // Include the full content for processing
+                  similarity: 1, // Include similarity for sorting
+                },
+              },
         ]);
 
-        return documents.map(doc => ({
-            title: doc.title,
-            similarity: doc.similarity,
-            excerpt: doc.excerpt || doc.content?.slice(0, 100), // Provide an excerpt
-        }));
+
+//ny code
+
+
+
+// Process documents using extractContentElements
+const processedDocuments = documents.map((doc) => {
+const extracted = extractContentElements(doc.content || '');
+return {
+  similarity: doc.similarity,
+  ...extracted, // Include imageUrl, title, and excerpt
+};
+});
+
+
+
+       // return documents.map(doc => ({
+         //   title: doc.title,
+          //  similarity: doc.similarity,
+           // excerpt: doc.excerpt || doc.content?.slice(0, 100), // Provide an excerpt
+       // }));
     } catch (err) {
         console.error('Error searching documents:', err);
         throw err;
