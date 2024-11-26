@@ -95,6 +95,7 @@ const performSearch = async (query) => {
             {
                 $project: {
                     _id: 0, // Exclude the _id field
+                    title: 1, // Include the title field
                     URL: 1, // Include only the URL field
                 },
             },
