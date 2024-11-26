@@ -91,41 +91,24 @@ const performSearch = async (query) => {
                 },
             },
             { $sort: { similarity: -1 } },
-            { $limit: 5 }, // Limit to top 2 most similar documents
+            { $limit: 5 }, // Limit to top 5 most similar documents
             {
                 $project: {
                     _id: 0, // Exclude the _id field
-                  //  content: 1, // Include the full content for processing
-                    similarity: 1, // Include similarity for sorting
-                  //  title: 1, // Include title
-                 //   URL: 1, // Include URL
+                    URL: 1, // Include only the URL field
                 },
             },
         ]);
 
-        // Process documents using extractContentElements
-        const processedDocuments = documents.map((doc) => {
-           // const extracted = extractContentElements(doc.content || ''); // Assuming this function extracts imageUrl, title, and excerpt
-            return {
-               
-            //Relevans: (doc.similarity * 100).toFixed(2) + '%', // Format similarity as percentage
-
-
-                //title: doc.title, // Clickable title with URL
-                URL: doc.URL, // URL to the original document
-               // imageUrl: extracted.imageUrl, // Extracted image URL
-        
-               // excerpt: extracted.excerpt, // Extracted excerpt
-               
-            };
-        });
-
-        return processedDocuments;
+        // Extract and return only the URLs
+        const urls = documents.map(doc => doc.URL);
+        return urls;
     } catch (err) {
         console.error('Error performing search:', err);
         throw err;
     }
 };
+
 
 
 
@@ -198,8 +181,10 @@ router.post('/webhook/:botToken', async (req, res) => {
 
                             await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                                 chat_id: chatId,
-                                text: `Search Results:\n\n${doc.URL}`,
-                               // parse_mode: "Markdown",
+                                text: `Search Results:\n\n${responseMessage}`,
+                                parse_mode: "Markdown",
+//I only want the URL field in the response
+
                             });
 
                            
