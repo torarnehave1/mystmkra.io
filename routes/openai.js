@@ -91,7 +91,7 @@ const performSearch = async (query) => {
                 },
             },
             { $sort: { similarity: -1 } },
-            { $limit: 2 }, // Limit to top 2 most similar documents
+            { $limit: 5 }, // Limit to top 2 most similar documents
             {
                 $project: {
                     _id: 0, // Exclude the _id field
@@ -107,11 +107,16 @@ const performSearch = async (query) => {
         const processedDocuments = documents.map((doc) => {
             const extracted = extractContentElements(doc.content || ''); // Assuming this function extracts imageUrl, title, and excerpt
             return {
-                similarity: doc.similarity, // Include similarity
-                imageUrl: extracted.imageUrl, // Extracted image URL
-                title: doc.title, //  title
+               
+            similarity: (doc.similarity * 100).toFixed(2) + '%', // Format similarity as percentage
+
+
+                title: doc.title, // Clickable title with URL
+                URL: doc.URL, // URL to the original document
+               // imageUrl: extracted.imageUrl, // Extracted image URL
+        
                 excerpt: extracted.excerpt, // Extracted excerpt
-                url: doc.URL // URL
+               
             };
         });
 
@@ -195,14 +200,23 @@ router.post('/webhook/:botToken', async (req, res) => {
                             text: "No documents found matching your query.",
                         });
                     } else {
-                        // Send the original response directly
-                        await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                            chat_id: chatId,
-                            text: `Search Results:\n\n${JSON.stringify(documents, null, 2)}`,
-                            parse_mode: "Markdown",
-                        });
+                        console.log('Sending results to Telegram.');
 
-                        console.log('Search results sent to user.');
+                        // Iterate through the documents and send each as a separate message
+                        for (const doc of documents) {
+                            const responseMessage = JSON.stringify(doc, null, 2);
+
+                            await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                                chat_id: chatId,
+                                text: `Search Results:\n\n${responseMessage}`,
+                                parse_mode: "Markdown",
+                            });
+
+                            // Introduce a delay between messages to avoid hitting Telegram rate limits
+                            await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
+                        }
+
+                        console.log('All documents sent as separate messages.');
                     }
 
                     // Return the original response to the HTTP client
@@ -235,6 +249,9 @@ router.post('/webhook/:botToken', async (req, res) => {
         res.status(400).json({ error: 'Invalid bot token.' });
     }
 });
+
+
+
 
 
 
