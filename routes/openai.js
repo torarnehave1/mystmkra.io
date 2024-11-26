@@ -119,16 +119,6 @@ const performSearch = async (query) => {
 
 
 
-       // return documents.map(doc => ({
-         //   title: doc.title,
-          //  similarity: doc.similarity,
-           // excerpt: doc.excerpt || doc.content?.slice(0, 100), // Provide an excerpt
-       // }));
-    } catch (err) {
-        console.error('Error searching documents:', err);
-        throw err;
-    }
-};
 
 /**
  * Function to generate embeddings using OpenAI
