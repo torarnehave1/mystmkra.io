@@ -91,7 +91,7 @@ const performSearch = async (query) => {
                 },
             },
             { $sort: { similarity: -1 } },
-            { $limit: 2 }, // Limit to top 2 most similar documents
+            { $limit: 5 }, // Limit to top 2 most similar documents
             {
                 $project: {
                     _id: 0, // Exclude the _id field
