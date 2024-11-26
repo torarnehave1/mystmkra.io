@@ -106,8 +106,9 @@ const performSearch = async (query) => {
             return {
                 similarity: doc.similarity, // Include similarity
                 imageUrl: extracted.imageUrl, // Extracted image URL
-                title: extracted.title, // Extracted title
+                title: doc.title, //  title
                 excerpt: extracted.excerpt, // Extracted excerpt
+                url: doc.URL // URL
             };
         });
 
