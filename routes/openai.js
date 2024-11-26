@@ -107,11 +107,15 @@ const performSearch = async (query) => {
         const processedDocuments = documents.map((doc) => {
             const extracted = extractContentElements(doc.content || ''); // Assuming this function extracts imageUrl, title, and excerpt
             return {
-                similarity: doc.similarity, // Include similarity
-                imageUrl: extracted.imageUrl, // Extracted image URL
-                title: doc.title, //  title
+               
+            similarity: (doc.similarity * 100).toFixed(2) + '%', // Format similarity as percentage
+
+
+                title: `<a href="${doc.URL}" target="_blank">${doc.title}</a>`, // Clickable title with URL
+               // imageUrl: extracted.imageUrl, // Extracted image URL
+        
                 excerpt: extracted.excerpt, // Extracted excerpt
-                url: doc.URL // URL
+               
             };
         });
 
