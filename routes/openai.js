@@ -167,7 +167,7 @@ router.post('/webhook/:botToken', async (req, res) => {
 
         if (payload.message) {
             const chatId = payload.message.chat.id;
-            const text = payload.message.text;
+            const text = payload.message.text; // Extract the text from the message
 
             // Log the received message
             await logMessage(payload.message);
@@ -178,7 +178,7 @@ router.post('/webhook/:botToken', async (req, res) => {
             }
 
             try {
-                if (text.startsWith('//FIND')) {
+                if (text && text.startsWith('//FIND')) { // Check if text exists before calling startsWith
                     const query = text.replace('//FIND', '').trim();
 
                     if (!query) {
@@ -222,8 +222,14 @@ router.post('/webhook/:botToken', async (req, res) => {
                     // Return the original response to the HTTP client
                     res.status(200).json(documents);
                     return; // Exit after sending the HTTP response
+                } else if (!text) { // Handle cases where the message has no text
+                    await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                        chat_id: chatId,
+                        text: "Sorry, I can only process text messages.",
+                    });
+                    return;
                 } else {
-                    // Send a default response for testing
+                    // Send a default response for other text messages
                     await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                         chat_id: chatId,
                         text: "OK",
@@ -249,6 +255,7 @@ router.post('/webhook/:botToken', async (req, res) => {
         res.status(400).json({ error: 'Invalid bot token.' });
     }
 });
+
 
 
 
