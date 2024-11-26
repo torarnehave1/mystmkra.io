@@ -111,11 +111,11 @@ const performSearch = async (query) => {
             similarity: (doc.similarity * 100).toFixed(2) + '%', // Format similarity as percentage
 
 
-                title: doc.title, // Clickable title with URL
+                //title: doc.title, // Clickable title with URL
                 URL: doc.URL, // URL to the original document
                // imageUrl: extracted.imageUrl, // Extracted image URL
         
-                excerpt: extracted.excerpt, // Extracted excerpt
+               // excerpt: extracted.excerpt, // Extracted excerpt
                
             };
         });
@@ -168,6 +168,14 @@ router.post('/webhook/:botToken', async (req, res) => {
         if (payload.message) {
             const chatId = payload.message.chat.id;
             const text = payload.message.text; // Extract the text from the message
+            const fromId = payload.message.from.id;
+
+            // Check if the message is from the bot itself
+            if (payload.message.from.is_bot) {
+                console.log('Skipping message from the bot itself.');
+                res.status(200).send('OK');
+                return;
+            }
 
             try {
                 if (text && text.includes('?')) {
@@ -202,7 +210,7 @@ router.post('/webhook/:botToken', async (req, res) => {
                     }
 
                     // Return the original response to the HTTP client
-                    res.status(200).json(documents);
+                    res.status(200).json({ success: true, documentsSent: documents.length });
                     return; // Exit after sending the HTTP response
                 } else {
                     console.log('Message does not contain a question mark.');
@@ -228,6 +236,7 @@ router.post('/webhook/:botToken', async (req, res) => {
         res.status(400).json({ error: 'Invalid bot token.' });
     }
 });
+
 
 
 
