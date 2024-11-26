@@ -165,9 +165,9 @@ router.post('/webhook/:botToken', async (req, res) => {
                     console.log(`Performing search for query: "${text}"`);
 
                     // Perform the search
-                    const documents = await performSearch(text);
+                    const urls = await performSearch(text); // Returns only URLs
 
-                    if (documents.length === 0) {
+                    if (urls.length === 0) {
                         await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                             chat_id: chatId,
                             text: "No documents found matching your query.",
@@ -175,29 +175,22 @@ router.post('/webhook/:botToken', async (req, res) => {
                     } else {
                         console.log('Sending results to Telegram.');
 
-                        // Iterate through the documents and send each as a separate message
-                        for (const doc of documents) {
-                            const responseMessage = JSON.stringify(doc, null, 2);
-
+                        // Iterate through the URLs and send each as a separate message
+                        for (const url of urls) {
                             await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                                 chat_id: chatId,
-                                text: `Search Results:\n\n${responseMessage}`,
-                                parse_mode: "Markdown",
-//I only want the URL field in the response
-
+                                text: url, // Send only the pure URL
                             });
-
-                           
 
                             // Introduce a delay between messages to avoid hitting Telegram rate limits
                             await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
                         }
 
-                        console.log('All documents sent as separate messages.');
+                        console.log('All URLs sent as separate messages.');
                     }
 
                     // Return the original response to the HTTP client
-                    res.status(200).json({ success: true, documentsSent: documents.length });
+                    res.status(200).json({ success: true, urlsSent: urls.length });
                     return; // Exit after sending the HTTP response
                 } else {
                     console.log('Message does not contain a question mark.');
@@ -223,6 +216,7 @@ router.post('/webhook/:botToken', async (req, res) => {
         res.status(400).json({ error: 'Invalid bot token.' });
     }
 });
+
 
 
 
