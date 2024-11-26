@@ -12,7 +12,7 @@ const connectDB = async () => {
     try {
         
 
-        await mongoose.connect('mongodb+srv://torarnehave:Q3AYMtCA62tOWNk1@cluster0.wcbzj0t.mongodb.net/slowyounet', {
+        await mongoose.connect('', {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
