@@ -213,7 +213,7 @@ router.post('/webhook/:botToken', async (req, res) => {
                             });
 
                             // Introduce a delay between messages to avoid hitting Telegram rate limits
-                            await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
+                          //  await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
                         }
 
                         console.log('All documents sent as separate messages.');
