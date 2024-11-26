@@ -91,7 +91,7 @@ const performSearch = async (query) => {
                 },
             },
             { $sort: { similarity: -1 } },
-            { $limit: 5 }, // Limit to top 2 most similar documents
+            { $limit: 2 }, // Limit to top 2 most similar documents
             {
                 $project: {
                     _id: 0, // Exclude the _id field
@@ -107,16 +107,11 @@ const performSearch = async (query) => {
         const processedDocuments = documents.map((doc) => {
             const extracted = extractContentElements(doc.content || ''); // Assuming this function extracts imageUrl, title, and excerpt
             return {
-               
-            similarity: (doc.similarity * 100).toFixed(2) + '%', // Format similarity as percentage
-
-
-                title: doc.title, // Clickable title with URL
-                URL: doc.URL, // URL to the original document
-               // imageUrl: extracted.imageUrl, // Extracted image URL
-        
+                similarity: doc.similarity, // Include similarity
+                imageUrl: extracted.imageUrl, // Extracted image URL
+                title: doc.title, //  title
                 excerpt: extracted.excerpt, // Extracted excerpt
-               
+                url: doc.URL // URL
             };
         });
 
