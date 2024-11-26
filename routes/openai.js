@@ -108,7 +108,7 @@ const performSearch = async (query) => {
             const extracted = extractContentElements(doc.content || ''); // Assuming this function extracts imageUrl, title, and excerpt
             return {
                
-            similarity: (doc.similarity * 100).toFixed(2) + '%', // Format similarity as percentage
+            Relevans: (doc.similarity * 100).toFixed(2) + '%', // Format similarity as percentage
 
 
                 //title: doc.title, // Clickable title with URL
