@@ -138,7 +138,7 @@ async function generateEmbedding(text) {
 
 const conversationStates = {};
 
-router.post('/webhook/:botToken', async (req, res) => {
+router.post('/webhook_BAK/:botToken', async (req, res) => {
     const botToken = req.params.botToken; // Extract bot token from the URL
     const payload = req.body;
 
@@ -220,6 +220,86 @@ router.post('/webhook/:botToken', async (req, res) => {
 
 
 
+router.post('/webhook/:botToken', async (req, res) => {
+    const botToken = req.params.botToken; // Extract bot token from the URL
+    const payload = req.body;
+
+    console.log(`Received webhook for bot: ${botToken}`);
+    console.log('Payload:', JSON.stringify(payload, null, 2));
+
+    if (botToken === process.env.TELEGRAM_BOT1_TOKEN || botToken === process.env.TELEGRAM_BOT2_TOKEN) {
+        console.log('Bot triggered');
+
+        if (payload.message) {
+            const chatId = payload.message.chat.id;
+            const text = payload.message.text; // Extract the text from the message
+
+            // Check if the message is from the bot itself
+            if (payload.message.from.is_bot) {
+                console.log('Skipping message from the bot itself.');
+                res.status(200).send('OK');
+                return;
+            }
+
+            try {
+                if (text && text.includes('?')) {
+                    console.log(`Performing search for query: "${text}"`);
+
+                    // Perform the search
+                    const documents = await performSearch(text); // Should return an array of { title, URL }
+
+                    if (documents.length === 0) {
+                        await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                            chat_id: chatId,
+                            text: "No documents found matching your query.",
+                        });
+                    } else {
+                        console.log('Sending results to Telegram.');
+
+                        // Iterate through the documents and send each as a separate message
+                        for (const doc of documents) {
+                            const message = `${doc.title || "Untitled"}\n${doc.URL}`; // Title and URL separated by a newline
+
+                            await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                                chat_id: chatId,
+                                text: message,
+                                parse_mode: "Markdown",
+                            });
+
+                            // Introduce a delay between messages to avoid hitting Telegram rate limits
+                            await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
+                        }
+
+                        console.log('All documents sent as separate messages.');
+                    }
+
+                    // Return the original response to the HTTP client
+                    res.status(200).json({ success: true, documentsSent: documents.length });
+                    return; // Exit after sending the HTTP response
+                } else {
+                    console.log('Message does not contain a question mark.');
+                    await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                        chat_id: chatId,
+                        text: "Please include a `?` in your message to perform a search.",
+                    });
+                }
+            } catch (err) {
+                console.error('Error processing message:', err);
+
+                await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    chat_id: chatId,
+                    text: "An error occurred while processing your request. Please try again later.",
+                });
+
+                res.status(500).json({ error: 'An error occurred while processing your request.' });
+                return;
+            }
+        }
+    } else {
+        console.log('Unknown bot token');
+        res.status(400).json({ error: 'Invalid bot token.' });
+    }
+});
 
 
 
