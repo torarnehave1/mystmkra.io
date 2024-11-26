@@ -95,20 +95,20 @@ const performSearch = async (query) => {
             {
                 $project: {
                     _id: 0, // Exclude the _id field
-                    content: 1, // Include the full content for processing
+                  //  content: 1, // Include the full content for processing
                     similarity: 1, // Include similarity for sorting
-                    title: 1, // Include title
-                    URL: 1, // Include URL
+                  //  title: 1, // Include title
+                 //   URL: 1, // Include URL
                 },
             },
         ]);
 
         // Process documents using extractContentElements
         const processedDocuments = documents.map((doc) => {
-            const extracted = extractContentElements(doc.content || ''); // Assuming this function extracts imageUrl, title, and excerpt
+           // const extracted = extractContentElements(doc.content || ''); // Assuming this function extracts imageUrl, title, and excerpt
             return {
                
-            Relevans: (doc.similarity * 100).toFixed(2) + '%', // Format similarity as percentage
+            //Relevans: (doc.similarity * 100).toFixed(2) + '%', // Format similarity as percentage
 
 
                 //title: doc.title, // Clickable title with URL
@@ -198,9 +198,11 @@ router.post('/webhook/:botToken', async (req, res) => {
 
                             await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                                 chat_id: chatId,
-                                text: `Search Results:\n\n${responseMessage}`,
-                                parse_mode: "Markdown",
+                                text: `Search Results:\n\n${doc.URL}`,
+                               // parse_mode: "Markdown",
                             });
+
+                           
 
                             // Introduce a delay between messages to avoid hitting Telegram rate limits
                             await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
