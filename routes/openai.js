@@ -22,6 +22,7 @@ import generateOpenAIResponse  from '../services/openAIService.js';
 import analyzePhotoAndText  from '../services/photoTextAnalysis.js';
 import  searchDocuments  from '../services/documentSearchService.js';
 import extractContentElements from '../services/extractContentfromMarkdown.js';
+import { title } from 'process';
 
 
 // List of Endpoints:
@@ -96,6 +97,8 @@ const performSearch = async (query) => {
                     _id: 0, // Exclude the _id field
                     content: 1, // Include the full content for processing
                     similarity: 1, // Include similarity for sorting
+                    title: 1, // Include title
+                    URL: 1, // Include URL
                 },
             },
         ]);
