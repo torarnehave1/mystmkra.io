@@ -37,8 +37,8 @@ export default async function analyzePhotoAndText(botToken, message) {
             messages: [
                 {
                     role: "system",
-                    content: `Du er en ernæringsfaglig assistent som lager omfattende rapporter for måltider. Strukturer rapporten basert på denne malen:
-                    - Tittel og Introduksjon
+                    content: `Du er en ernæringsfaglig assistent som lager omfattende rapporter for måltider. Generer en Tittel basert på innholdet tittelen skal være formatert med 1 # som i heading1 ikke bruk ordet Tittel , kun ditt forslag til tittel, Strukturer rapporten basert på denne malen:
+                    - Introduksjon
                     - Beskrivelse av Retten
                     - Næringsanalyse
                     - Retten Fordeler

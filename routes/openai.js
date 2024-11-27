@@ -446,6 +446,68 @@ router.post('/webhook2/:botToken', async (req, res) => {
 });
 
 
+router.get('/generate-embeddings', async (req, res) => {
+    try {
+        // Find all documents without valid embeddings
+        const documents = await MdFiles.find({
+            $or: [
+                { embedding: { $exists: false } },
+                { embedding: null },
+                { embedding: { $size: 0 } }
+            ]
+        });
+
+        if (documents.length === 0) {
+            return res.status(200).json({ message: 'No documents without embeddings found.' });
+        }
+
+        let updatedCount = 0;
+
+        for (const doc of documents) {
+            const content = doc.content?.trim();
+            if (!content) {
+                console.log(`Skipping document ${doc._id} - empty content`);
+                continue;
+            }
+
+            console.log(`Generating embedding for document ${doc._id}...`);
+
+            const response = await openai.embeddings.create({
+                model: 'text-embedding-ada-002',
+                input: [content],
+            });
+
+            const embedding = response.data[0].embedding;
+
+            // Validate that the embedding is an array of numbers
+            if (!Array.isArray(embedding) || !embedding.every(num => typeof num === 'number')) {
+                console.error(`Invalid embedding format for document ${doc._id}`);
+                continue;
+            }
+
+            // Update the document with the generated embedding
+            const updateResult = await MdFiles.updateOne(
+                { _id: doc._id },
+                { $set: { embedding } }
+            );
+
+            if (updateResult.modifiedCount === 1) {
+                console.log(`Successfully updated document ${doc._id}`);
+                updatedCount++;
+            } else {
+                console.log(`Failed to update document ${doc._id}`);
+            }
+        }
+
+        res.status(200).json({
+            success: true,
+            message: `Processed all documents. Updated ${updatedCount} documents.`,
+        });
+    } catch (error) {
+        console.error('Error processing documents:', error.message);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
 
 
