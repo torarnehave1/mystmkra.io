@@ -21,18 +21,15 @@
 // services/logMessage.js
 import TelegramLog from '../models/telegramlog.js';
 
-const logMessage = async (message, isOutgoing = false) => {
+const logMessage = async (message) => {
     try {
         const {
             message_id: messageId,
-            chat: { id: chatId, type: chatType },
-            from: { id: userId, username, first_name: firstName, last_name: lastName } = {},
-            text,
-            date
+            chat: { id: chatId, type: chatType = 'private' },
+            from: { id: userId = null, username = null, first_name: firstName = null, last_name: lastName = null, is_bot = false },
+            text = '',
+            date = Date.now() / 1000,
         } = message;
-
-        const isGroup = chatType === 'group' || chatType === 'supergroup';
-        const command = text && text.startsWith('/') ? text.split(' ')[0] : null;
 
         const logEntry = {
             messageId,
@@ -42,11 +39,9 @@ const logMessage = async (message, isOutgoing = false) => {
             username,
             firstName,
             lastName,
+            isBot: is_bot,
             text,
-            command,
-            timestamp: date ? new Date(date * 1000) : new Date(),
-            isGroup,
-            isOutgoing,
+            timestamp: new Date(date * 1000),
         };
 
         await TelegramLog.findOneAndUpdate(
@@ -55,7 +50,7 @@ const logMessage = async (message, isOutgoing = false) => {
             { upsert: true, new: true }
         );
 
-        console.log(`${isOutgoing ? 'Outgoing' : 'Incoming'} message logged successfully.`);
+        console.log('Message logged successfully.');
     } catch (error) {
         console.error('Error logging message:', error);
     }

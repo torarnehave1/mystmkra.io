@@ -8,7 +8,7 @@ import  searchDocuments  from '../services/documentSearchService.js';
 import OpenAI from 'openai';
 import mongoose from 'mongoose';
 import Mdfiles from '../models/Mdfiles.js';
-
+import logMessage from '../services/logMessage.js';
 
 
 // Load environment variables from .env file
@@ -133,6 +133,9 @@ bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
 
     try {
+        // Log the incoming message
+        await logMessage(msg);
+
         if (msg.photo && Array.isArray(msg.photo) && msg.photo.length > 0) {
             console.log('Photo detected in the message.');
 
@@ -153,50 +156,78 @@ bot.on('message', async (msg) => {
             // Analyze the photo and caption
             const analysisResult = await analyzePhotoAndText(TELEGRAM_BOT_TOKEN, msg);
 
+            // Log the outgoing message
+            await logMessage({
+                chat: { id: chatId },
+                text: analysisResult,
+                from: { is_bot: true },
+            });
+
             // Send the analysis result back to the user
             await bot.sendMessage(chatId, analysisResult);
         } else if (msg.text) {
-           
-            //I want to check if the message contains the word mystmkra.io
-
-           
-                const documents = await performSearch(msg.text);
-
-                // Check if any documents were found
-                if (documents.length === 0) {
-                    await bot.sendMessage(chatId, 'No relevant documents found.');
-                } else {
-                    // Format the documents into a readable string
-                    const formattedResponse = documents
-                        .map((doc, index) => `${index + 1}. [${doc.title}](${doc.URL})`)
-                        .join('\n');
-    
-                    // Send the formatted response to the user
-                    await bot.sendMessage(chatId, formattedResponse, { parse_mode: 'Markdown' });
-                
-            
-
-        
-
-            //generateOpenAIResponse
-            //const response = await generateOpenAIResponse(msg.text);
-           // await bot.sendMessage(chatId, response);
-
-
-
-        }
+            // Log the incoming text message
+            await logMessage(msg);
 
             // Perform a search for the provided text
-           
+            const documents = await performSearch(msg.text);
+
+            // Check if any documents were found
+            if (documents.length === 0) {
+                const noDocsMessage = 'No relevant documents found.';
+                
+                // Log the outgoing message
+                await logMessage({
+                    chat: { id: chatId },
+                    text: noDocsMessage,
+                    from: { is_bot: true },
+                });
+
+                await bot.sendMessage(chatId, noDocsMessage);
+            } else {
+                // Format the documents into a readable string
+                const formattedResponse = documents
+                    .map((doc, index) => `${index + 1}. [${doc.title}](${doc.URL})`)
+                    .join('\n');
+                
+                // Log the outgoing message
+                await logMessage({
+                    chat: { id: chatId },
+                    text: formattedResponse,
+                    from: { is_bot: true },
+                });
+
+                // Send the formatted response to the user
+                await bot.sendMessage(chatId, formattedResponse, { parse_mode: 'Markdown' });
+            }
         } else {
             console.log('Unsupported message type.');
-            await bot.sendMessage(chatId, 'Sorry, I only understand text or photo messages.');
+            const unsupportedMessage = 'Sorry, I only understand text or photo messages.';
+            
+            // Log the outgoing message
+            await logMessage({
+                chat: { id: chatId },
+                text: unsupportedMessage,
+                from: { is_bot: true },
+            });
+
+            await bot.sendMessage(chatId, unsupportedMessage);
         }
     } catch (error) {
         console.error('Error processing message:', error.message);
-        await bot.sendMessage(chatId, 'An error occurred while processing your message. Please try again later.');
+        const errorMessage = 'An error occurred while processing your message. Please try again later.';
+        
+        // Log the outgoing error message
+        await logMessage({
+            chat: { id: chatId },
+            text: errorMessage,
+            from: { is_bot: true },
+        });
+
+        await bot.sendMessage(chatId, errorMessage);
     }
 });
+
 
 
 
