@@ -9,17 +9,16 @@ import OpenAI from 'openai';
 import mongoose from 'mongoose';
 import Mdfiles from '../models/Mdfiles.js';
 import logMessage from '../services/logMessage.js';
-import config from '../config/config.js';
+import config from '../config/config.js'; // Import config.js
 
 // Load environment variables from .env file
 dotenv.config();
 
-// Determine the environment (production or development)
-const NODE_ENV = process.env.NODE_ENV || 'development';
-
+// Log the current environment
+console.log(`Environment: ${config.NODE_ENV}`);
 
 // Access the Telegram bot token based on the environment
-const TELEGRAM_BOT_TOKEN = NODE_ENV === 'production'
+const TELEGRAM_BOT_TOKEN = config.NODE_ENV === 'production'
     ? process.env.TELEGRAM_BOT1_TOKEN_PROD // Production token
     : process.env.TELEGRAM_BOT1_TOKEN_DEV; // Development token
 
@@ -41,7 +40,22 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-let currentThreadId = null; // In-memory store for the current thread ID
+// Function to generate embeddings using OpenAI
+async function generateEmbedding(text) {
+    if (!text || typeof text !== 'string') {
+        throw new Error('Input text is required and must be a non-empty string.');
+    }
+    try {
+        const response = await openai.embeddings.create({
+            model: 'text-embedding-ada-002',
+            input: text,
+        });
+        return response.data[0].embedding;
+    } catch (error) {
+        console.error('Error generating embedding:', error.message);
+        throw error;
+    }
+}
 
 // Function to perform document search
 const performSearch = async (query) => {
@@ -212,7 +226,7 @@ const telegramRouter = express.Router();
 // Endpoint to check bot status
 telegramRouter.get('/status', (req, res) => {
     try {
-        res.json({ status: 'Bot is running', uptime: process.uptime(), environment: NODE_ENV });
+        res.json({ status: 'Bot is running', uptime: process.uptime(), environment: config.NODE_ENV });
     } catch (error) {
         console.error('Error retrieving bot status:', error.message);
         res.status(500).json({ error: 'Unable to retrieve bot status' });
