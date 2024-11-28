@@ -198,7 +198,7 @@ bot.on('message', async (msg) => {
                 });
 
                 // Send the formatted response to the user
-                await bot.sendMessage(chatId, formattedResponse, { parse_mode: 'Html' });
+                await bot.sendMessage(chatId, formattedResponse, { parse_mode: 'Markdown' });
             }
         } else {
             console.log('Unsupported message type.');
