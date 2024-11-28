@@ -747,7 +747,12 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
 
   router.get('/blog/:userFolder/:filename', ensureValidToken, async (req, res) => {
     const userFolder = req.params.userFolder;
-    const filename = req.params.filename;
+    let filename = req.params.filename;
+
+    // Check if the request is for .html and map it to .md
+    if (filename.endsWith('.html')) {
+        filename = filename.replace('.html', '.md');
+    }
 
     const filePath = `/mystmkra/${userFolder}/${filename}`;
 
@@ -762,7 +767,6 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
 
         // Extract the first title from the markdown content (o:tittel)
         const titleRegex = /^#\s+(.*)$/m;
-        
         const titleMatch = fileContent.match(titleRegex);
         const title = titleMatch ? titleMatch[1].trim() : 'Default Title';
 
@@ -857,6 +861,7 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
         });
     }
 });
+
 
 
 
