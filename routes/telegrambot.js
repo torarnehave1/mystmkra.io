@@ -4,18 +4,24 @@ import express from 'express';
 import dotenv from 'dotenv';
 import generateOpenAIResponse from '../services/openAIService.js';
 import analyzePhotoAndText from '../services/photoTextAnalysis.js';
-import  searchDocuments  from '../services/documentSearchService.js';
+import searchDocuments from '../services/documentSearchService.js';
 import OpenAI from 'openai';
 import mongoose from 'mongoose';
 import Mdfiles from '../models/Mdfiles.js';
 import logMessage from '../services/logMessage.js';
-
+import config from '../config/config.js';
 
 // Load environment variables from .env file
 dotenv.config();
 
-// Access the Telegram bot token from the environment variables
-const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT1_TOKEN;
+// Determine the environment (production or development)
+const NODE_ENV = process.env.NODE_ENV || 'development';
+
+
+// Access the Telegram bot token based on the environment
+const TELEGRAM_BOT_TOKEN = NODE_ENV === 'production'
+    ? process.env.TELEGRAM_BOT1_TOKEN_PROD // Production token
+    : process.env.TELEGRAM_BOT1_TOKEN_DEV; // Development token
 
 if (!TELEGRAM_BOT_TOKEN) {
     console.error('Error: Telegram bot token is not set in the environment variables.');
@@ -30,13 +36,14 @@ bot.on('polling_error', (error) => {
     console.error('Polling error occurred:', error.message);
 });
 
-
+// OpenAI initialization
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-let currentThreadId = null;  // In-memory store for the current thread ID
+let currentThreadId = null; // In-memory store for the current thread ID
 
+// Function to perform document search
 const performSearch = async (query) => {
     try {
         // Generate embedding for the query
@@ -79,7 +86,7 @@ const performSearch = async (query) => {
                 },
             },
             { $sort: { similarity: -1 } },
-            { $limit: 10 }, // Limit to top 5 most similar documents
+            { $limit: 10 }, // Limit to top 10 most similar documents
             {
                 $project: {
                     _id: 0, // Exclude the _id field
@@ -98,35 +105,6 @@ const performSearch = async (query) => {
         throw err;
     }
 };
-
-
-
-
-
-
-
-
-/**
- * Function to generate embeddings using OpenAI
- * @param {string} text - The text content to generate embeddings for
- * @returns {Array} - The generated embedding
- */
-async function generateEmbedding(text) {
-    if (!text || typeof text !== 'string') {
-        throw new Error('Input text is required and must be a non-empty string.');
-    }
-    try {
-        const response = await openai.embeddings.create({
-            model: 'text-embedding-ada-002',
-            input: text,
-        });
-        return response.data[0].embedding;
-    } catch (error) {
-        console.error('Error generating embedding:', error.message);
-        throw error;
-    }
-}
-
 
 // Bot logic: handle all incoming messages
 bot.on('message', async (msg) => {
@@ -228,16 +206,13 @@ bot.on('message', async (msg) => {
     }
 });
 
-
-
-
 // Express router for Telegram-related routes
 const telegramRouter = express.Router();
 
 // Endpoint to check bot status
 telegramRouter.get('/status', (req, res) => {
     try {
-        res.json({ status: 'Bot is running', uptime: process.uptime() });
+        res.json({ status: 'Bot is running', uptime: process.uptime(), environment: NODE_ENV });
     } catch (error) {
         console.error('Error retrieving bot status:', error.message);
         res.status(500).json({ error: 'Unable to retrieve bot status' });
