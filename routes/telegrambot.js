@@ -121,6 +121,7 @@ const performSearch = async (query) => {
 };
 
 // Bot logic: handle all incoming messages
+// Bot logic: handle all incoming messages
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
 
@@ -140,11 +141,6 @@ bot.on('message', async (msg) => {
 
             console.log(`Photo URL: ${photoUrl}`);
 
-            // Use the caption if provided, or an empty string otherwise
-            const caption = msg.caption || '';
-
-            console.log(`Caption: ${caption}`);
-
             // Analyze the photo and caption
             const analysisResult = await analyzePhotoAndText(TELEGRAM_BOT_TOKEN, msg);
 
@@ -155,8 +151,26 @@ bot.on('message', async (msg) => {
                 from: { is_bot: true },
             });
 
-            // Send the analysis result back to the user
-            await bot.sendMessage(chatId, analysisResult);
+            // Send the analysis result back to the user with inline buttons
+            
+           //Transform the analysis result into a response formated as html
+           
+
+
+            
+            const responseWithQuestion = `${analysisResult}\n\n<b>Please help us become better at what we do! Are you happy with the report?</b>`;
+
+            await bot.sendMessage(chatId, responseWithQuestion, {
+                parse_mode: 'HTML',
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            { text: 'YES', callback_data: 'photo_yes' },
+                            { text: 'NO', callback_data: 'photo_no' },
+                        ],
+                    ],
+                },
+            });
         } else if (msg.text) {
             // Log the incoming text message
             await logMessage(msg);
@@ -189,8 +203,20 @@ bot.on('message', async (msg) => {
                     from: { is_bot: true },
                 });
 
-                // Send the formatted response to the user
-                await bot.sendMessage(chatId, formattedResponse, { parse_mode: 'Markdown' });
+                // Send the formatted response to the user with inline buttons
+                const responseWithQuestion = `${formattedResponse}\n\nAre you happy with the answer?`;
+
+                await bot.sendMessage(chatId, responseWithQuestion, {
+                    parse_mode: 'Markdown',
+                    reply_markup: {
+                        inline_keyboard: [
+                            [
+                                { text: 'YES', callback_data: 'search_yes' },
+                                { text: 'NO', callback_data: 'search_no' },
+                            ],
+                        ],
+                    },
+                });
             }
         } else {
             console.log('Unsupported message type.');
@@ -219,6 +245,33 @@ bot.on('message', async (msg) => {
         await bot.sendMessage(chatId, errorMessage);
     }
 });
+
+// Handle callback queries for inline buttons
+bot.on('callback_query', async (callbackQuery) => {
+    const chatId = callbackQuery.message.chat.id;
+    const callbackData = callbackQuery.data;
+
+    try {
+        if (callbackData === 'photo_yes' || callbackData === 'search_yes') {
+            await bot.sendMessage(chatId, 'Thank you for your feedback!');
+        } else if (callbackData === 'photo_no' || callbackData === 'search_no') {
+            await bot.sendMessage(chatId, 'We’re sorry the answer didn’t meet your expectations. Please share your suggestions!');
+        }
+
+        // Optionally, log the feedback
+        await logMessage({
+            chat: { id: chatId },
+            text: `Feedback received: ${callbackData}`,
+            from: { is_bot: true },
+        });
+
+        // Acknowledge the callback query to Telegram
+        await bot.answerCallbackQuery(callbackQuery.id);
+    } catch (error) {
+        console.error('Error handling callback query:', error.message);
+    }
+});
+
 
 // Express router for Telegram-related routes
 const telegramRouter = express.Router();
