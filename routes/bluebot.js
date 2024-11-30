@@ -213,6 +213,9 @@ bot.on('message', async (msg) => {
                             [
                                 { text: 'YES', callback_data: 'search_yes' },
                                 { text: 'NO', callback_data: 'search_no' },
+                                { text: 'NO', callback_data: 'search_no' },
+                                { text: 'NO', callback_data: 'search_no' },
+                                { text: 'NO', callback_data: 'search_no' },
                             ],
                         ],
                     },

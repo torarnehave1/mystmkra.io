@@ -14,8 +14,8 @@ import { isAuthenticated } from './auth/auth.js';
 import ChatGPT from './routes/openai.js';
 import ENVconfig from './config/config.js';
 import imgroutes from './routes/images.js';
-import telegramRouter from './routes/telegrambot.js';
-
+import telegramRouter1 from './routes/bluebot.js';
+import telegramRouter2 from './routes/greenbot.js';
 
 // Load environment variables
 dotenv.config();
@@ -78,7 +78,8 @@ app.use('/md', mdroute); // Markdown routes
 app.use('/blog', blogpost); // Blog post routes
 app.use('/openai', ChatGPT);
 app.use('/img', imgroutes);
-app.use('/telegram', telegramRouter);
+app.use('/blue', telegramRouter1);
+app.use('/green', telegramRouter2);
 
 // Support page
 app.get('/support', (req, res) => {
