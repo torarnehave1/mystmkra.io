@@ -35,6 +35,13 @@ const REDIRECT_URI = NODE_ENV === 'production'
   ? process.env.PYTHON_VERSION_PROD
   : process.env.PYTHON_VERSION_DEV;
 
+  // Get bot username dynamically based on environment
+const bot2Username =
+process.env.NODE_ENV === 'production'
+  ? process.env.BOT2_USERNAME_PROD
+  : process.env.BOT2_USERNAME_DEV;
+
+
 
 export default {
   PYTHON_VERSION,
@@ -45,4 +52,6 @@ export default {
   accessToken: process.env.DROPBOX_ACCESS_TOKEN,
   refreshToken: process.env.DROPBOX_REFRESH_TOKEN,
   expiryTime: 0,
+  bot2Username,
+
 };

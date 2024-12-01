@@ -1,0 +1,48 @@
+[
+  {
+    "translations": {
+      "EN": {
+        "generatePrompt": "Generate {numQuestions} questions for a questionnaire.\nTopic: {topic}\nCategory: {category}\nLanguage: English.\nFormat the output as a numbered list of questions.\nRespond in English.",
+        "systemLanguageSet": "System language set to {language}.",
+        "questionnaireTitle": "What is the title of the questionnaire?",
+        "questionnaireDescription": "Please provide a brief description of the questionnaire:",
+        "selectQuestionnaireLanguage": "In which language should the questionnaire be created?",
+        "numberOfCategories": "How many categories would you like to include in this questionnaire? (e.g., 3)",
+        "categoryNamePrompt": "What is the name of category {index}?",
+        "enterFirstQuestion": "Enter the first question for {categoryName}:",
+        "questionAdded": "Question added successfully! What would you like to do next?",
+        "generateQuestionsPrompt": "Generated questions for {categoryName}:\n{questions}",
+        "completedAllCategories": "You have completed all categories. Type done to finalize the questionnaire.",
+        "questionnaireSaved": "Questionnaire saved successfully!",
+        "invalidAction": "Invalid action. Please try again.",
+        "errorOccurred": "An error occurred. Please try again.",
+        "yes": "YES",
+        "no": "NO",
+        "nextCategory": "Next Category",
+        "generateQuestions": "Generate Questions",
+        "done": "Done"
+      },
+      "NO": {
+        "generatePrompt": "Generer {numQuestions} spørsmål til et spørreskjema.\nTema: {topic}\nKategori: {category}\nSpråk: Norsk.\nFormater svaret som en nummerert liste over spørsmål.\nSvar på norsk.",
+        "systemLanguageSet": "Systemspråk satt til {language}.",
+        "questionnaireTitle": "Hva er tittelen på spørreskjemaet?",
+        "questionnaireDescription": "Vennligst oppgi en kort beskrivelse av spørreskjemaet:",
+        "selectQuestionnaireLanguage": "På hvilket språk skal spørreskjemaet opprettes?",
+        "numberOfCategories": "Hvor mange kategorier vil du inkludere i dette spørreskjemaet? (f.eks. 3)",
+        "categoryNamePrompt": "Hva er navnet på kategori {index}?",
+        "enterFirstQuestion": "Skriv inn det første spørsmålet for {categoryName}:",
+        "questionAdded": "Spørsmålet er lagt til! Hva vil du gjøre neste?",
+        "generateQuestionsPrompt": "Genererte spørsmål for {categoryName}:\n{questions}",
+        "completedAllCategories": "Du har fullført alle kategorier. Skriv done for å fullføre spørreskjemaet.",
+        "questionnaireSaved": "Spørreskjemaet er lagret!",
+        "invalidAction": "Ugyldig handling. Vennligst prøv igjen.",
+        "errorOccurred": "Det oppstod en feil. Vennligst prøv igjen.",
+        "yes": "JA",
+        "no": "NEI",
+        "nextCategory": "Neste kategori",
+        "generateQuestions": "Generer spørsmål",
+        "done": "Ferdig"
+      }
+    }
+  }
+]
