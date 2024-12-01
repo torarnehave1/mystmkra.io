@@ -194,24 +194,93 @@ bot.on('callback_query', async (callbackQuery) => {
 
         case 'generate_questions': {
             const category = state.questionnaire.categories[state.currentCategoryIndex];
+          
+            // Generate questions
             const generatedQuestions = await generateQuestions(
-                state.questionnaire.title,
-                category.name,
-                state.systemLanguage || 'NO',
-                3
+              state.questionnaire.title,
+              category.name,
+              state.systemLanguage,
+              3 // Number of questions
             );
-
-            category.questions.push(...generatedQuestions.map((q) => ({ text: q, type: 'TEXT' })));
-            await bot.sendMessage(
-                chatId,
-                getTranslation(userLang, 'generateQuestionsPrompt', {
-                    categoryName: category.name,
-                    questions: generatedQuestions.join('\n'),
-                })
-            );
-            await bot.sendMessage(chatId, getTranslation(userLang, 'questionAdded'), { reply_markup: navigationKeyboard });
+          
+            // Store generated questions in state
+            state.generatedQuestions = generatedQuestions.map((question, index) => ({
+              text: question,
+              index,
+              confirmed: false,
+            }));
+          
+            // Send the first question to the user for review
+            const firstQuestion = state.generatedQuestions[0];
+            await bot.sendMessage(chatId, `Suggested question:\n\n${firstQuestion.text}`, {
+              reply_markup: {
+                inline_keyboard: [
+                  [{ text: 'Edit', callback_data: `edit_question_${firstQuestion.index}` }],
+                  [{ text: 'Confirm', callback_data: `confirm_question_${firstQuestion.index}` }],
+                ],
+              },
+            });
             break;
-        }
+          }
+          
+          case data.startsWith('edit_question_') && data: {
+            const questionIndex = parseInt(data.split('_')[2], 10);
+            const questionToEdit = state.generatedQuestions[questionIndex];
+          
+            // Save the current editing state
+            state.currentEditingQuestion = questionIndex;
+          
+            await bot.sendMessage(chatId, `Edit the question:\n\n${questionToEdit.text}`);
+            break;
+          }
+          
+          case data.startsWith('confirm_question_') && data: {
+            const questionIndex = parseInt(data.split('_')[2], 10);
+            state.generatedQuestions[questionIndex].confirmed = true;
+          
+            // Check if there are more questions to review
+            const nextQuestion = state.generatedQuestions.find((q) => !q.confirmed);
+            if (nextQuestion) {
+              await bot.sendMessage(chatId, `Suggested question:\n\n${nextQuestion.text}`, {
+                reply_markup: {
+                  inline_keyboard: [
+                    [{ text: 'Edit', callback_data: `edit_question_${nextQuestion.index}` }],
+                    [{ text: 'Confirm', callback_data: `confirm_question_${nextQuestion.index}` }],
+                  ],
+                },
+              });
+            } else {
+              // All questions reviewed
+              category.questions.push(...state.generatedQuestions.map((q) => ({ text: q.text, type: 'TEXT' })));
+              delete state.generatedQuestions;
+          
+              await bot.sendMessage(chatId, 'All questions have been reviewed and added to the questionnaire.', {
+                reply_markup: generateKeyboard(state.systemLanguage, 'navigation'),
+              });
+            }
+            break;
+          }
+          
+          case 'editing_question': {
+            const questionIndex = state.currentEditingQuestion;
+          
+            // Update the question text
+            state.generatedQuestions[questionIndex].text = msg.text;
+          
+            // Clear the current editing state
+            delete state.currentEditingQuestion;
+          
+            await bot.sendMessage(chatId, 'The question has been updated.', {
+              reply_markup: {
+                inline_keyboard: [
+                  [{ text: 'Edit', callback_data: `edit_question_${questionIndex}` }],
+                  [{ text: 'Confirm', callback_data: `confirm_question_${questionIndex}` }],
+                ],
+              },
+            });
+            break;
+          }
+          
 
         case 'next_category': {
             const nextCategoryIndex = state.currentCategoryIndex + 1;
