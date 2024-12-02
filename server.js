@@ -15,7 +15,7 @@ import ChatGPT from './routes/openai.js';
 import ENVconfig from './config/config.js';
 import imgroutes from './routes/images.js';
 import telegramRouter1 from './routes/bluebot.js';
-import telegramRouter2 from './routes/greenbot.js';
+import telegramRouter2 from './routes/greenbot_bak2.js';
 
 // Load environment variables
 dotenv.config();

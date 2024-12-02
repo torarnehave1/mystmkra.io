@@ -41,6 +41,10 @@ process.env.NODE_ENV === 'production'
   ? process.env.BOT2_USERNAME_PROD
   : process.env.BOT2_USERNAME_DEV;
 
+  const botToken = process.env.NODE_ENV === 'production'
+  ? process.env.TELEGRAM_BOT2_TOKEN_PROD
+  : process.env.TELEGRAM_BOT2_TOKEN_DEV;
+
 
 
 export default {
@@ -53,5 +57,6 @@ export default {
   refreshToken: process.env.DROPBOX_REFRESH_TOKEN,
   expiryTime: 0,
   bot2Username,
+  botToken,
 
 };
