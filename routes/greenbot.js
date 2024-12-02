@@ -199,7 +199,7 @@ bot.on('callback_query', async (callbackQuery) => {
             const generatedQuestions = await generateQuestions(
               state.questionnaire.title,
               category.name,
-              state.systemLanguage,
+              state.systemLanguage || 'NO',
               3 // Number of questions
             );
           
