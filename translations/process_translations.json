@@ -1,41 +1,46 @@
 [
-    {
-      "translations": {
-        "EN": {
-          "welcome": "Welcome to the process system!",
-          "selectLanguage": "Please select your preferred language:",
-          "languageSet": "System language set to {language}.",
-          "processStarted": "Process started: {processTitle}",
-          "generateQuestionsPrompt": "Describe your concerns or input, and we will help generate questions:",
-          "generatedQuestions": "Here are the questions we generated:\n{questions}",
-          "editPrompt": "Edit the questions, separated by new lines:",
-          "confirmationMessage": "Your input has been submitted successfully.",
-          "finalMessage": "Thank you for completing the process.",
-          "shareLink": "Share this process with others: {link}",
-          "noProcessFound": "No process found.",
-          "invalidProcessLink": "Invalid process link.",
-          "allSuggestionsDuplicates": "All suggestions were duplicates. Please provide more details.",
-          "nextStepPrompt": "{prompt}",
-          "validationError": "Invalid input. {errorDetails}"
-        },
-        "NO": {
-          "welcome": "Velkommen til prosessystemet!",
-          "selectLanguage": "Vennligst velg ditt foretrukne språk:",
-          "languageSet": "Systemspråk satt til {language}.",
-          "processStarted": "Prosess startet: {processTitle}",
-          "generateQuestionsPrompt": "Beskriv dine bekymringer eller innspill, så hjelper vi deg med å generere spørsmål:",
-          "generatedQuestions": "Her er spørsmålene vi genererte:\n{questions}",
-          "editPrompt": "Rediger spørsmålene, adskilt med nye linjer:",
-          "confirmationMessage": "Dine innspill er sendt inn.",
-          "finalMessage": "Takk for at du fullførte prosessen.",
-          "shareLink": "Del denne prosessen med andre: {link}",
-          "noProcessFound": "Ingen prosess funnet.",
-          "invalidProcessLink": "Ugyldig prosesskobling.",
-          "allSuggestionsDuplicates": "Alle forslagene var duplikater. Vennligst gi mer informasjon.",
-          "nextStepPrompt": "{prompt}",
-          "validationError": "Ugyldig inndata. {errorDetails}"
-        }
+  {
+    "translations": {
+      "EN": {
+        "welcome": "Welcome to the process system!",
+        "selectLanguage": "Please select your preferred language:",
+        "languageSet": "System language set to {language}.",
+        "processStarted": "Process started: {processTitle}",
+        "generateQuestionsPrompt": "Describe your concerns or input, and we will help generate questions:",
+        "generatedQuestions": "Here are the questions we generated:\n{questions}",
+        "editPrompt": "Edit the questions, separated by new lines:",
+        "confirmationMessage": "Your input has been submitted successfully.",
+        "finalMessage": "Thank you for completing the process.",
+        "shareLink": "Share this process with others: {link}",
+        "noProcessFound": "No process found.",
+        "invalidProcessLink": "Invalid process link.",
+        "allSuggestionsDuplicates": "All suggestions were duplicates. Please provide more details.",
+        "nextStepPrompt": "{prompt}",
+        "validationError": "Invalid input. {errorDetails}",
+        "noProcessAssociated": "No process is associated with your session. Please start a new process.",
+        "selectProcess": "Please select a process to start:",
+        "errorOccurred": "An error occurred. Please try again."
+      },
+      "NO": {
+        "welcome": "Velkommen til prosessystemet!",
+        "selectLanguage": "Vennligst velg ditt foretrukne språk:",
+        "languageSet": "Systemspråk satt til {language}.",
+        "processStarted": "Prosess startet: {processTitle}",
+        "generateQuestionsPrompt": "Beskriv dine bekymringer eller innspill, så hjelper vi deg med å generere spørsmål:",
+        "generatedQuestions": "Her er spørsmålene vi genererte:\n{questions}",
+        "editPrompt": "Rediger spørsmålene, adskilt med nye linjer:",
+        "confirmationMessage": "Dine innspill er sendt inn.",
+        "finalMessage": "Takk for at du fullførte prosessen.",
+        "shareLink": "Del denne prosessen med andre: {link}",
+        "noProcessFound": "Ingen prosess funnet.",
+        "invalidProcessLink": "Ugyldig prosesskobling.",
+        "allSuggestionsDuplicates": "Alle forslagene var duplikater. Vennligst gi mer informasjon.",
+        "nextStepPrompt": "{prompt}",
+        "validationError": "Ugyldig inndata. {errorDetails}",
+        "noProcessAssociated": "Ingen prosess er knyttet til økten din. Vennligst start en ny prosess.",
+        "selectProcess": "Vennligst velg en prosess å starte:",
+        "errorOccurred": "Det oppstod en feil. Vennligst prøv igjen."
       }
     }
-  ]
-  
+  }
+]

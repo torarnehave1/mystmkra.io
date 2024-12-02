@@ -22,10 +22,12 @@ const getTranslation = (language, key, placeholders = {}) => {
 bot.onText(/\/start(.*)/, async (msg, match) => {
   const chatId = msg.chat.id;
   const args = match[1].trim(); // Extract any arguments after /start
+  console.log(`[DEBUG] /start called with args: "${args}" for chatId: ${chatId}`);
 
   let userState = await UserState.findOne({ userId: chatId });
 
   if (!userState) {
+    console.log(`[DEBUG] Creating new user state for chatId: ${chatId}`);
     userState = new UserState({ userId: chatId });
     await userState.save();
   }
@@ -33,6 +35,7 @@ bot.onText(/\/start(.*)/, async (msg, match) => {
   if (args) {
     const processId = args; // Assume args is the processId
     const process = await Process.findOne({ processId });
+    console.log(`[DEBUG] Process lookup for processId: "${processId}" found: ${!!process}`);
 
     if (process) {
       userState.processId = processId;
@@ -43,12 +46,14 @@ bot.onText(/\/start(.*)/, async (msg, match) => {
       await executeStep(chatId); // Start the process
       return;
     } else {
-      await bot.sendMessage(chatId, 'Invalid process link.');
+      console.log(`[ERROR] Invalid process link for processId: "${processId}"`);
+      await bot.sendMessage(chatId, getTranslation(userState.systemLanguage, 'invalidProcessLink'));
       return;
     }
   }
 
   // Default start behavior if no arguments are provided
+  console.log(`[DEBUG] Sending welcome message to chatId: ${chatId}`);
   await bot.sendMessage(chatId, getTranslation(userState.systemLanguage, 'welcome'), {
     reply_markup: {
       inline_keyboard: [
@@ -59,18 +64,109 @@ bot.onText(/\/start(.*)/, async (msg, match) => {
   });
 });
 
-// Handle Language Selection
+// Handle Language Selection and Execute Step If Possible
 bot.on('callback_query', async (callbackQuery) => {
   const { data, message } = callbackQuery;
   const chatId = message.chat.id;
 
+  console.log(`[DEBUG] Callback query received: "${data}" for chatId: ${chatId}`);
+
   if (data.startsWith('lang_')) {
     const language = data.split('_')[1];
+    console.log(`[DEBUG] Language selected: "${language}" for chatId: ${chatId}`);
+
     let userState = await UserState.findOne({ userId: chatId });
+    if (!userState) {
+      console.log(`[ERROR] No user state found for chatId: ${chatId}`);
+      await bot.sendMessage(chatId, 'An error occurred. Please start again with /start.');
+      return;
+    }
+
     userState.systemLanguage = language;
     await userState.save();
 
     await bot.sendMessage(chatId, getTranslation(language, 'languageSet', { language: language === 'EN' ? 'English' : 'Norwegian' }));
+    console.log(`[DEBUG] User language updated to "${language}" for chatId: ${chatId}`);
+
+    // Check if there's a process already associated
+    if (userState.processId) {
+      console.log(`[DEBUG] Existing processId "${userState.processId}" found for chatId: ${chatId}`);
+      await executeStep(chatId); // Proceed to execute the step
+    } else {
+      // If no process is associated, prompt the user to start one
+      console.log(`[DEBUG] No process associated with chatId: ${chatId}`);
+      await bot.sendMessage(chatId, getTranslation(language, 'noProcessAssociated'), {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: 'Start a New Process', callback_data: 'start_process' }],
+          ],
+        },
+      });
+    }
+  } else if (data === 'start_process') {
+    console.log(`[DEBUG] User requested to start a new process for chatId: ${chatId}`);
+
+    // Check if processes exist
+    const availableProcesses = await Process.find({}, { processId: 1, title: 1 });
+
+    if (availableProcesses.length === 0) {
+      console.log(`[DEBUG] No processes found for chatId: ${chatId}`);
+      await bot.sendMessage(chatId, getTranslation('EN', 'noProcessesAvailable'), {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: 'Create a Process', callback_data: 'create_process' }],
+          ],
+        },
+      });
+    } else {
+      const buttons = availableProcesses.map((process) => [
+        { text: process.title, callback_data: `process_${process.processId}` },
+      ]);
+
+      await bot.sendMessage(chatId, getTranslation('EN', 'selectProcess'), {
+        reply_markup: {
+          inline_keyboard: buttons,
+        },
+      });
+    }
+  } else if (data === 'create_process') {
+    console.log(`[DEBUG] User initiated process creation for chatId: ${chatId}`);
+    await bot.sendMessage(chatId, "Please provide the title of the process:");
+
+    bot.once('message', async (msg) => {
+      const processTitle = msg.text;
+      console.log(`[DEBUG] Received process title: "${processTitle}" for chatId: ${chatId}`);
+
+      const newProcess = new Process({
+        processId: `process_${Date.now()}`,
+        title: processTitle,
+        description: '',
+        steps: [], // Start with no steps; steps can be added dynamically
+      });
+
+      await newProcess.save();
+      console.log(`[DEBUG] New process created with title: "${processTitle}" for chatId: ${chatId}`);
+      await bot.sendMessage(chatId, `Process "${processTitle}" has been created. You can now start adding steps.`);
+    });
+  } else if (data.startsWith('process_')) {
+    const processId = data.split('_')[1];
+    console.log(`[DEBUG] User selected processId "${processId}" for chatId: ${chatId}`);
+
+    let userState = await UserState.findOne({ userId: chatId });
+    const process = await Process.findOne({ processId });
+
+    if (process) {
+      userState.processId = processId;
+      userState.currentStepIndex = 0;
+      await userState.save();
+
+      await bot.sendMessage(chatId, getTranslation(userState.systemLanguage, 'processStarted', { processTitle: process.title }));
+      console.log(`[DEBUG] Process started for chatId: ${chatId}, processId: ${processId}`);
+      await executeStep(chatId); // Start the process
+    } else {
+      console.log(`[ERROR] Invalid processId "${processId}" selected for chatId: ${chatId}`);
+      await bot.sendMessage(chatId, getTranslation(userState.systemLanguage, 'invalidProcessLink'));
+    }
   }
 });
 
@@ -80,78 +176,31 @@ const executeStep = async (chatId) => {
   const process = await Process.findOne({ processId: userState.processId });
 
   if (!process) {
-    await bot.sendMessage(chatId, 'No process found.');
+    await bot.sendMessage(chatId, getTranslation(userState.systemLanguage, 'noProcessFound'));
     return;
   }
 
   const step = process.steps[userState.currentStepIndex];
   const userLang = userState.systemLanguage;
 
-  switch (step.type) {
-    case 'generate_questions': {
-      const prompt = getTranslation(userLang, 'generateQuestionsPrompt');
-      await bot.sendMessage(chatId, prompt);
-
-      bot.once('message', async (msg) => {
-        const userInput = msg.text;
-
-        // Generate questions using OpenAI
-        const generatedQuestions = await generateQuestionsFromOpenAI(userState, userInput);
-
-        // Check for duplicates
-        const uniqueQuestions = checkForDuplicates(generatedQuestions, userState.generatedQuestions);
-
-        if (uniqueQuestions.length === 0) {
-          await bot.sendMessage(chatId, 'All suggestions were duplicates. Please provide more details.');
-          return;
-        }
-
-        userState.generatedQuestions.push(...uniqueQuestions.map((q) => ({ text: q, confirmed: false })));
-        await userState.save();
-
-        await bot.sendMessage(chatId, getTranslation(userLang, 'generatedQuestions', { questions: uniqueQuestions.join('\n') }));
-      });
-      break;
-    }
-    case 'final': {
-      // Final step logic
-      const botUsername = config.BOT_USERNAME || 'your_bot_username'; // Replace with your bot username
-      const shareableLink = `https://t.me/${botUsername}?start=${userState.processId}`;
-
-      // Send the final message with the link
-      await bot.sendMessage(chatId, getTranslation(userLang, 'finalMessage'));
-      await bot.sendMessage(chatId, `Share this process with others: ${shareableLink}`);
-
-      // Clear the user's state
-      userState.processId = null;
-      userState.currentStepIndex = 0;
-      userState.responses = [];
-      userState.generatedQuestions = [];
-      userState.conversationHistory = [];
-      await userState.save();
-
-      break;
-    }
-    default: {
-      // Handle other step types
-      await bot.sendMessage(chatId, getTranslation(userLang, step.prompt));
-    }
+  if (step) {
+    // Process the step
+    await bot.sendMessage(chatId, getTranslation(userLang, step.prompt || 'nextStepPrompt'));
+  } else {
+    // Finalize the process
+    await bot.sendMessage(chatId, getTranslation(userLang, 'finalMessage'));
   }
 
-  // Advance to the next step, if applicable
   if (userState.currentStepIndex + 1 < process.steps.length) {
     userState.currentStepIndex += 1;
     await userState.save();
-    await executeStep(chatId); // Move to the next step
+    await executeStep(chatId);
   }
 };
 
-//add an enpoint to check the status of the bot
-
+// Status endpoint for health checks
 router.get('/status', (req, res) => {
-    res.json({ status: 'Running' });
-    }
-);
-
+  res.json({ status: 'Running' });
+});
 
 export default router;
