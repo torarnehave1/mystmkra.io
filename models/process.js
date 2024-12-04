@@ -30,6 +30,7 @@ const processSchema = new Schema({
   steps: [stepSchema], // Array of steps in the process
   createdBy: { type: String }, // User or system that created the process
   createdAt: { type: Date, default: Date.now }, // Timestamp for process creation
+  isFinished: { type: Boolean, default: false }, // Indicates if the process is finished
 });
 
 const Process = mongoose.model('Process', processSchema);
