@@ -4,7 +4,7 @@
       "EN": {
         "welcome": "Welcome to the process system!",
         "selectLanguage": "Please select your preferred language:",
-        "languageSet": "System language set to {language}.",
+        "language_set_message": "System language set to {language}.",
         "processStarted": "Process started: {processTitle}",
         "generateQuestionsPrompt": "Describe your concerns or input, and we will help generate questions:",
         "generatedQuestions": "Here are the questions we generated:\n{questions}",
@@ -24,7 +24,7 @@
       "NO": {
         "welcome": "Velkommen til prosessystemet!",
         "selectLanguage": "Vennligst velg ditt foretrukne språk:",
-        "languageSet": "Systemspråk satt til {language}.",
+        "language_set_message": "Systemspråk satt til {language}.",
         "processStarted": "Prosess startet: {processTitle}",
         "generateQuestionsPrompt": "Beskriv dine bekymringer eller innspill, så hjelper vi deg med å generere spørsmål:",
         "generatedQuestions": "Her er spørsmålene vi genererte:\n{questions}",

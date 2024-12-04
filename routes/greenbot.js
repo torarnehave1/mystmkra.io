@@ -4,43 +4,25 @@ import config from '../config/config.js';
 import UserState from '../models/UserState.js';
 import Process from '../models/Process.js';
 import translationsData from '../translations/process_translations.json' assert { type: 'json' };
+import {
+  getTranslation,
+  extractProcessId,
+  extractStepTypeAndProcessId,
+  isValidProcessId,
+} from '../services/helpers.js';
+import ProcessAnswers from '../models/ProcessAnswers.js'; // Import ProcessAnswers model
 
 // [SECTION 1: Initialization]
 // This section initializes the Express router and Telegram bot
 const router = express.Router();
 const bot = new TelegramBot(config.botToken, { polling: true });
 
+// Load translations
 const translations = translationsData[0].translations;
 
 // [SECTION 2: Helper Functions]
 // This section contains helper functions for translations and ID extraction
-
-// Helper: Get translation
-const getTranslation = (language, key, placeholders = {}) => {
-  const translation = translations[language]?.[key] || key;
-  return translation.replace(/\{(\w+)\}/g, (_, placeholder) => placeholders[placeholder] || `{${placeholder}}`);
-};
-
-// Function to extract processId
-function extractProcessId(data) {
-  const parts = data.split('_');
-  console.log(`[DEBUG] extractProcessId: data="${data}", parts="${parts}"`);
-  return parts.slice(2).join('_');
-}
-
-// Function to extract step type and processId
-function extractStepTypeAndProcessId(data) {
-  const parts = data.split('_');
-  console.log(`[DEBUG] extractStepTypeAndProcessId: data="${data}", parts="${parts}"`);
-  const type = parts.slice(2, -2).join('_'); // Extract step type
-  const processId = parts.slice(-2).join('_'); // Extract processId
-  return { type, processId };
-}
-
-// Function to validate processId
-function isValidProcessId(processId) {
-  return typeof processId === 'string' && processId.match(/^process_\d+$/);
-}
+// (Moved to helpers.js and imported)
 
 // [SECTION 3: Bot Commands]
 // This section contains the bot commands and their handlers
@@ -95,7 +77,13 @@ bot.on('callback_query', async (callbackQuery) => {
       await userState.save();
 
       // Send process creation options
-      await bot.sendMessage(chatId, `Language set to ${language === 'EN' ? 'English' : 'Norwegian'}. What would you like to do next?`, {
+      const welcomeMessage = getTranslation(
+        language,
+        'language_set_message',
+        { language: language === 'EN' ? 'English' : 'Norwegian' },
+        translations
+      );
+      await bot.sendMessage(chatId, welcomeMessage, {
         reply_markup: {
           inline_keyboard: [
             [{ text: 'Create Process Manually', callback_data: 'create_process_manual' }],
@@ -166,10 +154,10 @@ bot.on('callback_query', async (callbackQuery) => {
     await bot.sendMessage(chatId, 'Please select the step type:', {
       reply_markup: {
         inline_keyboard: [
-          [{ text: 'Text Input', callback_data: `step_type_text_${processId}` }],
-          [{ text: 'Yes/No', callback_data: `step_type_yes_no_${processId}` }],
-          [{ text: 'File Upload', callback_data: `step_type_file_${processId}` }],
-          [{ text: 'Generate Questions', callback_data: `step_type_generate_questions_${processId}` }],
+          [{ text: 'Text Input', callback_data: `step_type_text_process_${processId}` }],
+          [{ text: 'Yes/No', callback_data: `step_type_yes_no_process_${processId}` }],
+          [{ text: 'File Upload', callback_data: `step_type_file_process_${processId}` }],
+          [{ text: 'Generate Questions', callback_data: `step_type_generate_questions_process_${processId}` }],
         ],
       },
     });
@@ -187,171 +175,202 @@ bot.on('callback_query', async (callbackQuery) => {
       return;
     }
 
-    await bot.sendMessage(chatId, `Please provide the prompt for this ${type} step:`);
-
-    bot.once('message', async (msg) => {
-      const stepPrompt = msg.text;
-      console.log(`[DEBUG] Received step prompt: "${stepPrompt}" for step type: "${type}"`);
-
-      const process = await Process.findOne({ processId });
-      if (!process) {
-        console.error(`[ERROR] Process not found for processId: "${processId}"`);
-        await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
-        return;
-      }
-
-      const newStep = {
-        stepId: `step_${Date.now()}`,
-        type,
-        prompt: stepPrompt,
-      };
-
-      process.steps.push(newStep);
-      await process.save();
-      console.log(`[DEBUG] Added step to processId: "${processId}"`);
-
-      await bot.sendMessage(chatId, `Step has been added to the process "${process.title}". What would you like to do next?`, {
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: 'Add Another Step', callback_data: `add_step_${processId}` }],
-            [{ text: 'Finish Process', callback_data: `finish_process_${processId}` }],
-          ],
-        },
-      });
-      return;
-    });
-  }
-
-  // Step 5: Finish Process
-  if (data.startsWith('finish_process_')) {
-    const processId = extractProcessId(data);
-    console.log(`[DEBUG] Finishing process with processId: "${processId}" for chatId: ${chatId}`);
-
-    if (!isValidProcessId(processId)) {
-      console.error(`[ERROR] Invalid processId extracted: "${processId}"`);
-      await bot.sendMessage(chatId, 'An error occurred. Please try again.');
-      return;
-    }
-
-    try {
-      const process = await Process.findOne({ processId });
-      if (!process) {
-        console.error(`[ERROR] Process not found for processId: "${processId}"`);
-        await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
-        return;
-      }
-
-      // Mark the process as finished
-      process.isFinished = true;
-      await process.save();
-      console.log(`[DEBUG] Process with processId: "${processId}" has been marked as finished`);
-
-      await bot.sendMessage(chatId, `Process "${process.title}" has been finished. Thank you!`);
-    } catch (error) {
-      console.error(`[ERROR] Failed to finish process: ${error.message}`);
-      await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
-    }
+    await bot.sendMessage(chatId, `You selected the step type: "${type}". Please provide the details for this step.`);
+    // Handle step type logic here
   }
 });
 
 // [SECTION 4: View Finished Process]
-// This section contains the code to view a finished process
+// This section contains the code to view finished processes and navigate through their steps
 
 // Command to view finished processes
 bot.onText(/\/view/, async (msg) => {
-  const chatId = msg.chat.id;
-  console.log(`[DEBUG] /view_finished triggered by user ${chatId}`);
-
-  try {
-    const finishedProcesses = await Process.find({ isFinished: true, createdBy: chatId });
-
-    if (finishedProcesses.length === 0) {
-      await bot.sendMessage(chatId, 'You have no finished processes.');
-      return;
-    }
-
-    const processButtons = finishedProcesses.map(process => [{ text: process.title, callback_data: `view_process_${process.processId}` }]);
-
-    await bot.sendMessage(chatId, 'Select a finished process to view:', {
-      reply_markup: {
-        inline_keyboard: processButtons,
-      },
-    });
-  } catch (error) {
-    console.error(`[ERROR] Failed to retrieve finished processes: ${error.message}`);
-    await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
-  }
-});
-
-// Handle viewing a finished process
-bot.on('callback_query', async (callbackQuery) => {
-  const { data, message } = callbackQuery;
-  const chatId = message.chat.id;
-
-  if (data.startsWith('view_process_')) {
-    const processId = extractProcessId(data);
-    console.log(`[DEBUG] Viewing process with processId: "${processId}" for chatId: ${chatId}`);
-
+    const chatId = msg.chat.id;
+    console.log(`[DEBUG] /view triggered by user ${chatId}`);
+  
     try {
-      const process = await Process.findOne({ processId, createdBy: chatId });
-      if (!process) {
-        console.error(`[ERROR] Process not found for processId: "${processId}"`);
-        await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
+      const finishedProcesses = await Process.find({ isFinished: true, createdBy: chatId });
+  
+      if (finishedProcesses.length === 0) {
+        await bot.sendMessage(chatId, 'You have no finished processes.');
         return;
       }
-
-      // Save the current process and step index in the user state
-      const userState = await UserState.findOne({ userId: chatId });
-      userState.processId = processId;
-      userState.currentStepIndex = 0;
-      await userState.save();
-
-      // Start the process
-      await bot.sendMessage(chatId, `Starting process: ${process.title}`, {
+  
+      const processButtons = finishedProcesses.map((process) => [
+        { text: process.title, callback_data: `view_process_${process.processId}` },
+      ]);
+  
+      await bot.sendMessage(chatId, 'Select a finished process to view:', {
         reply_markup: {
-          inline_keyboard: [
-            [{ text: 'Start', callback_data: `start_process_${processId}` }],
-            [{ text: 'End', callback_data: `end_process_${processId}` }],
-          ],
+          inline_keyboard: processButtons,
         },
       });
     } catch (error) {
-      console.error(`[ERROR] Failed to retrieve process details: ${error.message}`);
+      console.error(`[ERROR] Failed to retrieve finished processes: ${error.message}`);
       await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
     }
-  }
-
-  // Handle starting the process
-  if (data.startsWith('start_process_')) {
-    const processId = extractProcessId(data);
-    console.log(`[DEBUG] Starting process with processId: "${processId}" for chatId: ${chatId}`);
-
+  });
+  
+  // Handle viewing a finished process
+  bot.on('callback_query', async (callbackQuery) => {
+    const { data, message } = callbackQuery;
+    const chatId = message.chat.id;
+  
+    if (data.startsWith('view_process_')) {
+      const processId = extractProcessId(data);
+      console.log(`[DEBUG] Viewing process with processId: "${processId}" for chatId: ${chatId}`);
+  
+      try {
+        const process = await Process.findOne({ processId, createdBy: chatId });
+        if (!process) {
+          console.error(`[ERROR] Process not found for processId: "${processId}"`);
+          await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
+          return;
+        }
+  
+        // Save the current process and step index in the user state
+        const userState = await UserState.findOne({ userId: chatId });
+        userState.processId = processId;
+        userState.currentStepIndex = 0;
+        await userState.save();
+  
+        // Start the process
+        await bot.sendMessage(chatId, `Starting process: ${process.title}`, {
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: 'Start', callback_data: `start_process_${processId}` }],
+              [{ text: 'End', callback_data: `end_process_${processId}` }],
+            ],
+          },
+        });
+      } catch (error) {
+        console.error(`[ERROR] Failed to retrieve process details: ${error.message}`);
+        await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
+      }
+    }
+  
+    // Handle starting the process
+    if (data.startsWith('start_process_')) {
+      const processId = extractProcessId(data);
+      console.log(`[DEBUG] Starting process with processId: "${processId}" for chatId: ${chatId}`);
+  
+      try {
+        const userState = await UserState.findOne({ userId: chatId });
+        const process = await Process.findOne({ processId, createdBy: chatId });
+  
+        if (!process) {
+          console.error(`[ERROR] Process not found for processId: "${processId}"`);
+          await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
+          return;
+        }
+  
+        const currentStepIndex = userState.currentStepIndex;
+        if (currentStepIndex >= process.steps.length) {
+          await bot.sendMessage(chatId, 'You have completed all steps in this process.', {
+            reply_markup: {
+              inline_keyboard: [
+                [{ text: 'Submit Process', callback_data: `submit_process_${processId}` }],
+              ],
+            },
+          });
+          return;
+        }
+  
+        const currentStep = process.steps[currentStepIndex];
+        if (currentStep.type === 'text') {
+          await bot.sendMessage(chatId, `Step ${currentStepIndex + 1}: ${currentStep.prompt}`);
+          bot.once('message', async (msg) => {
+            userState.currentStepIndex += 1;
+            await userState.save();
+            await bot.sendMessage(chatId, 'Response recorded. Moving to the next step...');
+            handleNextStep(chatId, processId);
+          });
+        } else if (currentStep.type === 'yes_no') {
+          await bot.sendMessage(chatId, `Step ${currentStepIndex + 1}: ${currentStep.prompt}`, {
+            reply_markup: {
+              inline_keyboard: [
+                [{ text: 'Yes', callback_data: `yes_${processId}` }],
+                [{ text: 'No', callback_data: `no_${processId}` }],
+              ],
+            },
+          });
+        }
+      } catch (error) {
+        console.error(`[ERROR] Failed to start process: ${error.message}`);
+        await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
+      }
+    }
+  
+    // Handle yes/no responses
+    if (data.startsWith('yes_') || data.startsWith('no_')) {
+      const processId = extractProcessId(data);
+      console.log(`[DEBUG] Received yes/no response for processId: "${processId}" for chatId: ${chatId}`);
+  
+      try {
+        const userState = await UserState.findOne({ userId: chatId });
+        userState.answers.push({ stepIndex: userState.currentStepIndex, answer: data.startsWith('yes_') ? 'Yes' : 'No' }); // Save answer
+        userState.currentStepIndex += 1;
+        await userState.save();
+        await bot.sendMessage(chatId, 'Response recorded. Moving to the next step...');
+        handleNextStep(chatId, processId);
+      } catch (error) {
+        console.error(`[ERROR] Failed to record yes/no response: ${error.message}`);
+        await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
+      }
+    }
+  
+    // Handle submitting the process
+    if (data.startsWith('submit_process_')) {
+      const processId = extractProcessId(data);
+      console.log(`[DEBUG] Submitting process with processId: "${processId}" for chatId: ${chatId}`);
+  
+      try {
+        const process = await Process.findOne({ processId, createdBy: chatId });
+        if (!process) {
+          console.error(`[ERROR] Process not found for processId: "${processId}"`);
+          await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
+          return;
+        }
+  
+        await bot.sendMessage(chatId, `Process "${process.title}" has been submitted. Thank you!`);
+      } catch (error) {
+        console.error(`[ERROR] Failed to submit process: ${error.message}`);
+        await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
+      }
+    }
+  });
+  
+  // Function to handle moving to the next step
+  async function handleNextStep(chatId, processId) {
     try {
       const userState = await UserState.findOne({ userId: chatId });
       const process = await Process.findOne({ processId, createdBy: chatId });
-
-      if (!process) {
-        console.error(`[ERROR] Process not found for processId: "${processId}"`);
-        await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
-        return;
-      }
-
+  
       const currentStepIndex = userState.currentStepIndex;
       if (currentStepIndex >= process.steps.length) {
-        await bot.sendMessage(chatId, 'You have completed all steps in this process.', {
+        await bot.sendMessage(chatId, 'You have completed all steps in this process. Thank you!', {
           reply_markup: {
             inline_keyboard: [
               [{ text: 'Submit Process', callback_data: `submit_process_${processId}` }],
             ],
           },
         });
+  
+        // Save answers to ProcessAnswers collection
+        const processAnswers = new ProcessAnswers({
+          userId: chatId,
+          processId: processId,
+          answers: userState.answers, // Assuming userState.answers holds the answers
+        });
+        await processAnswers.save();
         return;
       }
-
+  
       const currentStep = process.steps[currentStepIndex];
       if (currentStep.type === 'text') {
         await bot.sendMessage(chatId, `Step ${currentStepIndex + 1}: ${currentStep.prompt}`);
         bot.once('message', async (msg) => {
+          userState.answers.push({ stepIndex: currentStepIndex, answer: msg.text }); // Save answer
           userState.currentStepIndex += 1;
           await userState.save();
           await bot.sendMessage(chatId, 'Response recorded. Moving to the next step...');
@@ -368,91 +387,12 @@ bot.on('callback_query', async (callbackQuery) => {
         });
       }
     } catch (error) {
-      console.error(`[ERROR] Failed to start process: ${error.message}`);
+      console.error(`[ERROR] Failed to handle next step: ${error.message}`);
       await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
     }
   }
+  
 
-  // Handle yes/no responses
-  if (data.startsWith('yes_') || data.startsWith('no_')) {
-    const processId = extractProcessId(data);
-    console.log(`[DEBUG] Received yes/no response for processId: "${processId}" for chatId: ${chatId}`);
-
-    try {
-      const userState = await UserState.findOne({ userId: chatId });
-      userState.currentStepIndex += 1;
-      await userState.save();
-      await bot.sendMessage(chatId, 'Response recorded. Moving to the next step...');
-      handleNextStep(chatId, processId);
-    } catch (error) {
-      console.error(`[ERROR] Failed to record yes/no response: ${error.message}`);
-      await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
-    }
-  }
-
-  // Handle submitting the process
-  if (data.startsWith('submit_process_')) {
-    const processId = extractProcessId(data);
-    console.log(`[DEBUG] Submitting process with processId: "${processId}" for chatId: ${chatId}`);
-
-    try {
-      const process = await Process.findOne({ processId, createdBy: chatId });
-      if (!process) {
-        console.error(`[ERROR] Process not found for processId: "${processId}"`);
-        await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
-        return;
-      }
-
-      await bot.sendMessage(chatId, `Process "${process.title}" has been submitted. Thank you!`);
-    } catch (error) {
-      console.error(`[ERROR] Failed to submit process: ${error.message}`);
-      await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
-    }
-  }
-});
-
-// Function to handle moving to the next step
-async function handleNextStep(chatId, processId) {
-  try {
-    const userState = await UserState.findOne({ userId: chatId });
-    const process = await Process.findOne({ processId, createdBy: chatId });
-
-    const currentStepIndex = userState.currentStepIndex;
-    if (currentStepIndex >= process.steps.length) {
-      await bot.sendMessage(chatId, 'You have completed all steps in this process.', {
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: 'Submit Process', callback_data: `submit_process_${processId}` }],
-          ],
-        },
-      });
-      return;
-    }
-
-    const currentStep = process.steps[currentStepIndex];
-    if (currentStep.type === 'text') {
-      await bot.sendMessage(chatId, `Step ${currentStepIndex + 1}: ${currentStep.prompt}`);
-      bot.once('message', async (msg) => {
-        userState.currentStepIndex += 1;
-        await userState.save();
-        await bot.sendMessage(chatId, 'Response recorded. Moving to the next step...');
-        handleNextStep(chatId, processId);
-      });
-    } else if (currentStep.type === 'yes_no') {
-      await bot.sendMessage(chatId, `Step ${currentStepIndex + 1}: ${currentStep.prompt}`, {
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: 'Yes', callback_data: `yes_${processId}` }],
-            [{ text: 'No', callback_data: `no_${processId}` }],
-          ],
-        },
-      });
-    }
-  } catch (error) {
-    console.error(`[ERROR] Failed to handle next step: ${error.message}`);
-    await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
-  }
-}
 
 // [SECTION 5: Status Endpoint]
 // This section contains the status endpoint for health checks
