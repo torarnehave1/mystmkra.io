@@ -12,7 +12,7 @@ import rateLimit from 'express-rate-limit'; // Security to protect from brute fo
 import morgan from 'morgan'; // Log functionality
 import { isAuthenticated } from './auth/auth.js';
 import ChatGPT from './routes/openai.js';
-import ENVconfig from './config/config.js';
+import config from './config/config.js';
 import imgroutes from './routes/images.js';
 import telegramRouter1 from './routes/bluebot.js';
 import telegramRouter2 from './routes/greenbot.js';
