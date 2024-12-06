@@ -24,12 +24,18 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 // Set up rate limiter
+if (config.NODE_ENV === 'production') {
+  app.set('trust proxy', 1); // Trust the first proxy (e.g., Nginx)
+} else {
+  app.set('trust proxy', false); // Do not trust proxy in development
+}
+
+// Example rate limiter
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 2000 // limit each IP to 2000 requests per windowMs
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: 'Too many requests, please try again later.',
 });
-
-app.set('trust proxy', true);
 
 app.use(limiter);
 
