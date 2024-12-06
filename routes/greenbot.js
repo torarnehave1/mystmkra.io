@@ -17,6 +17,9 @@ const router = express.Router();
 const bot = new TelegramBot(config.botToken, { polling: true });
 const translations = translationsData[0].translations;
 
+console.log(`The application is running in ${config.NODE_ENV} mode.`);
+console.log(`The bot running is ${config.botToken}.`);
+
 // [SECTION 2: Bot Commands]
 
 // Step 1: Start Command and Language Selection
