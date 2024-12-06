@@ -116,6 +116,8 @@ const presentStep = async (bot, chatId, processId, currentStep, userState) => {
     });
     userState.isProcessingStep = false;
     await userState.save();
+
+    
   } else if (currentStep.type === 'file_process') {
     await bot.sendMessage(chatId, `Step ${userState.currentStepIndex + 1}: ${currentStep.prompt}`);
     bot.once('document', async (msg) => {
