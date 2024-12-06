@@ -1,57 +1,27 @@
-// config.js
 import dotenv from 'dotenv';
 import os from 'os';
 
-dotenv.config(); // Load environment variables from .env file
+dotenv.config();
 
 const hostname = os.hostname();
 console.log(`Hostname: ${hostname}`);
+console.log(`Read from .env: ${process.env.PRODUCTION_HOSTNAME}`);
 
-const readfromenv = process.env.PRODUCTION_HOSTNAME;
+const NODE_ENV = process.env.NODE_ENV || (hostname === process.env.PRODUCTION_HOSTNAME ? 'production' : 'development');
+const isProduction = NODE_ENV === 'production';
 
-if (readfromenv) {
-  console.log(`Read from .env: ${readfromenv}`);
-}
-
-// Set the environment based on the hostname
-const isProduction = hostname === process.env.PRODUCTION_HOSTNAME; // Define your production hostname in .env
-
-// Set NODE_ENV based on the detected environment
-const NODE_ENV = isProduction ? 'production' : 'development';
 console.log(`Environment: ${NODE_ENV}`);
 
-// Determine the base URL based on the environment
-const BASE_URL = NODE_ENV === 'production'
-  ? process.env.SYSTEM_PRODUCTION_URL
-  : process.env.SYSTEM_DEVELOPMENT_URL;
+const BASE_URL = NODE_ENV === 'production' ? process.env.SYSTEM_PRODUCTION_URL : process.env.SYSTEM_DEVELOPMENT_URL;
+const REDIRECT_URI = NODE_ENV === 'production' ? process.env.DROPBOX_REDIRECT_URI_PROD : process.env.DROPBOX_REDIRECT_URI_DEV;
 
-// Determine the redirect URI based on the environment
-const REDIRECT_URI = NODE_ENV === 'production'
-  ? process.env.DROPBOX_REDIRECT_URI_PROD
-  : process.env.DROPBOX_REDIRECT_URI_DEV;
+const PYTHON_VERSION = NODE_ENV === 'production' ? process.env.PYTHON_VERSION_PROD : process.env.PYTHON_VERSION_DEV;
 
-  //Determin the python version based on the enviroment
-  const PYTHON_VERSION = NODE_ENV === 'production'
-  ? process.env.PYTHON_VERSION_PROD
-  : process.env.PYTHON_VERSION_DEV;
+const bot2Username = NODE_ENV === 'production' ? process.env.BOT2_USERNAME_PROD : process.env.BOT2_USERNAME_DEV;
+console.log(`Selected bot username: ${bot2Username}`);
 
-  // Get bot username dynamically based on environment
-const bot2Username =
-process.env.NODE_ENV === 'production'
-  ? process.env.BOT2_USERNAME_PROD
-  : process.env.BOT2_USERNAME_DEV;
-
-  console.log('Selected bot username:', bot2Username);
-
-  const botToken =
-  process.env.NODE_ENV === 'production'
-    ? process.env.TELEGRAM_BOT2_TOKEN_PROD
-    : process.env.TELEGRAM_BOT2_TOKEN_DEV;
-
-console.log('Selected bot token:', botToken);
-
-
-
+const botToken = NODE_ENV === 'production' ? process.env.TELEGRAM_BOT2_TOKEN_PROD : process.env.TELEGRAM_BOT2_TOKEN_DEV;
+console.log(`Selected bot token: ${botToken}`);
 
 export default {
   PYTHON_VERSION,
@@ -64,5 +34,4 @@ export default {
   expiryTime: 0,
   bot2Username,
   botToken,
-
 };
