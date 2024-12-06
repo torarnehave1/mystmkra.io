@@ -21,7 +21,6 @@ const bot2Username = NODE_ENV === 'production' ? process.env.BOT2_USERNAME_PROD 
 console.log(`Selected bot username: ${bot2Username}`);
 
 const botToken = NODE_ENV === 'production' ? process.env.TELEGRAM_BOT2_TOKEN_PROD : process.env.TELEGRAM_BOT2_TOKEN_DEV;
-console.log(`Selected bot token: ${botToken}`);
 
 export default {
   PYTHON_VERSION,
