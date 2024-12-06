@@ -1,4 +1,3 @@
-
 import mongoose from 'mongoose';
 
 const ProcessAnswersSchema = new mongoose.Schema({
@@ -7,8 +6,9 @@ const ProcessAnswersSchema = new mongoose.Schema({
     required: true,
   },
   processId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId, // Use ObjectId type
     required: true,
+    ref: 'Process', // Reference to the Process model
   },
   answers: [
     {
@@ -22,6 +22,10 @@ const ProcessAnswersSchema = new mongoose.Schema({
       },
     },
   ],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const ProcessAnswers = mongoose.model('ProcessAnswers', ProcessAnswersSchema);

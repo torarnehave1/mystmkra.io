@@ -7,7 +7,7 @@ const stepSchema = new Schema({
   stepId: { type: String, required: true }, // Unique identifier for the step
   type: {
     type: String,
-    enum: ['text', 'yes_no', 'file', 'choice', 'generate_questions', 'final'],
+    enum: ['text_process', 'yes_no_process', 'file_process', 'choice', 'generate_questions_process', 'final'],
     required: true,
   }, // Type of step
   prompt: { type: String, required: true }, // Question or instruction text for the user
@@ -24,7 +24,6 @@ const stepSchema = new Schema({
 
 // Process Schema: Defines the overall workflow
 const processSchema = new Schema({
-  processId: { type: String, required: true, unique: true }, // Unique identifier for the process
   title: { type: String, required: true }, // Title of the process
   description: { type: String }, // Optional description for the process
   steps: [stepSchema], // Array of steps in the process
@@ -33,6 +32,6 @@ const processSchema = new Schema({
   isFinished: { type: Boolean, default: false }, // Indicates if the process is finished
 });
 
-const Process = mongoose.model('Process', processSchema);
+const processes = mongoose.model('process', processSchema);
 
-export default Process;
+export default processes;
