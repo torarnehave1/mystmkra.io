@@ -297,7 +297,16 @@ document.addEventListener('DOMContentLoaded', updateLoggedInStatus);
 }
 
 function insertSnippetIntoTextarea(snippetContent, textarea) {
-    textarea.value += snippetContent;  // Append the snippet content to the textarea
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const currentText = textarea.value;
+
+    const before = currentText.substring(0, start);
+    const after = currentText.substring(end);
+
+    textarea.value = before + snippetContent + after;
+    textarea.selectionStart = textarea.selectionEnd = start + snippetContent.length;
+    textarea.focus();
 }
 
 async function deleteSnippet(snippetId) {
