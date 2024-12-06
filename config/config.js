@@ -41,6 +41,8 @@ process.env.NODE_ENV === 'production'
   ? process.env.BOT2_USERNAME_PROD
   : process.env.BOT2_USERNAME_DEV;
 
+  console.log('Selected bot username:', bot2Username);
+
   const botToken =
   process.env.NODE_ENV === 'production'
     ? process.env.TELEGRAM_BOT2_TOKEN_PROD
