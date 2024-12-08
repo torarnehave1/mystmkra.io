@@ -12,6 +12,7 @@ export const handleAddStep = async (bot, chatId, processId) => {
         [{ text: 'Choice', callback_data: `step_type_choice_${processId}` }],
         [{ text: 'Generate Questions', callback_data: `step_type_generate_questions_process_${processId}` }],
         [{ text: 'Final Step', callback_data: `step_type_final_${processId}` }],
+        [{ text: 'Email', callback_data: `step_type_email_process_${processId}` }], // Added new step type
       ],
     },
   });
@@ -34,6 +35,7 @@ export const handleAddStep = async (bot, chatId, processId) => {
       'choice',
       'generate_questions_process',
       'final',
+      'email_process', // Added new step type
     ];
 
     if (!allowedStepTypes.includes(stepType)) {

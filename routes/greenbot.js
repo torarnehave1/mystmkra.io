@@ -4,11 +4,14 @@ import config from '../config/config.js';
 import translationsData from '../translations/process_translations.json' assert { type: 'json' };
 import { getTranslation, extractProcessId, extractStepTypeAndProcessId } from '../services/helpers.js';
 import { handleViewProcess, handleNextStep } from '../services/viewprocess.js'; // Use modular functions
-import processes from '../models/process.js';
+import Process from '../models/process.js';
 import UserState from '../models/UserState.js';
 import { handleCreateProcessManual } from '../services/createProcessManual.js';
 import { handleAddStep } from '../services/AddStepService.js';
 import { handleFinishProcess } from '../services/finishprocess.js';
+import { generateDeepLink } from '../services/deeplink.js'; // Import generateDeepLink function
+//import { saveAnswer } from '../services/answerservice.js';
+
 //import { handleGenerateQuestions } from '../services/GenerateQuestionsService.js';
 
 
@@ -27,17 +30,19 @@ bot.onText(/\/start/, async (msg) => {
   console.log(`[DEBUG] /start triggered by user ${chatId}`);
 
   try {
+    // Create or retrieve user state
     let userState = await UserState.findOne({ userId: chatId });
-
     if (!userState) {
       console.log(`[DEBUG] Creating a new user state for user ${chatId}`);
-      userState = new UserState({ userId: chatId });
+      userState = new UserState({ userId: chatId, language: 'EN' }); // Add language property
       await userState.save();
     }
 
     // Reset process-related state
     userState.processId = null;
     userState.currentStepIndex = 0;
+    userState.answers = [];
+    userState.isProcessingStep = false;
     await userState.save();
 
     // Send welcome message with language selection
@@ -55,10 +60,12 @@ bot.onText(/\/start/, async (msg) => {
   }
 });
 
+
 // Handle callback queries
 bot.on('callback_query', async (callbackQuery) => {
   const { data, message } = callbackQuery;
   const chatId = message.chat.id;
+ // console.log(`[DEBUG] Callback query received:`, callbackQuery); // Log the entire callbackQuery object
 
   // Handle language selection
   if (data.startsWith('lang_')) {
@@ -107,6 +114,12 @@ bot.on('callback_query', async (callbackQuery) => {
   }
 
   if (data === 'create_process_manual') {
+    const userState = await UserState.findOne({ userId: chatId });
+    userState.processId = null;
+    userState.currentStepIndex = 0;
+    userState.answers = [];
+    userState.isProcessingStep = false;
+    await userState.save();
     await handleCreateProcessManual(bot, chatId);
     return;
   }
@@ -120,7 +133,20 @@ bot.on('callback_query', async (callbackQuery) => {
   if (data.startsWith('finish_process_')) {
     const processId = data.replace('finish_process_', '');
     await handleFinishProcess(bot, chatId, processId);
+
+    // Generate and present the deep link
+    const botUsername = config.bot2Username; // Replace with your actual bot username variable
+    const deepLink = generateDeepLink(botUsername, processId);
+    await bot.sendMessage(chatId, `Share this deep link with users: ${deepLink}`);
     return;
+  }
+
+  if (data.startsWith('start_process_')) {
+    const processId = extractProcessId(data);
+    const userState = await UserState.findOne({ userId: chatId });
+    const process = await Process.findById(processId);
+    const currentStep = process.steps[userState.currentStepIndex];
+    presentStep(bot, chatId, processId, currentStep, userState);
   }
   // Additional callback handlers (original logic intact)
 });
@@ -133,7 +159,7 @@ bot.onText(/\/view/, async (msg) => {
   console.log(`[DEBUG] /view triggered by user ${chatId}`);
 
   try {
-    const finishedProcesses = await processes.find({ isFinished: true, createdBy: chatId });
+    const finishedProcesses = await Process.find({ isFinished: true, createdBy: chatId });
 
     if (!finishedProcesses.length) {
       await bot.sendMessage(chatId, 'You have no finished processes.');

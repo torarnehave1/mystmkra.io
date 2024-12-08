@@ -31,6 +31,6 @@ export default {
   accessToken: process.env.DROPBOX_ACCESS_TOKEN,
   refreshToken: process.env.DROPBOX_REFRESH_TOKEN,
   expiryTime: 0,
-  bot2Username,
+  bot2Username: bot2Username , // Replace with your actual bot username
   botToken,
 };

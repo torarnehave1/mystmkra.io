@@ -1,7 +1,9 @@
 import UserState from '../models/UserState.js';
 import Process from '../models/process.js';
 import ProcessAnswers from '../models/ProcessAnswers.js';
-import { extractProcessId } from '../services/helpers.js'; // Corrected path
+import { extractProcessId } from '../services/helpers.js';
+import { saveAnswerAndNextStep } from '../services/answerservice.js'; // Import saveAnswerAndNextStep function
+import { generateDeepLink } from '../services/deeplink.js'; // Import generateDeepLink function
 
 // Function to handle viewing a process
 export const handleViewProcess = async (bot, chatId, processId) => {
@@ -15,10 +17,19 @@ export const handleViewProcess = async (bot, chatId, processId) => {
       return;
     }
 
+    // Create or retrieve user state
+    let userState = await UserState.findOne({ userId: chatId });
+    if (!userState) {
+      console.log(`[DEBUG] Creating a new user state for user ${chatId}`);
+      userState = new UserState({ userId: chatId });
+      await userState.save();
+    }
+
     // Save the current process and step index in the user state
-    const userState = await UserState.findOne({ userId: chatId });
     userState.processId = processId;
     userState.currentStepIndex = 0;
+    userState.answers = [];
+    userState.isProcessingStep = false;
     await userState.save();
 
     // Start the process
@@ -35,6 +46,7 @@ export const handleViewProcess = async (bot, chatId, processId) => {
     await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
   }
 };
+
 
 // Function to handle moving to the next step
 export const handleNextStep = async (bot, chatId, processId) => {
@@ -74,6 +86,12 @@ export const handleNextStep = async (bot, chatId, processId) => {
         answers: userState.answers,
       });
       await processAnswers.save();
+
+      // Generate and present the deep link
+      const botUsername = 'your_bot_username'; // Replace with your actual bot username
+      const deepLink = generateDeepLink(botUsername, processId);
+      await bot.sendMessage(chatId, `Share this deep link with users: ${deepLink}`);
+
       userState.isProcessingStep = false;
       await userState.save();
       return;
@@ -92,21 +110,26 @@ export const handleNextStep = async (bot, chatId, processId) => {
 };
 
 const presentStep = async (bot, chatId, processId, currentStep, userState) => {
+  const stepIndex = userState.currentStepIndex;
+
   if (currentStep.type === 'text_process') {
-    await bot.sendMessage(chatId, `Step ${userState.currentStepIndex + 1}: ${currentStep.prompt}`);
+    await bot.sendMessage(chatId, `Step ${stepIndex + 1}: ${currentStep.prompt}`);
     bot.once('message', async (msg) => {
-      if (!userState.answers) {
-        userState.answers = [];
-      }
-      userState.answers.push({ stepIndex: userState.currentStepIndex, answer: msg.text });
-      userState.currentStepIndex += 1;
-      userState.isProcessingStep = false;
-      await userState.save();
-      await bot.sendMessage(chatId, 'Response recorded. Moving to the next step...');
-      handleNextStep(bot, chatId, processId);
+      if (msg.chat.id !== chatId) return; // Ignore messages from other chats
+      console.log(`[DEBUG] Text input received: "${msg.text}" for processId: ${processId}`);
+
+      await saveAnswerAndNextStep({
+        bot,
+        chatId,
+        processId,
+        userState,
+        stepIndex,
+        answer: msg.text,
+      });
+      await handleNextStep(bot, chatId, processId);
     });
   } else if (currentStep.type === 'yes_no_process') {
-    await bot.sendMessage(chatId, `Step ${userState.currentStepIndex + 1}: ${currentStep.prompt}`, {
+    await bot.sendMessage(chatId, `Step ${stepIndex + 1}: ${currentStep.prompt}`, {
       reply_markup: {
         inline_keyboard: [
           [{ text: 'Yes', callback_data: `yes_${processId}` }],
@@ -114,22 +137,37 @@ const presentStep = async (bot, chatId, processId, currentStep, userState) => {
         ],
       },
     });
-    userState.isProcessingStep = false;
-    await userState.save();
 
-    
+    bot.once('callback_query', async (callbackQuery) => {
+      if (callbackQuery.message.chat.id !== chatId) return; // Ignore callback from other chats
+      const response = callbackQuery.data.startsWith('yes') ? 'Yes' : 'No';
+      console.log(`[DEBUG] Yes/No response received: "${response}" for processId: "${processId}"`);
+
+      await saveAnswerAndNextStep({
+        bot,
+        chatId,
+        processId,
+        userState,
+        stepIndex,
+        answer: response,
+      });
+      await handleNextStep(bot, chatId, processId);
+    });
   } else if (currentStep.type === 'file_process') {
-    await bot.sendMessage(chatId, `Step ${userState.currentStepIndex + 1}: ${currentStep.prompt}`);
+    await bot.sendMessage(chatId, `Step ${stepIndex + 1}: ${currentStep.prompt}`);
     bot.once('document', async (msg) => {
-      if (!userState.answers) {
-        userState.answers = [];
-      }
-      userState.answers.push({ stepIndex: userState.currentStepIndex, answer: msg.document.file_id });
-      userState.currentStepIndex += 1;
-      userState.isProcessingStep = false;
-      await userState.save();
-      await bot.sendMessage(chatId, 'File received. Moving to the next step...');
-      handleNextStep(bot, chatId, processId);
+      if (msg.chat.id !== chatId) return; // Ignore documents from other chats
+      console.log(`[DEBUG] File received: "${msg.document.file_id}" for processId: ${processId}`);
+
+      await saveAnswerAndNextStep({
+        bot,
+        chatId,
+        processId,
+        userState,
+        stepIndex,
+        answer: msg.document.file_id,
+      });
+      await handleNextStep(bot, chatId, processId);
     });
   }
 };

@@ -1,22 +1,47 @@
 import mongoose from 'mongoose';
 
-const { Schema } = mongoose;
-
-const userStateSchema = new Schema({
-  userId: { type: String, required: true, unique: true },
-  currentStepIndex: { type: Number, default: 0 },
-  processId: { type: String }, // Active process
-  systemLanguage: { type: String, enum: ['EN', 'NO'], default: 'EN' },
-  responses: [{ stepId: String, value: Schema.Types.Mixed }], // User inputs
-  generatedQuestions: [{ text: String, confirmed: { type: Boolean, default: false } }], // Suggested questions
-  conversationHistory: [
+const UserStateSchema = new mongoose.Schema({
+  userId: {
+    type: Number,
+    required: true,
+    unique: true, // Ensure one state per user
+  },
+  processId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Process', // Reference to the Process model
+    default: null, // Optional initially
+  },
+  currentStepIndex: {
+    type: Number,
+    default: 0, // Default to the first step
+  },
+  isProcessingStep: {
+    type: Boolean,
+    default: false, // Used to prevent duplicate step handling
+  },
+  answers: [
     {
-      role: { type: String, enum: ['system', 'user', 'assistant'], required: true },
-      content: { type: String, required: true },
+      stepIndex: {
+        type: Number,
+        required: true,
+      },
+      answer: {
+        type: String,
+        required: true,
+      },
     },
-  ], // Chat history
+  ],
+  systemLanguage: {
+    type: String,
+    enum: ['EN', 'NO'], // Languages available
+    default: 'EN', // Default to English
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-const UserState = mongoose.model('UserState', userStateSchema);
+const UserState = mongoose.model('UserState', UserStateSchema);
 
 export default UserState;
