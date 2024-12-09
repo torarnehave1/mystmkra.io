@@ -13,6 +13,6 @@ db.getCollection('processes')
 
 //DELETE ALL DOCUMENTS
 
-//db.getCollection('processes').deleteMany({})
+db.getCollection('processes').deleteMany({})
 //db.getCollection('userstates').deleteMany({})
-db.getCollection('processanswers').deleteMany({})
+//db.getCollection('processanswers').deleteMany({})

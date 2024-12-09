@@ -121,7 +121,6 @@ const performSearch = async (query) => {
 };
 
 // Bot logic: handle all incoming messages
-// Bot logic: handle all incoming messages
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
 
@@ -175,51 +174,62 @@ bot.on('message', async (msg) => {
             // Log the incoming text message
             await logMessage(msg);
 
-            // Perform a search for the provided text
-            const documents = await performSearch(msg.text);
+            // Check if the message includes a question mark to trigger a search
+            if (msg.text.includes('?')) {
+                // Perform a search for the provided text
+                const documents = await performSearch(msg.text);
 
-            // Check if any documents were found
-            if (documents.length === 0) {
-                const noDocsMessage = 'No relevant documents found.';
-                
-                // Log the outgoing message
-                await logMessage({
-                    chat: { id: chatId },
-                    text: noDocsMessage,
-                    from: { is_bot: true },
-                });
+                // Check if any documents were found
+                if (documents.length === 0) {
+                    const noDocsMessage = 'No relevant documents found.';
+                    
+                    // Log the outgoing message
+                    await logMessage({
+                        chat: { id: chatId },
+                        text: noDocsMessage,
+                        from: { is_bot: true },
+                    });
 
-                await bot.sendMessage(chatId, noDocsMessage);
-            } else {
-                // Format the documents into a readable string
-                const formattedResponse = documents
-                    .map((doc, index) => `${index + 1}. [${doc.title}](${doc.URL})`)
-                    .join('\n');
-                
-                // Log the outgoing message
-                await logMessage({
-                    chat: { id: chatId },
-                    text: formattedResponse,
-                    from: { is_bot: true },
-                });
+                    await bot.sendMessage(chatId, noDocsMessage);
+                } else {
+                    // Format the documents into a readable string
+                    const formattedResponse = documents
+                        .map((doc, index) => `${index + 1}. [${doc.title}](${doc.URL})`)
+                        .join('\n');
+                    
+                    // Log the outgoing message
+                    await logMessage({
+                        chat: { id: chatId },
+                        text: formattedResponse,
+                        from: { is_bot: true },
+                    });
 
-                // Send the formatted response to the user with inline buttons
-                const responseWithQuestion = `${formattedResponse}\n\nAre you happy with the answer?`;
+                    // Send the formatted response to the user with inline buttons
+                    const responseWithQuestion = `${formattedResponse}\n\nAre you happy with the answer?`;
 
-                await bot.sendMessage(chatId, responseWithQuestion, {
-                    parse_mode: 'Markdown',
-                    reply_markup: {
-                        inline_keyboard: [
-                            [
-                                { text: 'YES', callback_data: 'search_yes' },
-                                { text: 'NO', callback_data: 'search_no' },
-                                { text: 'NO', callback_data: 'search_no' },
-                                { text: 'NO', callback_data: 'search_no' },
-                                { text: 'NO', callback_data: 'search_no' },
+                    await bot.sendMessage(chatId, responseWithQuestion, {
+                        parse_mode: 'Markdown',
+                        reply_markup: {
+                            inline_keyboard: [
+                                [
+                                    { text: 'YES', callback_data: 'search_yes' },
+                                    { text: 'NO', callback_data: 'search_no' },
+                                ],
                             ],
-                        ],
-                    },
+                        },
+                    });
+                }
+            } else {
+                const noQuestionMarkMessage = 'Please include a question mark in your query to perform a search.';
+                
+                // Log the outgoing message
+                await logMessage({
+                    chat: { id: chatId },
+                    text: noQuestionMarkMessage,
+                    from: { is_bot: true },
                 });
+
+                await bot.sendMessage(chatId, noQuestionMarkMessage);
             }
         } else {
             console.log('Unsupported message type.');

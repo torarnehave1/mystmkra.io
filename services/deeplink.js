@@ -9,7 +9,7 @@ export const generateDeepLink = (botUsername, processId) => {
     throw new Error('Both botUsername and processId are required to generate a deep link.');
   }
 
-  const deepLink = `https://t.me/${botUsername}?start=process_${processId}`;
+  const deepLink = `https://t.me/${botUsername}?start=view_process_${processId}`;
   console.log(`[DEBUG] Generated deep link: ${deepLink}`);
   return deepLink;
 };

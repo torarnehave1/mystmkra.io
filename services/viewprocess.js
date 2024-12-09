@@ -4,6 +4,7 @@ import ProcessAnswers from '../models/ProcessAnswers.js';
 import { extractProcessId } from '../services/helpers.js';
 import { saveAnswerAndNextStep } from '../services/answerservice.js'; // Import saveAnswerAndNextStep function
 import { generateDeepLink } from '../services/deeplink.js'; // Import generateDeepLink function
+import config from '../config/config.js'; // Import config
 
 // Function to handle viewing a process
 export const handleViewProcess = async (bot, chatId, processId) => {
@@ -31,6 +32,11 @@ export const handleViewProcess = async (bot, chatId, processId) => {
     userState.answers = [];
     userState.isProcessingStep = false;
     await userState.save();
+
+    // Generate and present the deep link
+    const botUsername = config.bot2Username; // Get bot username from config
+    const deepLink = generateDeepLink(botUsername, processId);
+    await bot.sendMessage(chatId, `Share this deep link with users: ${deepLink}`);
 
     // Start the process
     await bot.sendMessage(chatId, `Starting process: ${process.title}`, {
@@ -86,11 +92,6 @@ export const handleNextStep = async (bot, chatId, processId) => {
         answers: userState.answers,
       });
       await processAnswers.save();
-
-      // Generate and present the deep link
-      const botUsername = 'your_bot_username'; // Replace with your actual bot username
-      const deepLink = generateDeepLink(botUsername, processId);
-      await bot.sendMessage(chatId, `Share this deep link with users: ${deepLink}`);
 
       userState.isProcessingStep = false;
       await userState.save();

@@ -22,12 +22,35 @@ const translations = translationsData[0].translations;
 
 
 
+// Helper function to extract process ID from start parameter
+function extractProcessIdFromStartParam(startParam) {
+  const match = startParam.match(/^view_process_(.+)$/);
+  return match ? match[1] : null;
+}
+
 // [SECTION 2: Bot Commands]
 
 // Step 1: Start Command and Language Selection
-bot.onText(/\/start/, async (msg) => {
+bot.onText(/\/start(?: (.+))?/, async (msg, match) => {
   const chatId = msg.chat.id;
-  console.log(`[DEBUG] /start triggered by user ${chatId}`);
+  const startParam = match[1];
+  console.log(`[DEBUG] /start triggered by user ${chatId} with param: ${startParam}`);
+
+  if (startParam) {
+    const processId = extractProcessIdFromStartParam(startParam);
+    if (processId) {
+      try {
+        await handleViewProcess(bot, chatId, processId);
+      } catch (error) {
+        console.error(`[ERROR] Failed to handle deep link for process ${processId}: ${error.message}`);
+        await bot.sendMessage(chatId, 'An error occurred while trying to view the process. Please try again later.');
+      }
+      return;
+    } else {
+      await bot.sendMessage(chatId, 'Invalid deep link parameter. Please check the link and try again.');
+      return;
+    }
+  }
 
   try {
     // Create or retrieve user state
@@ -132,12 +155,18 @@ bot.on('callback_query', async (callbackQuery) => {
 
   if (data.startsWith('finish_process_')) {
     const processId = data.replace('finish_process_', '');
-    await handleFinishProcess(bot, chatId, processId);
+    try {
+      await handleFinishProcess(bot, chatId, processId);
+    } catch (error) {
+      console.error(`[ERROR] Failed to finish process ${processId}: ${error.message}`);
+      await bot.sendMessage(chatId, 'An error occurred while finishing the process. Please try again later.');
+    }
+    return;
+  }
 
-    // Generate and present the deep link
-    const botUsername = config.bot2Username; // Replace with your actual bot username variable
-    const deepLink = generateDeepLink(botUsername, processId);
-    await bot.sendMessage(chatId, `Share this deep link with users: ${deepLink}`);
+  if (data.startsWith('view_')) {
+    const processId = extractProcessId(data);
+    await handleViewProcess(bot, chatId, processId); // Use modular function
     return;
   }
 
@@ -153,7 +182,6 @@ bot.on('callback_query', async (callbackQuery) => {
 
 // [SECTION 3: View Finished Process Command]
 
-// Command to view finished processes
 bot.onText(/\/view/, async (msg) => {
   const chatId = msg.chat.id;
   console.log(`[DEBUG] /view triggered by user ${chatId}`);
@@ -175,6 +203,11 @@ bot.onText(/\/view/, async (msg) => {
     await bot.sendMessage(chatId, 'Select a finished process to view:', {
       reply_markup: { inline_keyboard: processButtons },
     });
+
+    // Generate and send deep link
+    const botUsername = config.bot2Username; // Assuming botUsername is in the config
+    const deepLink = `https://t.me/${botUsername}?view=view_${process._id}`;
+    await bot.sendMessage(chatId, `You can also use this link to view your processes: ${deepLink}`);
   } catch (error) {
     console.error(`[ERROR] Failed to retrieve finished processes: ${error.message}`);
     await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
