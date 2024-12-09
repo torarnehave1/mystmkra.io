@@ -128,56 +128,13 @@ bot.on('message', async (msg) => {
         // Log the incoming message
         await logMessage(msg);
 
-        if (msg.photo && Array.isArray(msg.photo) && msg.photo.length > 0) {
-            console.log('Photo detected in the message.');
+        if (msg.text && msg.text.startsWith('/search')) {
+            // Extract the search query after the command
+            const query = msg.text.replace('/search', '').trim();
 
-            // Extract the highest resolution photo (last in the array)
-            const photoId = msg.photo[msg.photo.length - 1].file_id;
-
-            // Retrieve the file path for the photo
-            const file = await bot.getFile(photoId);
-            const photoUrl = `https://api.telegram.org/file/bot${TELEGRAM_BOT_TOKEN}/${file.file_path}`;
-
-            console.log(`Photo URL: ${photoUrl}`);
-
-            // Analyze the photo and caption
-            const analysisResult = await analyzePhotoAndText(TELEGRAM_BOT_TOKEN, msg);
-
-            // Log the outgoing message
-            await logMessage({
-                chat: { id: chatId },
-                text: analysisResult,
-                from: { is_bot: true },
-            });
-
-            // Send the analysis result back to the user with inline buttons
-            
-           //Transform the analysis result into a response formated as html
-           
-
-
-            
-            const responseWithQuestion = `${analysisResult}\n\n<b>Please help us become better at what we do! Are you happy with the report?</b>`;
-
-            await bot.sendMessage(chatId, responseWithQuestion, {
-                parse_mode: 'HTML',
-                reply_markup: {
-                    inline_keyboard: [
-                        [
-                            { text: 'YES', callback_data: 'photo_yes' },
-                            { text: 'NO', callback_data: 'photo_no' },
-                        ],
-                    ],
-                },
-            });
-        } else if (msg.text) {
-            // Log the incoming text message
-            await logMessage(msg);
-
-            // Check if the message includes a question mark to trigger a search
-            if (msg.text.includes('?')) {
+            if (query) {
                 // Perform a search for the provided text
-                const documents = await performSearch(msg.text);
+                const documents = await performSearch(query);
 
                 // Check if any documents were found
                 if (documents.length === 0) {
@@ -220,20 +177,69 @@ bot.on('message', async (msg) => {
                     });
                 }
             } else {
-                const noQuestionMarkMessage = 'Please include a question mark in your query to perform a search.';
+                const noQueryMessage = 'Please provide a search query after the /search command.';
                 
                 // Log the outgoing message
                 await logMessage({
                     chat: { id: chatId },
-                    text: noQuestionMarkMessage,
+                    text: noQueryMessage,
                     from: { is_bot: true },
                 });
 
-                await bot.sendMessage(chatId, noQuestionMarkMessage);
+                await bot.sendMessage(chatId, noQueryMessage);
+            }
+        } else if (msg.text && msg.text.startsWith('/food')) {
+            if (msg.photo && Array.isArray(msg.photo) && msg.photo.length > 0) {
+                console.log('Photo detected in the message.');
+
+                // Extract the highest resolution photo (last in the array)
+                const photoId = msg.photo[msg.photo.length - 1].file_id;
+
+                // Retrieve the file path for the photo
+                const file = await bot.getFile(photoId);
+                const photoUrl = `https://api.telegram.org/file/bot${TELEGRAM_BOT_TOKEN}/${file.file_path}`;
+
+                console.log(`Photo URL: ${photoUrl}`);
+
+                // Analyze the photo and caption
+                const analysisResult = await analyzePhotoAndText(TELEGRAM_BOT_TOKEN, msg);
+
+                // Log the outgoing message
+                await logMessage({
+                    chat: { id: chatId },
+                    text: analysisResult,
+                    from: { is_bot: true },
+                });
+
+                // Send the analysis result back to the user with inline buttons
+                const responseWithQuestion = `${analysisResult}\n\n<b>Please help us become better at what we do! Are you happy with the report?</b>`;
+
+                await bot.sendMessage(chatId, responseWithQuestion, {
+                    parse_mode: 'HTML',
+                    reply_markup: {
+                        inline_keyboard: [
+                            [
+                                { text: 'YES', callback_data: 'photo_yes' },
+                                { text: 'NO', callback_data: 'photo_no' },
+                            ],
+                        ],
+                    },
+                });
+            } else {
+                const noPhotoMessage = 'Please send a photo along with the /food command.';
+                
+                // Log the outgoing message
+                await logMessage({
+                    chat: { id: chatId },
+                    text: noPhotoMessage,
+                    from: { is_bot: true },
+                });
+
+                await bot.sendMessage(chatId, noPhotoMessage);
             }
         } else {
-            console.log('Unsupported message type.');
-            const unsupportedMessage = 'Sorry, I only understand text or photo messages.';
+            console.log('Unsupported message type or command.');
+            const unsupportedMessage = 'Sorry, I only understand the /search and /food commands.';
             
             // Log the outgoing message
             await logMessage({
