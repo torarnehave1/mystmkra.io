@@ -34,7 +34,7 @@ export const handleViewProcess = async (bot, chatId, processId) => {
     await userState.save();
 
     // Generate and present the deep link
-    const botUsername = config.bot2Username; // Get bot username from config
+    const botUsername = config.botUsername; // Get bot username from config
     const deepLink = generateDeepLink(botUsername, processId);
     await bot.sendMessage(chatId, `Share this deep link with users: ${deepLink}`);
 

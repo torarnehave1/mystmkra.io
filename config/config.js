@@ -17,8 +17,8 @@ const REDIRECT_URI = NODE_ENV === 'production' ? process.env.DROPBOX_REDIRECT_UR
 
 const PYTHON_VERSION = NODE_ENV === 'production' ? process.env.PYTHON_VERSION_PROD : process.env.PYTHON_VERSION_DEV;
 
-const bot2Username = NODE_ENV === 'production' ? process.env.BOT2_USERNAME_PROD : process.env.BOT2_USERNAME_DEV;
-console.log(`Selected bot username: ${bot2Username}`);
+const botUsername = NODE_ENV === 'production' ? process.env.BOT1_USERNAME_PROD : process.env.BOT2_USERNAME_DEV;
+console.log(`Selected bot username: ${botUsername}`);
 
 const botToken = NODE_ENV === 'production' ? process.env.TELEGRAM_BOT2_TOKEN_PROD : process.env.TELEGRAM_BOT2_TOKEN_DEV;
 
@@ -31,6 +31,6 @@ export default {
   accessToken: process.env.DROPBOX_ACCESS_TOKEN,
   refreshToken: process.env.DROPBOX_REFRESH_TOKEN,
   expiryTime: 0,
-  bot2Username: bot2Username , // Replace with your actual bot username
+  botUsername: botUsername , // Replace with your actual bot username
   botToken,
 };

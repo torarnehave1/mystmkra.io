@@ -205,7 +205,7 @@ bot.onText(/\/view/, async (msg) => {
     });
 
     // Generate and send deep link
-    const botUsername = config.bot2Username; // Assuming botUsername is in the config
+    const botUsername = config.botUsername; // Assuming botUsername is in the config
     const deepLink = `https://t.me/${botUsername}?view=view_${process._id}`;
     await bot.sendMessage(chatId, `You can also use this link to view your processes: ${deepLink}`);
   } catch (error) {

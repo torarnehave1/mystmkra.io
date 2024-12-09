@@ -22,7 +22,7 @@ export const handleFinishProcess = async (bot, chatId, processId) => {
     await bot.sendMessage(chatId, `Process "${process.title}" has been successfully marked as finished. Thank you!`);
 
     // Generate and send deep link
-    const botUsername = config.bot2Username; // Assuming botUsername is in the config
+    const botUsername = config.botUsername; // Assuming botUsername is in the config
     const deepLink = `https://t.me/${botUsername}?start=view_process_${process._id}`;
     await bot.sendMessage(chatId, `You can also use this link to view your processes: ${deepLink}`);
   } catch (error) {
