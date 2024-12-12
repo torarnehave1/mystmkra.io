@@ -1,0 +1,1000 @@
+  998  pm2 stop myst
+  999  pm2 start myst
+ 1000  cd ..
+ 1001  cd var
+ 1002  cd www
+ 1003  cd html
+ 1004  cd mystmkra.io
+ 1005  git pull
+ 1006  pm2 stop myst
+ 1007  pm2 start myst
+ 1008  git pull
+ 1009  pm2 stop myst
+ 1010  pm2 start myst
+ 1011  git pull
+ 1012  pm2 stop myst
+ 1013  pm2 start myst
+ 1014  git pull
+ 1015  pm2 stop myst
+ 1016  pm2 start myst
+ 1017  cd ..
+ 1018  cd var
+ 1019  cd www
+ 1020  cd hml
+ 1021  cd html
+ 1022  cd mystmkra.io
+ 1023  git pull
+ 1024  pm2 stop
+ 1025  pm2 stop myst
+ 1026  pm2 start myst
+ 1027  pm2 stop myst
+ 1028  git pull
+ 1029  pm2 start myst
+ 1030  cd ..
+ 1031  cd var
+ 1032  cd www
+ 1033  cd html
+ 1034  cd mystmkra.io
+ 1035  git pull
+ 1036  pm2 stop myst
+ 1037  pm2 start myst
+ 1038  git pull
+ 1039  cd node_modules
+ 1040  pm2 stop myst
+ 1041  rm .package-lock.json
+ 1042  cd..
+ 1043  cd ..
+ 1044  git pull
+ 1045  pm2 start myst
+ 1046  cd ..
+ 1047  cd var
+ 1048  cd www
+ 1049  cd html
+ 1050  cd mystmkra.io
+ 1051  git pull
+ 1052  Mandala1.
+ 1053  cd ..
+ 1054  cd www
+ 1055  cd var
+ 1056  cd www
+ 1057  cd html
+ 1058  cd mystmkra.io
+ 1059  git pull
+ 1060  pm2 stop myst
+ 1061  pm2 start myst
+ 1062  git pull
+ 1063  pm2 stop myst
+ 1064  pm2 start myst
+ 1065  git pull
+ 1066  pm2 stop myst
+ 1067  pm2 start myst
+ 1068  pm2 stop myst
+ 1069  git pull
+ 1070  pm2 start myst
+ 1071  pm2 stop myst
+ 1072  git pull
+ 1073  pm2 start myst
+ 1074  pm2 stop myst
+ 1075  git pull
+ 1076  pm2 start myst
+ 1077  pm2 stop myst
+ 1078  git pull
+ 1079  pm2 start myst
+ 1080  git pull
+ 1081  pm2 stop myst
+ 1082  pm2 start myst
+ 1083  pm2 stop myst
+ 1084  git pull
+ 1085  pm2 start myst
+ 1086  pm2 stop myst
+ 1087  node server.js
+ 1088  pm2 stop myst
+ 1089  git pull
+ 1090  node server.js
+ 1091  NODE_ENV=production node server.js
+ 1092  pm2 start server.js --name myst --env production
+ 1093  pm2 stop myst
+ 1094  NODE_ENV=production node server.js
+ 1095  cd ..
+ 1096  cd var
+ 1097  cd www
+ 1098  cd html
+ 1099  mystmkra.io
+ 1100  cd mystmkra.io
+ 1101  pm2 list
+ 1102  pm2 start myst
+ 1103  pm2 stop myst
+ 1104  git pull
+ 1105  pm2 start myst
+ 1106  pm2 stop myst
+ 1107  git pull
+ 1108  pm2 start myst
+ 1109  cd ..
+ 1110  cd var
+ 1111  cd www
+ 1112  cd html
+ 1113  cd mystmkra.io
+ 1114  git pull
+ 1115  pm2 stop slow
+ 1116  pm2 start slow
+ 1117  pm2 stopm myst
+ 1118  pm2 stop myst
+ 1119  pm2 start myst
+ 1120  pm2 stop myst
+ 1121  git pull
+ 1122  pm2 start myst
+ 1123  pm2 stop myst
+ 1124  git pull
+ 1125  pm2 start myst
+ 1126  pm2 stop myst
+ 1127  git pull
+ 1128  pm2 start myst
+ 1129  pm2 stop myst
+ 1130  git pull
+ 1131  pm2 start myst
+ 1132  pm2 list
+ 1133  pm2 stop myst
+ 1134  git pull
+ 1135  pm2 start myst
+ 1136  git pull
+ 1137  pm2 stop myst
+ 1138  pm2 start myst
+ 1139  pm2 stop myst
+ 1140  git pull
+ 1141  pm2 start myst
+ 1142  pm2 stop myst
+ 1143  git pull
+ 1144  pm2 start myst
+ 1145  pm2 stop myst
+ 1146  git pull
+ 1147  pm2 start myst
+ 1148  do-r
+ 1149  do-release-upgrade
+ 1150  sudo apt update
+ 1151  sudo apt upgrade
+ 1152  do-release-upgrade
+ 1153  reboot
+ 1154  do-release-upgrade
+ 1155  cd ..
+ 1156  cd var
+ 1157  cd www
+ 1158  cd html
+ 1159  cd mystmkra.io
+ 1160  pm2 list
+ 1161  pm2 save
+ 1162  PORT=3001 pm2 start server.js --name myst --env production
+ 1163  pm2 save
+ 1164  pm2 list
+ 1165  cd ..
+ 1166  cd slowyou.net
+ 1167  PORT=3000 pm2 start server.js --name slow --env production
+ 1168  sudo apt update
+ 1169  sud apt upgrade
+ 1170  sudo apt upgrade
+ 1171  cd ~
+ 1172  ls -a
+ 1173  sudo apt install zoxide
+ 1174  nano .bashrc
+ 1175  source ~/.bashrc
+ 1176  cd ..
+ 1177  cd var
+ 1178  cd www
+ 1179  cd html
+ 1180  cd slowyou.net
+ 1181  pm2 list
+ 1182  pm2 stop slow
+ 1183  git pull https://github.com/torarnehave1/slowyou.net main
+ 1184  pm2 start slow
+ 1185  pm2 save
+ 1186  pm2 list
+ 1187  z mystmkra.io
+ 1188  cd var
+ 1189  cd ..
+ 1190  z html
+ 1191  z myst
+ 1192  dir
+ 1193  cd mystmkra.io
+ 1194  git pull
+ 1195  pm2 stop myst
+ 1196  pm2 start myst
+ 1197  pm2 stop myst
+ 1198  pm2 start myst
+ 1199  z myst
+ 1200  git pull
+ 1201  pm2 stop myst
+ 1202  pm2 start myst
+ 1203  pm2 stop myst
+ 1204  git pull
+ 1205  pm2 start myst
+ 1206  git pull
+ 1207  pm2 stop
+ 1208  pm2 stop myst
+ 1209  pm2 start myst
+ 1210  pm2 stop myst
+ 1211  git pull
+ 1212  git pull
+ 1213  pm2 stop myst
+ 1214  pm2 start myst
+ 1215  z myst
+ 1216  git pull
+ 1217  pm2 stop myst
+ 1218  pm2 start myst
+ 1219  git pull
+ 1220  pm2 stop myst
+ 1221  pm2 start myst
+ 1222  pm2 stop myst
+ 1223  git pull
+ 1224  pm2 start myst
+ 1225  z slow
+ 1226  git pull
+ 1227  git branch --set-upstream-to=origin/main
+ 1228  git pull https://github.com/torarnehave1/slowyou.net main
+ 1229  pm2 stop slow
+ 1230  pm2 start slow
+ 1231  pm2 stop slow
+ 1232  git pull https://github.com/torarnehave1/slowyou.net main
+ 1233  pm2 start slow
+ 1234  git pull https://github.com/torarnehave1/slowyou.net main
+ 1235  pm2 stop slow
+ 1236  pm2 start slow
+ 1237  pm2 stop slow
+ 1238  git pull https://github.com/torarnehave1/slowyou.net main
+ 1239  pm2 start slow
+ 1240  z myst
+ 1241  git pull
+ 1242  z slow
+ 1243  git pull https://github.com/torarnehave1/slowyou.net main
+ 1244  pm2 stop slow
+ 1245  pm2 start slow
+ 1246  z slow
+ 1247  pm2 stop slwo
+ 1248  pm2 stop slow
+ 1249  git pull https://github.com/torarnehave1/slowyou.net main
+ 1250  pm2 start slow
+ 1251  z slow
+ 1252  git pull https://github.com/torarnehave1/slowyou.net main
+ 1253  pm2 stop slow
+ 1254  pm2 start slow
+ 1255  git pull https://github.com/torarnehave1/slowyou.net main
+ 1256  pm2 stop slow
+ 1257  pm2 start slow
+ 1258  git pull https://github.com/torarnehave1/slowyou.net main
+ 1259  pm2 stop slow
+ 1260  pm2 start slow
+ 1261  pm2 stop slow
+ 1262  git pull https://github.com/torarnehave1/slowyou.net main
+ 1263  pm2 start slow
+ 1264  dig alivenesstrends.com
+ 1265  z slow
+ 1266  cd..
+ 1267  mkdir alivenesstrends.com
+ 1268  dir
+ 1269  rmdir alivenesstrends.com
+ 1270  dir
+ 1271  cd ..
+ 1272  mkdir alivenesstrends.com
+ 1273  dir
+ 1274  cd alivenesstrends.com
+ 1275  sudo ln -s /etc/nginx/sites-available/alivenesstrends.com /etc/nginx/sites-enabled/
+ 1276  sudo nginx -t
+ 1277  sudo ln -s /etc/nginx/sites-available/alivenesstrends.conf /etc/nginx/sites-enabled/
+ 1278  sudo nginx -t
+ 1279  sudo ln -s /etc/nginx/sites-available/alivenesstrends /etc/nginx/sites-enabled/
+ 1280  sudo nginx -t
+ 1281  sudo chown -R www-data:www-data /var/www/html/alivenesstrends.com
+ 1282  sudo chmod -R 755 /var/www/html/alivenesstrends.com
+ 1283  sudo nano /etc/nginx/sites-available/alivenesstrends.com
+ 1284  sudo ln -s /etc/nginx/sites-available/alivenesstrends.com /etc/nginx/sites-enabled/
+ 1285  sudo nginx -t
+ 1286  sudo ln -s /etc/nginx/sites-available/alivenesstrends /etc/nginx/sites-enabled/
+ 1287  sudo nginx -t
+ 1288  z etc
+ 1289  cd ..
+ 1290  cd etc
+ 1291  cd nginx
+ 1292  dir
+ 1293  cd sites-available
+ 1294  dir
+ 1295  sudo ln -s /etc/nginx/sites-available/alivenesstrends /etc/nginx/sites-enabled/
+ 1296  sudo nginx -t
+ 1297  sudo nginx reload
+ 1298  sudo tail -f /var/log/nginx/error.log
+ 1299  sudo rm /etc/nginx/sites-enabled/alivenesstrends.conf
+ 1300  sudo rm /etc/nginx/sites-enabled/alivenesstrends.com
+ 1301  sudo rm /etc/nginx/sites-enabled/alivenesstrends
+ 1302  sudo nano /etc/nginx/sites-available/alivenesstrends.conf
+ 1303  cd ..
+ 1304  cd var
+ 1305  sudo ln -s /etc/nginx/sites-available/alivenesstrends.conf /etc/nginx/sites-enabled/
+ 1306  sudo nginx -t
+ 1307  sudo systemctl restart nginx
+ 1308  z ali
+ 1309  git init
+ 1310  git remote add origin https://github.com/torarnehave1/alivenesstrends
+ 1311  git config --global --add safe.directory /var/www/html/alivenesstrends.com
+ 1312  git remote add origin https://github.com/torarnehave1/alivenesstrends
+ 1313  git remote -v
+ 1314  git fetch origin
+ 1315  git checkout main
+ 1316  git pull origin main
+ 1317  sudo apt update
+ 1318  sudo apt upgrade
+ 1319  sudo certbot --nginx -d alivenesstrends.com -d www.alivenesstrends.com
+ 1320  dig alivenesstrends.com
+ 1321  dig www.alivenesstrends.com
+ 1322  curl -I http://alivenesstrends.com
+ 1323  curl -I https://alivenesstrends.com
+ 1324  curl -I http://alivenesstrends.com
+ 1325  sudo certbot --nginx -v alivenesstrends.com -v www.alivenesstrends.com
+ 1326  sudo certbot --nginx -d alivenesstrends.com -d www.alivenesstrends.com
+ 1327  sudo certbot --nginx -d alivenesstrends.com -d www.alivenesstrends.com -v
+ 1328  dir
+ 1329  git pull
+ 1330  sudo rm -rf .git
+ 1331  dir
+ 1332  sudo rm -rf /var/www/html/alivenesstrends.com/*
+ 1333  dir
+ 1334  git init
+ 1335  git remote add origin https://github.com/torarnehave1/alivenesstrends.com
+ 1336  git fetch origin
+ 1337  git checkout -b main origin/main
+ 1338  dir
+ 1339  pm2 list
+ 1340  pm2 start app.js --name "trend" --env PORT=3002
+ 1341  pm2 start server.js --name "trend" --env PORT=3002
+ 1342  pm2 save
+ 1343  pm2 list
+ 1344  pm2 stop trend
+ 1345  git pull
+ 1346  pm2 start trend
+ 1347  sudo certbot --nginx -d alivenesstrends.com -d www.alivenesstrends.com -v
+ 1348  sudo nginx -t
+ 1349  sudo certbot -d alivenesstrends.com -d www.alivenesstrends.com --manual --preferred-challenges dns certonly
+ 1350  sudo certbot --nginx -d alivenesstrends.com -d www.alivenesstrends.com -v
+ 1351  d
+ 1352  do-release-upgrade
+ 1353  reboot
+ 1354  do-release-upgrade
+ 1355  dig alivenesstrends.com
+ 1356  telnet alivenesstrends.com 80
+ 1357  sudo nginx -t
+ 1358  sudo ss -tulwn | grep 3002
+ 1359  sudo netstat -tulnp | grep 3002
+ 1360  z trend
+ 1361  pm2 list
+ 1362  pm2 save
+ 1363  pm2 save --force
+ 1364  pm2 list
+ 1365  pm2 start server.js --name alivenesstrends --env PORT=3002
+ 1366  sudo ss -tulwn | grep 3002
+ 1367  curl -I http://alivenesstrends.com
+ 1368  z slow
+ 1369  pm2 start server.js --name slow --env PORT=3000
+ 1370  z myst
+ 1371  pm2 start server.js --name myst --env PORT=3001
+ 1372  pm2 save
+ 1373  pm2 list
+ 1374  curl -I http://mystmkra.io
+ 1375  curl -I http://slowyou.net
+ 1376  curl -I http://alivenesstrends.com
+ 1377  sudo ufw status
+ 1378  z alive
+ 1379  pm2 logs alivenesstrends
+ 1380  curl http://localhost:3002
+ 1381  sudo nginx -t
+ 1382  sudo rm /etc/nginx/sites-available/mystmkra.slowyou.net
+ 1383  sudo rm /etc/nginx/sites-enabled/mystmkra.slowyou.net
+ 1384  sudo nginx -t
+ 1385  sudo systemctl restart nginx
+ 1386  curl -I http://alivenesstrends.com
+ 1387  sudo nginx -t
+ 1388  sudo systemctl restart nginx
+ 1389  curl -I http://alivenesstrends.com
+ 1390  pm2 list
+ 1391  curl -I http://alivenesstrends.com
+ 1392  dir
+ 1393  cd public
+ 1394  dir
+ 1395  cd..
+ 1396  cd ..
+ 1397  pm2 stop alivenesstrends
+ 1398  node server.js
+ 1399  pm2 stop alivenesstrends
+ 1400  pm2 start alivenesstrends
+ 1401  sudo nginx -t
+ 1402  sudo systemctl reload nginx
+ 1403  sudo systemctl restart nginx
+ 1404  sudo certbot --nginx -d alivenesstrends.com -d www.alivenesstrends.com
+ 1405  sudo certbot --nginx -d alivenesstrends.com -d www.alivenesstrends.com -v
+ 1406  dig +short alivenesstrends.com
+ 1407  dig +short www.alivenesstrends.com
+ 1408  sudo nginx -t
+ 1409  sudo systemctl reload nginx
+ 1410  sudo systemctl restart nginx
+ 1411  sudo certbot --nginx -d alivenesstrends.com -d www.alivenesstrends.com -v
+ 1412  sudo chown -R www-data:www-data /var/www/html/alivenesstrends.com/public
+ 1413  sudo chown -R www-data:www-data /var/www/html/alivenesstrends.com
+ 1414  sudo systemctl reload nginx
+ 1415  sudo ufw status
+ 1416  sudo nginx -t
+ 1417  sudo systemctl reload nginx
+ 1418  sudo systemctl restart nginx
+ 1419  curl -I http://alivenesstrends.com/index.html
+ 1420  pm2 list
+ 1421  git pull
+ 1422  curl -I http://alivenesstrends.com/index.html
+ 1423  nc -zv localhost 80
+ 1424  sudo lsof -i :80
+ 1425  ps -p 3764 -f
+ 1426  top -p 3764
+ 1427  curl http://alivenesstrends.com
+ 1428  curl http://maiken.slowyou.net
+ 1429  curl -I http://maiken.slowyou.net
+ 1430  curl  https://maiken.slowyou.net/
+ 1431  curl http://mystmkra.io
+ 1432  curl https://mystmkra.io
+ 1433  curl https://slowyou.net
+ 1434  sudo ss -tuln | grep ':80'
+ 1435  dig alivenesstrends.com
+ 1436  sudo tail -f /var/log/nginx/access.log
+ 1437  sudo certbot nginx
+ 1438  sudo cerbot --nginx
+ 1439  sudo certbot --nginx
+ 1440  curl -i  http://www.alivenesstrends.com/.well-known/acme-challenge/X-_tCqYxjOoz5unD1hMvDEnOZnnNHh4pbjOTTtX7l9o
+ 1441  sudo certbot --nginx
+ 1442  sudo systemctl reload nginx
+ 1443  sudo systemctl restart nginx
+ 1444  curl -i http://alivenesstrends.com
+ 1445  dig alivenesstrends.io
+ 1446  dig slowyou.io
+ 1447  dig alivenesstrends.io
+ 1448  dig alivenesstrends.com
+ 1449  dig alivenesstrends.io
+ 1450  dig +short alivenesstrends.com
+ 1451  sudo nano /etc/nginx/sites-available/alivenesstrends.conf
+ 1452  ls -l /etc/nginx/sites-enabled/
+ 1453  ls -l /var/www/html/alivenesstrends.com/public
+ 1454  sudo ufw status
+ 1455  sudo tail -f /var/log/nginx/access.log
+ 1456  sudo tail -f /var/log/nginx/error.log
+ 1457  dig alivenesstrends.io
+ 1458  sudo ss -tuln | grep nginx
+ 1459  sudo systemctl status nginx
+ 1460  sudo ss -tuln | grep ':80\|:443'
+ 1461  sudo tcpdump -i any port 80
+ 1462  curl -I http://localhost:3002
+ 1463  sudo nginx -t
+ 1464  sudo systemctl status nginx
+ 1465  sudo systemctl restart nginx
+ 1466  sudo systemctl status nginx
+ 1467  curl -i http://localhost:3002
+ 1468  curl -I http://alivenesstrends.com
+ 1469  traceroute alivenesstrends.com
+ 1470  apt install traceroute
+ 1471  traceroute alivenesstrends.com
+ 1472  dig alivenesstrends.io
+ 1473  z myst
+ 1474  cd..
+ 1475  cd ..
+ 1476  mkdir alivenesstrends.io
+ 1477  cd alivenesstrends.io
+ 1478  git init
+ 1479  z alive
+ 1480  git remote add origin https://github.com/torarnehave1/alivenesstrends.io
+ 1481  git remote -v
+ 1482  git pull
+ 1483  git branch --set-upstream-to=origin/main main
+ 1484  git pull
+ 1485  git branch --set-upstream-to=origin/main
+ 1486  git branch
+ 1487  git pull origin main
+ 1488  git status
+ 1489  git pull
+ 1490  git branch --set-upstream-to=origin/<branch> main'
+ 1491  git branch --set-upstream-to=origin/<branch> main
+ 1492  git pull origin main
+ 1493  dir
+ 1494  cd public
+ 1495  dir
+ 1496  git pull origin main
+ 1497  pm2 list
+ 1498  pm2 start server.js --name "trends.io" --env production -- PORT=3003
+ 1499  cd ..
+ 1500  pm2 start server.js --name "trends.io" --env production -- PORT=3003
+ 1501  pm2 save
+ 1502  pm2 list
+ 1503  pm2 restart alivenesstrends --name "trends.com"
+ 1504  pm2 save
+ 1505  pm2 list
+ 1506  dig alivenesstrends.com
+ 1507  cd ..
+ 1508  cd alivenesstrends.com
+ 1509  dig alivenesstrends.io
+ 1510  sudo certbot --nginx -d alivenesstrends.com -d www.alivenesstrends.com
+ 1511  sudo nginx -t
+ 1512  sudo systemctl reload nginx
+ 1513  curl -i http://alivenesstrends.com
+ 1514  curl -i https://alivenesstrends.com
+ 1515  sudo ln -s /etc/nginx/sites-available/trends.io /etc/nginx/sites-enabled/
+ 1516  sudo nginx -t
+ 1517  sudo systemctl reload nginx
+ 1518  cd ..
+ 1519  sudo certbot --nginx -d alivenesstrends.io -d www.alivenesstrends.io
+ 1520  z aliveness
+ 1521  z ali
+ 1522  cd..
+ 1523  cd ..
+ 1524  cd alivenesstrends.io
+ 1525  git pull origin
+ 1526  git pull
+ 1527  git pull origin main
+ 1528  pm2 list
+ 1529  pm2 stop trends.io
+ 1530  pm2 start trends.io
+ 1531  pm2 list
+ 1532  pm2 start 3
+ 1533  git pull origin main
+ 1534  z slow
+ 1535  pm2 list
+ 1536  pm2 stop slow
+ 1537  node server.js
+ 1538  pm2 start slow
+ 1539  cd ..
+ 1540  pip3 install xhtml2pdf
+ 1541  z slow
+ 1542  pm2 list
+ 1543  pm2 stop slow
+ 1544  pm2 start slow
+ 1545  z myst
+ 1546  pm2 list
+ 1547  pm2 stop myst
+ 1548  git pull
+ 1549  pm2 start myst
+ 1550  pm2 list
+ 1551  git pull
+ 1552  z myst
+ 1553  git pull
+ 1554  pm2 stop myst
+ 1555  pm2 start myst
+ 1556  git pull
+ 1557  pm2 stop myst
+ 1558  pm2 start myst
+ 1559  git pull
+ 1560  pm2 stop myst
+ 1561  pm2 start myst
+ 1562  git pull
+ 1563  pm2 stop myst
+ 1564  pm2 start myst
+ 1565  z myst
+ 1566  cd ..
+ 1567  mkdir inaribox.io
+ 1568  cd inaribox.io
+ 1569  z inara
+ 1570  z inari
+ 1571  dir
+ 1572  git init
+ 1573  sudo apt-get update
+ 1574  git clone https://github.com/torarnehave1/inaribox.io.git .
+ 1575  git remote add origin https://github.com/torarnehave1/inaribox.io.git
+ 1576  git remote -v
+ 1577  git checkout main
+ 1578  git pull
+ 1579  git branch --set-upstream-to=origin/main main
+ 1580  git branch --set-upstream-to=origin/main
+ 1581  git fetch origin
+ 1582  git checkout -b main origin/main
+ 1583  git pull
+ 1584  ip addr show
+ 1585  dig +short inaribox.io
+ 1586  sudo chown -R $USER:$USER /var/www/html/inaribox.io
+ 1587  sudo ln -s /etc/nginx/sites-available/inaribox.io /etc/nginx/sites-enabled/
+ 1588  sudo nginx -t
+ 1589  sudo systemctl restart nginx
+ 1590  sudo certbot --nginx -d inaribox.io -d www.inaribox.io
+ 1591  sudo apt update
+ 1592  sudo apt install --upgrade certbot python3-certbot-nginx python3-openssl
+ 1593  sudo certbot --nginx -d inaribox.io -d www.inaribox.io
+ 1594  sudo apt remove python3-openssl
+ 1595  sudo apt install python3-openssl
+ 1596  sudo certbot --nginx -d inaribox.io -d www.inaribox.io
+ 1597  sudo apt install python3-openssl
+ 1598  sudo certbot --nginx -d inaribox.io -d www.inaribox.io
+ 1599  sudo apt update
+ 1600  sudo apt install snapd
+ 1601  reboot
+ 1602  apt list --upgradable
+ 1603  sudo apt update
+ 1604  sudo apt upgrade
+ 1605  z inari
+ 1606  pm2 list
+ 1607  pm2 save
+ 1608  sudo history > /var/www/html/hist.txt
+ 1609  history | sudo tee /var/www/html/hist.txt > /dev/null
+ 1610  cd..
+ 1611  dir
+ 1612  cd ..
+ 1613  dir
+ 1614  pm2 start server.js --name myst --env production
+ 1615  cd ..
+ 1616  z myst
+ 1617  pm2 start server.js --name myst --env production
+ 1618  z slow
+ 1619  PORT=3000 pm2 start server.js --name slow --env production
+ 1620  pm2 save
+ 1621  pm2 list
+ 1622  z trends
+ 1623  pm2 start app.js --name "trend" --env PORT=3002
+ 1624  dir
+ 1625  pm2 start server.js --name "trend" --env PORT=3002
+ 1626  pm2 save
+ 1627  z trends.io
+ 1628  start server.js --name "trends.io" --env production -- PORT=3003
+ 1629  dir
+ 1630  PM2 start server.js --name "trends.io" --env production -- PORT=3003
+ 1631  pm2 start server.js --name "trends.io" --env production -- PORT=3003
+ 1632  z inari
+ 1633  sudo certbot --nginx -d inaribox.com -d www.inaribox.com
+ 1634  sudo systemctl enable --now snapd
+ 1635  sudo snap install core
+ 1636  sudo snap refresh core
+ 1637  sudo snap install --classic certbot
+ 1638  sudo ln -s /snap/bin/certbot /usr/bin/certbot
+ 1639  certbot --version
+ 1640  sudo certbot --nginx -d inaribox.com -d www.inaribox.com
+ 1641  sudo certbot --nginx -d inaribox.io -d www.inaribox.io
+ 1642  pm2 list
+ 1643  pm2 start server.js --name "inaribox.io" --env production -- PORT=3004
+ 1644  pm2 save
+ 1645  pm2 startup
+ 1646  sudo systemctl reload nginx
+ 1647  sudo chown -R www-data:www-data /var/www/html/inaribox.io
+ 1648  sudo chmod -R 755 /var/www/html/inaribox.io
+ 1649  sudo systemctl restart nginx
+ 1650  sudo tail -f /var/log/nginx/error.log
+ 1651  sudo tail -f /var/log/syslog
+ 1652  sudo nginx -t
+ 1653  node server.js
+ 1654  pm2 list
+ 1655  pm2 stop inaribox.io
+ 1656  node server.js
+ 1657  git pull
+ 1658  git config --global --add safe.directory /var/www/html/inaribox.io
+ 1659  git pull
+ 1660  rm server.js
+ 1661  dir
+ 1662  git pull
+ 1663  node server.js
+ 1664  pm2 start server.js --name "inaribox.io" --env production -- PORT=3004
+ 1665  sudo nginx -t
+ 1666  sudo systemctl reload nginx
+ 1667  pm2 stop inaribox.io
+ 1668  pm2 start inaribox.io
+ 1669  pm2 list
+ 1670  pm2 stop slow
+ 1671  pm2 start slow
+ 1672  pm2 save
+ 1673  pm2 start inaribox.io
+ 1674  pm2 start server.js --name "inaribox.io" --env production -- PORT=3004
+ 1675  git pull
+ 1676  git pull -X theirs origin main
+ 1677  git fetch origin
+ 1678  git reset --hard origin/main
+ 1679  git pull
+ 1680  sudo nginx -t
+ 1681  sudo systemctl reload nginx
+ 1682  z inar
+ 1683  pm2 list
+ 1684  pm2 stop inaribox.io
+ 1685  pm2 start inaribox.io
+ 1686  pm2 start server.js --name "inaribox" --env production -- PORT=3004
+ 1687  pm2 save
+ 1688  pm2 list
+ 1689  pm2 stop inaribox
+ 1690  pm2 start inaribox
+ 1691  git pull
+ 1692  pm2 stop inari
+ 1693  pm2 stop inaribox
+ 1694  pm2 start inaribox
+ 1695  sudo nginx -t
+ 1696  sudo systemctl reload nginx
+ 1697  pm2 stop inarinbox
+ 1698  pm2 stop inaribox
+ 1699  pm2 start inaribox
+ 1700  pm2 delete 4
+ 1701  pm2 save
+ 1702  pm2 list
+ 1703  git pull
+ 1704  pm2 list
+ 1705  pm2 restart 5 --name inari
+ 1706  pm2 restart 3 --name trendsio
+ 1707  pm2 restart 2 --name trendcom
+ 1708  pm2 restart 2 --name trendscom
+ 1709  sudo apt update
+ 1710  sudo apt upgrade
+ 1711  reboot
+ 1712  z myst
+ 1713  git pull
+ 1714  pm2 list
+ 1715  curl -X POST "https://api.telegram.org/bot8055177336:AAErBZ8AXfUar9rgpomf_AarOxzIuE6PF0s/setWebhook" -d "url=https://mystmkra.io/openai/webhook/8055177336:AAErBZ8AXfUar9rgpomf_AarOxzIuE6PF0s"
+ 1716  pm2 logs mystmkra-bot
+ 1717  pm2 logs
+ 1718  sudo tail -f /var/log/nginx/access.log | grep "/openai/webhook"
+ 1719  sudo tail -f /var/log/nginx/error.log | grep "/openai/webhook"
+ 1720  pm2 list
+ 1721  pm2 stop myst
+ 1722  pm2 start myst
+ 1723  sudo tail -f /var/log/nginx/error.log | grep "/openai/webhook"
+ 1724  sudo tail -f /var/log/nginx/access.log | grep "/openai/webhook"
+ 1725  curl -X POST -H "Content-Type: application/json" -d '{"update_id":123,"message":{"text":"Hello, Bot!"}}' https://mystmkra.io/openai/webhook/8055177336:AAErBZ8AXfUar9rgpomf_AarOxzIuE6PF0s
+ 1726  curl -X GET "https://api.telegram.org/bot8055177336:AAErBZ8AXfUar9rgpomf_AarOxzIuE6PF0s/getWebhookInfo"
+ 1727  sudo nginx -t
+ 1728  sudo systemctl reload nginx
+ 1729  curl -X POST -H "Content-Type: application/json" -d '{"update_id":123,"message":{"text":"Hello, Bot!"}}' https://mystmkra.io/openai/webhook/8055177336:AAErBZ8AXfUar9rgpomf_AarOxzIuE6PF0s
+ 1730  sudo tail -f /var/log/nginx/error.log
+ 1731  curl -X POST "https://api.telegram.org/bot8055177336:AAErBZ8AXfUar9rgpomf_AarOxzIuE6PF0s/deleteWebhook"
+ 1732  curl -X POST "https://api.telegram.org/bot8055177336:AAErBZ8AXfUar9rgpomf_AarOxzIuE6PF0s/setWebhook" -d "url=https://mystmkra.io/openai/webhook/8055177336:AAErBZ8AXfUar9rgpomf_AarOxzIuE6PF0s"
+ 1733  pm2 logs
+ 1734  git pull
+ 1735  pm2 stop myst
+ 1736  pm2 start myst
+ 1737  git pull
+ 1738  pm2 stop myst
+ 1739  pm2 start myst
+ 1740  curl -X POST https://mystmkra.io/openai/ask      -H "Content-Type: application/json"      -d '{"question": "What is the capital of France?"}'
+ 1741  git pull
+ 1742  pm2 stop myst
+ 1743  pm2 start myst
+ 1744  z myst
+ 1745  pm2 logs
+ 1746  git pull
+ 1747  pm2 stop myst
+ 1748  pm2 start myst
+ 1749  pm2 logs
+ 1750  git pull
+ 1751  pm2 stop myst
+ 1752  pm2 start myst
+ 1753  pm2 logs
+ 1754  git pull
+ 1755  pm2 stop myst
+ 1756  pm2 start myst
+ 1757  pm2 logs
+ 1758  z myst
+ 1759  git pull
+ 1760  pm2 stop myst
+ 1761  pm2 start myst
+ 1762  pm2 logs
+ 1763  npm install -g npm@10.9.1
+ 1764  git pull
+ 1765  pm2 stop myst
+ 1766  pm2 start myst
+ 1767  pm2 logs
+ 1768  git pull
+ 1769  pm2 stop myst
+ 1770  pm2 start myst
+ 1771  pm2 logs
+ 1772  git pull
+ 1773  pm2 stop myst
+ 1774  pm2 start myst
+ 1775  pm2 logs
+ 1776  git pull
+ 1777  pm2 stop myst
+ 1778  pm2 start myst
+ 1779  pm2 logs
+ 1780  git pull
+ 1781  pm2 stop myst
+ 1782  pm2 start myst
+ 1783  pm2 logs
+ 1784  z myst
+ 1785  git pull
+ 1786  pm2 stop myst
+ 1787  pm2 start myst
+ 1788  git pull
+ 1789  pm2 stop myst
+ 1790  pm2 start myst
+ 1791  pm2 ogs
+ 1792  pm2 logs
+ 1793  curl -X POST "https://api.telegram.org/bot8055177336:AAErBZ8AXfUar9rgpomf_AarOxzIuE6PF0s/setWebhook" -d "url=https://mystmkra.io/openai/webhook/8055177336:AAErBZ8AXfUar9rgpomf_AarOxzIuE6PF0s"
+ 1794  curl -X POST "https://api.telegram.org/bot8055177336:AAErBZ8AXfUar9rgpomf_AarOxzIuE6PF0s/deleteWebhook"
+ 1795  curl -X POST "https://api.telegram.org/bot8055177336:AAErBZ8AXfUar9rgpomf_AarOxzIuE6PF0s/setWebhook" -d "url=https://mystmkra.io/openai/webhook/8055177336:AAErBZ8AXfUar9rgpomf_AarOxzIuE6PF0s"
+ 1796  git pull
+ 1797  pm2 stop myst
+ 1798  pmt start myst
+ 1799  pm2 start myst
+ 1800  pm2 logs
+ 1801  git pull
+ 1802  pm2 stop myst
+ 1803  pm2 start myst
+ 1804  pm2 logs
+ 1805  git pull
+ 1806  pm2 stop myst
+ 1807  pm2 start myst
+ 1808  pm2 logs
+ 1809  git pull
+ 1810  pm2 stop myst
+ 1811  pm2 start myst
+ 1812  pm2 logs
+ 1813  git pull
+ 1814  pm2 stop myst
+ 1815  pm2 start myst
+ 1816  pm2 logs
+ 1817  pm2 stop myst
+ 1818  git pull
+ 1819  pm2 start myst
+ 1820  pm2 logs
+ 1821  z myst
+ 1822  git pull
+ 1823  pm2 stop myst
+ 1824  pm2 start myst
+ 1825  pm2 logs
+ 1826  git pull
+ 1827  pm2 stop myst
+ 1828  pm2 start myst
+ 1829  pm2 logs
+ 1830  git pull
+ 1831  pm2 stop myst
+ 1832  pm2 start myst
+ 1833  pm2 logs
+ 1834  curl -X POST "https://api.telegram.org/bot8055177336:AAErBZ8AXfUar9rgpomf_AarOxzIuE6PF0s/setWebhook" -d "url="
+ 1835  curl -X POST "https://api.telegram.org/bot8055177336:AAErBZ8AXfUar9rgpomf_AarOxzIuE6PF0s/setWebhook" -d "url=https://mystmkra.io/openai/webhook/8055177336:AAErBZ8AXfUar9rgpomf_AarOxzIuE6PF0s"
+ 1836  curl -X POST "https://api.telegram.org/bot8055177336:AAErBZ8AXfUar9rgpomf_AarOxzIuE6PF0s/setWebhook" -d "url="
+ 1837  z myst
+ 1838  git pull
+ 1839  pm2 stop myst
+ 1840  pm2 start myst
+ 1841  curl -X POST "https://api.telegram.org/bot8000794035:AAEMLyXyjjU0sTKY9rmRTWhzFQxhPBXBX94/setWebhook" -d "url=https://mystmkra.io/openai/webhook/8000794035:AAEMLyXyjjU0sTKY9rmRTWhzFQxhPBXBX94"
+ 1842  git pull
+ 1843  pm2 stop myst
+ 1844  pm2 start myst
+ 1845  pm2 logs
+ 1846  git pull
+ 1847  pm2 stop myst
+ 1848  pm2 start myst
+ 1849  pm2 logs
+ 1850  git pull
+ 1851  pm2 stop myst
+ 1852  pm2 start myst
+ 1853  pm2 logs
+ 1854  git pull
+ 1855  pm2 stop myst
+ 1856  pm2 start myst
+ 1857  pm2 logs
+ 1858  git pull
+ 1859  pm2 stop myst
+ 1860  pm2 start myst
+ 1861  pm2 logs
+ 1862  z myst
+ 1863  pm2 logs
+ 1864  git pull
+ 1865  pm2 stop myst
+ 1866  pm2 start myst
+ 1867  pm2 logs
+ 1868  git pull
+ 1869  pm2 stop myst
+ 1870  pm2 start myst
+ 1871  pm2 logs
+ 1872  git pull
+ 1873  pm2 stop myst
+ 1874  pm2 start myst
+ 1875  pm2 logs
+ 1876  git pull
+ 1877  pm2 list
+ 1878  pm2 stop myst
+ 1879  pm2 start myst
+ 1880  pm2 logs
+ 1881  git pull
+ 1882  pm2 stop myst
+ 1883  pm2 start myst
+ 1884  pm2 logs
+ 1885  git pull
+ 1886  pm2 stop myst
+ 1887  pm2 start myst
+ 1888  pm2 logs
+ 1889  git pull
+ 1890  pm2 stop myst
+ 1891  pm2 start myst
+ 1892  pm2 logs
+ 1893  git pull
+ 1894  pm2 stop myst
+ 1895  pm2 start myst
+ 1896  pm2 logs
+ 1897  git pull
+ 1898  pm2 stop myst
+ 1899  pm2 start myst
+ 1900  pm2 logs
+ 1901  z myst
+ 1902  git pull
+ 1903  pm2 stop myst
+ 1904  pm2 start myst
+ 1905  pm2 logs
+ 1906  git pull
+ 1907  chmod +x deploy.sh
+ 1908  ./deploy.sh
+ 1909  pm2 stop myst
+ 1910  ./deploy.sh
+ 1911  curl -X POST "https://api.telegram.org/botv7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk/setWebhook" -d "url=https://mystmkra.io/openai/webhook/7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk"
+ 1912  pm2 list
+ 1913  curl -X POST "https://api.telegram.org/botv7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk/setWebhook" -d "url=https://mystmkra.io/openai/webhook/7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk"
+ 1914  pm2 stop
+ 1915  pm2 stop myst
+ 1916  pm2 start myst
+ 1917  curl -X POST "https://api.telegram.org/botv7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk/setWebhook" -d "url=https://mystmkra.io/openai/webhook/7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk"
+ 1918  curl -X POST "https://api.telegram.org/bot8000794035:AAEMLyXyjjU0sTKY9rmRTWhzFQxhPBXBX94/setWebhook" -d "url=""
+ 1919  curl -X POST "https://api.telegram.org/bot7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk/setWebhook" -d "url=https://mystmkra.io/openai/webhook/7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk"
+ 1920  curl -X POST "https://api.telegram.org/bot8000794035:AAEMLyXyjjU0sTKY9rmRTWhzFQxhPBXBX94/setWebhook" -d "url=""
+ 1921  curl -X POST "https://api.telegram.org/bot7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk/setWebhook" -d "url=https://mystmkra.io/openai/webhook/7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk"
+ 1922  pm2 list
+ 1923  ./deploy.sh
+ 1924  curl -X POST "https://api.telegram.org/bot8000794035:AAEMLyXyjjU0sTKY9rmRTWhzFQxhPBXBX94/setWebhook" -d "url=""
+ 1925  curl -X POST "https://api.telegram.org/bot7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk/setWebhook" -d "url=https://mystmkra.io/openai/webhook/7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk"
+ 1926  curl -X POST "https://api.telegram.org/bot7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk/setWebhook" -d "url=https://mystmkra.io/openai/webhook/7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk"
+ 1927  pm2 stop myst
+ 1928  ./deploy.sh
+ 1929  z myst
+ 1930  pm2 logs
+ 1931  curl -X POST "https://api.telegram.org/bot7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk/setWebhook" -d "url=""
+ 1932  curl -X POST "https://api.telegram.org/bot7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk/setWebhook" -d "url=https://mystmkra.io/openai/webhook/7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk" -d allowed_updates='["message", "callback_query"]'
+ 1933  curl -X POST "https://api.telegram.org/bot7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk/setWebhook" -d "url=https://mystmkra.io/openai/webhook/7832014827:AAGZNPxCDvHOapQFak
+ 1934  curl -X POST "https://api.telegram.org/bot7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk/delteWebhook"
+ 1935  curl -X POST "https://api.telegram.org/bot7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk/deleteWebhook"
+ 1936  curl -X POST "https://api.telegram.org/bot7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk/setWebhook" -d "url=https://mystmkra.io/openai/webhook/7832014827:AAGZNPxCDvHOapQFakUTGuqYo8xmXuiPfdk" -d allowed_updates='["message", "callback_query"]'
+ 1937  pm2 myst stop
+ 1938  pm2 list
+ 1939  z myst
+ 1940  ./deploy.sh
+ 1941  pm2 myst stop
+ 1942  ./deploy.sh
+ 1943  z myst
+ 1944  ./deploy.sh
+ 1945  z myst
+ 1946  git pull
+ 1947  pm2 stop myst
+ 1948  pm2 start myst
+ 1949  pm2 stop myst
+ 1950  git pull
+ 1951  node server.js
+ 1952  pm2 stop myst
+ 1953  git pull
+ 1954  node serverjs
+ 1955  node server.js
+ 1956  git pull
+ 1957  node server.js
+ 1958  git pull
+ 1959  node server.js
+ 1960  z m
+ 1961  git pull
+ 1962  pm2 list
+ 1963  pm2 start myst
+ 1964  z myst
+ 1965  git pull
+ 1966  pm2 list
+ 1967  pm2 stop myst
+ 1968  pm2 start myst
+ 1969  z myst
+ 1970  git pull
+ 1971  pm2 stop myst
+ 1972  pm2 start myst
+ 1973  pm2 logs
+ 1974  git pull
+ 1975  pm2 stop myst
+ 1976  pm2 start myst
+ 1977  git pull
+ 1978  pm2 stop myst
+ 1979  pm2 start myst
+ 1980  git pull
+ 1981  pm2 stop myst
+ 1982  pm2 start myst
+ 1983  pm2 logs
+ 1984  git pull
+ 1985  pm2 stop myst
+ 1986  pm2 start myst
+ 1987  pm2 logs
+ 1988  pm2 stop myst
+ 1989  pm2 update
+ 1990  pm2 list
+ 1991  pm2 save
+ 1992  pm2 save --force
+ 1993  pm2 list
+ 1994  reboot
+ 1995  pm2 list
+ 1996  z myst
+ 1997  history > history.txt

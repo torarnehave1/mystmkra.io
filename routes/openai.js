@@ -1495,7 +1495,7 @@ router.post('/process-text', async (req, res) => {
 
     const systemMessages = {
         'answer-question': "You will answer back in a professional way with markdown format and titles where it is appropriate.",
-        'spellcheck-rewrite': "You will spellcheck and rewrite the following text, keeping it as close to the original as possible , keep the original language while fixing any grammatical or typographical errors. You will answer back in a professional way with markdown format and titles where it is appropriate. If the main title of the text is missing, come up with your own suggestion on a title based on the text content. Create an abstract as a intro chapter.",
+        'spellcheck-rewrite': "Du vil korrekturlese og omskrive følgende tekst, og holde den så nær originalen som mulig, samtidig som du retter eventuelle grammatiske eller typografiske feil. Du skal beholde det opprinnelige språket, men rette opp feil der det er nødvendig. Du skal svare tilbake på en profesjonell måte i markdown-format, med overskrifter der det er passende. Hvis hovedtittelen mangler, skal du foreslå en tittel basert på innholdet i teksten. Lag et sammendrag som et introduksjonskapittel.",
         'generate-image-prompt': "You are an AI that generates creative and descriptive prompts for generating images based on provided text content. Please generate an image prompt that best represents the key themes or scenes from the following content."
     };
 
@@ -1561,6 +1561,75 @@ router.post('/create-image', async (req, res) => {
         res.status(500).json({ error: 'Failed to create image' });
     }
 });
+
+router.post('/mentor-analysis', async (req, res) => {
+    const { transcription } = req.body;
+
+    if (!transcription || typeof transcription !== 'string') {
+        return res.status(400).json({ error: 'Transcription is required and must be a non-empty string.' });
+    }
+
+    try {
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o",
+            temperature: 0.6,
+            max_tokens: 10000, // Ensure enough space for a detailed response
+            messages: [
+                {
+                    role: "system",
+                    content: `
+Du er en ekspert på samtaleanalyse og skal levere en detaljert oppsummering og innsiktsfulle høydepunkter basert på transkripsjonen. Svaret ditt skal være strukturert i markdown-format og følge malen nedenfor:
+Perspektivet er Sydney Banks, De tre prinsipper, Aivanta Vedanta , men ikke nevn dette i svaret ditt.
+
+# Samtaleanalyse og Høydepunkter
+
+Om du finner følgende tekst mønster [FOKUS: Tema] i prompten så skal du fokuser på å gi svar på det som er angitt i den delen av prompten.
+
+## Transkripsjon oppsummering
+---
+# Gullkorn fra Samtalen (Identifiserte Høydepunkter)
+
+## Fra Mentoren
+
+### **"Utsagn"**
+(Forklar hvorfor dette utsagnet er viktig, og hvordan det kan påvirke deltakerens utvikling.)
+
+## Fra Deltageren
+
+### **"Utsagn"**
+(Forklar hvorfor dette utsagnet er viktig, og hvordan det kan påvirke deltakerens utvikling.)
+---
+
+Analyser hele transkripsjonen og identifiser de 10 mest betydningsfulle gullkornene fra mentoren og deltageren. Sørg for at forklaringer er komplette og kontekstuelle. Hvis nødvendig, oppsummer og parafraser for klarhet. Skriv hele kappittel.
+
+
+
+
+`
+                },
+                {
+                    role: "user",
+                    content: `Analyser følgende transkripsjon: ${transcription}`
+                }
+            ],
+        });
+
+        const analysisContent = response.choices[0].message.content;
+
+        const closingStatement = `**[Join AlivenessLAβ on Telegram](https://t.me/+zcY08tT_g75iZDk0)**`;
+
+        return res.json({
+            success: true,
+            analysis: `${analysisContent}\n\n${closingStatement}`
+        });
+    } catch (error) {
+        console.error("Error analyzing conversation:", error.message || error.response?.data);
+        res.status(500).json({ error: "Failed to analyze the conversation." });
+    }
+});
+
+
+
 
 router.get('/createimage', async (req, res) => {
     const prompt = req.query.prompt;

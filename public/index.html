@@ -703,7 +703,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const matchWriteImgPrompt = value.match(/^\s*\/\/\s*AIMG\s*$/im);
             const matchNIBIQuestion = value.match(/^\s*\/\/\s*SYOU\s*(.+?)\s*\?$/im); // New pattern for NIBI questions
             const matchTag = value.match(/\/\/TAG:(.+)!/); // Updated pattern to handle //TAG:TAGNAME!
-
+            const matchMentor = value.match(/^\s*\/\/\s*MMM\s*$/im);
+            console.log('matchMentor:', matchMentor);
             try {
                 // Handle //CIMG command: Create an image from the given prompt
                 if (matchCreateImage && matchCreateImage[1].trim() && !value.includes('<iframe')) {
@@ -737,6 +738,41 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else {
                             console.error('No imageUrl returned from API');
                             alert('No image was generated. Please try again.');
+                        }
+                    }
+                }
+
+                else if (matchMentor) {
+                    const transcription = value.trim(); // Use the full content of the textarea
+                    if (transcription) {
+                        if (progressBarContainer) {
+                            progressBarContainer.style.display = 'block';
+                        }
+
+                        const response = await fetch('/openai/mentor-analysis', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ transcription })
+                        });
+
+                        const data = await response.json();
+
+                        if (progressBarContainer) {
+                            progressBarContainer.style.display = 'none';
+                        }
+
+                        if (data.analysis) {
+                            const beforeMentor = value.substring(0, matchMentor.index);
+                            const afterMentor = value.substring(matchMentor.index + matchMentor[0].length);
+                            const newText = `${beforeMentor}${data.analysis}\n${afterMentor}`;
+                            markdownTextarea.value = newText;
+                            markdownTextarea.selectionStart = markdownTextarea.selectionEnd = newText.length;
+                            markdownTextarea.focus();
+                        } else {
+                            console.error('No analysis returned from API');
+                            alert('No analysis was generated. Please try again.');
                         }
                     }
                 }

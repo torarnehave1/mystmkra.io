@@ -10,6 +10,7 @@ import { handleCreateProcessManual } from '../services/createProcessManual.js';
 import { handleAddStep } from '../services/AddStepService.js';
 import { handleFinishProcess } from '../services/finishprocess.js';
 import { generateDeepLink } from '../services/deeplink.js'; // Import generateDeepLink function
+import analyzeConversation from '../services/conversationanalysis.js'; // Import analyzeConversation function
 //import { saveAnswer } from '../services/answerservice.js';
 
 //import { handleGenerateQuestions } from '../services/GenerateQuestionsService.js';
@@ -178,6 +179,20 @@ bot.on('callback_query', async (callbackQuery) => {
     presentStep(bot, chatId, processId, currentStep, userState);
   }
   // Additional callback handlers (original logic intact)
+});
+
+// Handle //MENTOR command
+bot.onText(/\/\/MENTOR/, async (msg) => {
+  const chatId = msg.chat.id;
+  const transcription = msg.text;
+
+  try {
+    const analysisResult = await analyzeConversation(config.botToken, msg);
+    await bot.sendMessage(chatId, analysisResult);
+  } catch (error) {
+    console.error(`[ERROR] Failed to analyze conversation: ${error.message}`);
+    await bot.sendMessage(chatId, 'An error occurred while analyzing the conversation. Please try again later.');
+  }
 });
 
 // [SECTION 3: View Finished Process Command]
