@@ -10,6 +10,7 @@ import mongoose from 'mongoose';
 import Mdfiles from '../models/Mdfiles.js';
 import logMessage from '../services/logMessage.js';
 import config from '../config/config.js'; // Import config.js
+import generateOpenAIResponse from '../services/bluBotOpenAiQuestions.js';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -174,8 +175,20 @@ bot.on('message', async (msg) => {
             // Log the incoming text message
             await logMessage(msg);
 
-            // Check if the message includes a question mark to trigger a search
-            if (msg.text.includes('?')) {
+            if (msg.text.startsWith('Q:')) {
+                // Generate a response from OpenAI
+                const openAIResponse = await generateOpenAIResponse(msg.text);
+
+                // Log the outgoing message
+                await logMessage({
+                    chat: { id: chatId },
+                    text: openAIResponse,
+                    from: { is_bot: true },
+                });
+
+                // Send the OpenAI response to the user
+                await bot.sendMessage(chatId, openAIResponse);
+            } else if (msg.text.includes('?')) {
                 // Perform a search for the provided text
                 const documents = await performSearch(msg.text);
 
