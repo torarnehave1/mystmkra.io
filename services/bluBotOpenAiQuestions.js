@@ -18,6 +18,7 @@ export default async function generateOpenAIResponseforBlueBot(text) {
     try {
         const response = await openai.chat.completions.create({
             model: "gpt-4",
+            temperature: 0.7,
             messages: [
                 { role: "system", content: SYSTEM_CONTEXT },
                 { role: "user", content: text },
