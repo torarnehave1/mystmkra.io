@@ -10,7 +10,7 @@ import mongoose from 'mongoose';
 import Mdfiles from '../models/Mdfiles.js';
 import logMessage from '../services/logMessage.js';
 import config from '../config/config.js'; // Import config.js
-import generateOpenAIResponse from '../services/bluBotOpenAiQuestions.js';
+import generateOpenAIResponseforBlueBot from '../services/bluBotOpenAiQuestions.js';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -177,7 +177,7 @@ bot.on('message', async (msg) => {
 
             if (msg.text.startsWith('Q:')) {
                 // Generate a response from OpenAI
-                const openAIResponse = await generateOpenAIResponse(msg.text);
+                const openAIResponse = await generateOpenAIResponseforBlueBot(msg.text);
 
                 // Log the outgoing message
                 await logMessage({
