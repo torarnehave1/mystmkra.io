@@ -1,0 +1,27 @@
+/* styles.css */
+.editor-container {
+    width: 500px;
+    margin: 50px auto;
+    border: 1px solid #ccc;
+}
+
+#editor {
+    padding: 10px;
+    min-height: 100px;
+    outline: none; /* Removes default outline on focus */
+    border-bottom: 1px solid #ccc;
+    overflow-wrap: break-word; /* Prevents text from overflowing */
+}
+
+.keyboard {
+    display: flex;
+    padding: 10px;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.keyboard button {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
