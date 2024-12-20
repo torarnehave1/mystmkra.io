@@ -19,7 +19,7 @@ dotenv.config();
 console.log(`Environment: ${config.NODE_ENV}`);
 
 // Log the Telegram bot token
-console.log(`Telegram Bot Token: ${TELEGRAM_BOT_TOKEN}`);
+
 
 // Access the Telegram bot token based on the environment
 const TELEGRAM_BOT_TOKEN = config.NODE_ENV === 'production'
@@ -31,6 +31,8 @@ if (!TELEGRAM_BOT_TOKEN) {
     process.exit(1); // Exit the process if the bot token is missing
 }
 
+
+console.log(`Telegram Bot Token for Blue: ${TELEGRAM_BOT_TOKEN}`);
 let bot;
 
 if (config.NODE_ENV === 'production') {
