@@ -16,8 +16,8 @@ const getChatHistory = async (token, chatId) => {
         }
     } catch (error) {
         if (error.response && error.response.status === 409) {
-            console.error('Conflict error: Multiple instances of the bot may be running.');
-            throw new Error('Conflict error: Please ensure only one instance of the bot is running.');
+            console.error('Conflict error: Multiple instances of the bot may be running. This can happen if the bot is running on multiple servers or if there are multiple webhook configurations.');
+            throw new Error('Conflict error: Please ensure only one instance of the bot is running. Check for multiple servers or webhook configurations.');
         } else if (error.response && error.response.status === 426) {
             throw new Error('Upgrade Required: Please check your Telegram Bot API access level.');
         } else {
