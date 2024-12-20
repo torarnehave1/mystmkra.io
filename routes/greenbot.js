@@ -28,7 +28,7 @@ if (!TELEGRAM_BOT_TOKEN) {
 }
 
 // Log the Telegram bot token
-console.log(`Telegram Bot Token: ${TELEGRAM_BOT_TOKEN}`);
+console.log(`Telegram Bot Token for Green: ${TELEGRAM_BOT_TOKEN}`);
 
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
 const translations = translationsData[0].translations;
