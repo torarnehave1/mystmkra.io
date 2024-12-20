@@ -12,17 +12,24 @@ keyboard.addEventListener('click', (event) => {
 function insertAtCursor(text) {
     const selection = window.getSelection();
     if (!selection.rangeCount) {
-        editor.appendChild(document.createTextNode(text)); //If no selection, just append
+        const buttonDiv = document.createElement('div');
+        buttonDiv.className = 'inline-button';
+        buttonDiv.textContent = text;
+        buttonDiv.contentEditable = 'false';
+        editor.appendChild(buttonDiv); //If no selection, just append
         return;
     }
 
     const range = selection.getRangeAt(0);
     range.deleteContents(); //Delete any selected content
 
-    const textNode = document.createTextNode(text);
-    range.insertNode(textNode);
+    const buttonDiv = document.createElement('div');
+    buttonDiv.className = 'inline-button';
+    buttonDiv.textContent = text;
+    buttonDiv.contentEditable = 'false';
+    range.insertNode(buttonDiv);
 
-    range.setStartAfter(textNode); // Move cursor to the end of inserted text
+    range.setStartAfter(buttonDiv); // Move cursor to the end of inserted text
     range.collapse(true); // Collapse the range (no selection)
     selection.removeAllRanges();
     selection.addRange(range);

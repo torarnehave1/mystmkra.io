@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inline Keyboard Editor</title>
     <link rel="stylesheet" href="telegramstyles.css">
+    <style>
+        .inline-button {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 2px;
+            background-color: #e0e0e0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .inline-button:hover {
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <div class="editor-container">
@@ -12,9 +26,10 @@
         <div class="keyboard">
             <button data-value="😊">😊</button>
             <button data-value="🎉">🎉</button>
-            <button data-value="👍">👍</button>
+            <button data-value="👍">����</button>
             <button data-value="Hello">Hello</button>
             <button data-value="World">World</button>
+            <button data-value="1">1</button>
         </div>
     </div>
     <script src="telegramscript.js"></script>

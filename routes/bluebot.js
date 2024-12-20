@@ -18,6 +18,9 @@ dotenv.config();
 // Log the current environment
 console.log(`Environment: ${config.NODE_ENV}`);
 
+// Log the Telegram bot token
+console.log(`Telegram Bot Token: ${TELEGRAM_BOT_TOKEN}`);
+
 // Access the Telegram bot token based on the environment
 const TELEGRAM_BOT_TOKEN = config.NODE_ENV === 'production'
     ? process.env.TELEGRAM_BOT1_TOKEN_PROD // Production token
@@ -28,13 +31,30 @@ if (!TELEGRAM_BOT_TOKEN) {
     process.exit(1); // Exit the process if the bot token is missing
 }
 
-// Create a Telegram bot instance using polling
-const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
+let bot;
 
-// Handle polling errors globally
-bot.on('polling_error', (error) => {
-    console.error('Polling error occurred:', error.message);
-});
+if (config.NODE_ENV === 'production') {
+    // Create a Telegram bot instance using webhook
+    bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { webHook: true });
+
+    // Set the webhook URL
+    const WEBHOOK_URL = `${config.webhookBaseUrl1}/bot${TELEGRAM_BOT_TOKEN}`;
+    bot.setWebHook(WEBHOOK_URL)
+        .then(() => {
+            console.log(`Webhook set to ${WEBHOOK_URL}`);
+        })
+        .catch((error) => {
+            console.error(`Error setting webhook: ${error.message}`);
+        });
+} else {
+    // Create a Telegram bot instance using polling
+    bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
+
+    // Handle polling errors globally
+    bot.on('polling_error', (error) => {
+        console.error('Polling error occurred:', error.message);
+    });
+}
 
 // OpenAI initialization
 const openai = new OpenAI({
@@ -128,6 +148,12 @@ bot.on('message', async (msg) => {
     try {
         // Log the incoming message
         await logMessage(msg);
+
+        // Simple test for responding to "halla"
+        if (msg.text.toLowerCase() === 'halla') {
+            await bot.sendMessage(chatId, 'halla på deg');
+            return;
+        }
 
         if (msg.photo && Array.isArray(msg.photo) && msg.photo.length > 0) {
             console.log('Photo detected in the message.');
@@ -233,7 +259,8 @@ bot.on('message', async (msg) => {
                     });
                 }
             } else {
-                const noQuestionMarkMessage = 'Please include a question mark in your query to perform a search.';
+                console.log('Message does not contain a question mark.');
+                const noQuestionMarkMessage = 'Please include a `?` in your message to perform a search.';
                 
                 // Log the outgoing message
                 await logMessage({
@@ -301,6 +328,14 @@ bot.on('callback_query', async (callbackQuery) => {
 
 // Express router for Telegram-related routes
 const telegramRouter = express.Router();
+
+if (config.NODE_ENV === 'production') {
+    // Endpoint to handle incoming webhook requests
+    telegramRouter.post(`/bot${TELEGRAM_BOT_TOKEN}`, (req, res) => {
+        bot.processUpdate(req.body);
+        res.sendStatus(200);
+    });
+}
 
 // Endpoint to check bot status
 telegramRouter.get('/status', (req, res) => {

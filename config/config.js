@@ -20,7 +20,11 @@ const PYTHON_VERSION = NODE_ENV === 'production' ? process.env.PYTHON_VERSION_PR
 const botUsername = NODE_ENV === 'production' ? process.env.BOT2_USERNAME_PROD : process.env.BOT2_USERNAME_DEV;
 console.log(`Selected bot username: ${botUsername}`);
 
-const botToken = NODE_ENV === 'production' ? process.env.TELEGRAM_BOT2_TOKEN_PROD : process.env.TELEGRAM_BOT2_TOKEN_DEV;
+const botToken1 = NODE_ENV === 'production' ? process.env.TELEGRAM_BOT1_TOKEN_PROD : process.env.TELEGRAM_BOT1_TOKEN_DEV;
+const botToken2 = NODE_ENV === 'production' ? process.env.TELEGRAM_BOT2_TOKEN_PROD : process.env.TELEGRAM_BOT2_TOKEN_DEV;
+
+const webhookBaseUrl1 = process.env.WEBHOOK_BASE_URL1 || 'https://mystmkra.io/blue';
+const webhookBaseUrl2 = process.env.WEBHOOK_BASE_URL2 || 'https://mystmkra.io/green';
 
 export default {
   PYTHON_VERSION,
@@ -31,6 +35,9 @@ export default {
   accessToken: process.env.DROPBOX_ACCESS_TOKEN,
   refreshToken: process.env.DROPBOX_REFRESH_TOKEN,
   expiryTime: 0,
-  botUsername: botUsername , // Replace with your actual bot username
-  botToken,
+  botUsername,
+  botToken1,
+  botToken2,
+  webhookBaseUrl1,
+  webhookBaseUrl2,
 };

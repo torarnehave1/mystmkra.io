@@ -11,14 +11,26 @@ import { handleAddStep } from '../services/AddStepService.js';
 import { handleFinishProcess } from '../services/finishprocess.js';
 import { generateDeepLink } from '../services/deeplink.js'; // Import generateDeepLink function
 import analyzeConversation from '../services/conversationanalysis.js'; // Import analyzeConversation function
-//import { saveAnswer } from '../services/answerservice.js';
-
-//import { handleGenerateQuestions } from '../services/GenerateQuestionsService.js';
-
+import generateOpenAIResponseforGreenBot from '../services/greenBotOpenAiQuestions.js'; // Correct import
+import logMessage from '../services/logMessage.js'; // Import logMessage function
 
 // [SECTION 1: Initialization]
 const router = express.Router();
-const bot = new TelegramBot(config.botToken, { polling: true });
+
+// Access the Telegram bot token based on the environment
+const TELEGRAM_BOT_TOKEN = config.NODE_ENV === 'production'
+    ? config.botToken2 // Production token
+    : config.botToken2; // Development token
+
+if (!TELEGRAM_BOT_TOKEN) {
+    console.error('Error: Telegram bot token is not set in the environment variables.');
+    process.exit(1); // Exit the process if the bot token is missing
+}
+
+// Log the Telegram bot token
+console.log(`Telegram Bot Token: ${TELEGRAM_BOT_TOKEN}`);
+
+const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
 const translations = translationsData[0].translations;
 
 
@@ -84,6 +96,35 @@ bot.onText(/\/start(?: (.+))?/, async (msg, match) => {
   }
 });
 
+// Bot logic: handle all incoming messages
+bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
+
+    try {
+        // Log the incoming message
+        console.log(`[DEBUG] Received message: ${msg.text}`);
+        await logMessage(msg);
+
+        // Simple test for responding to "halla"
+        if (msg.text.toLowerCase() === 'halla') {
+            console.log(`[DEBUG] Responding to "halla" message from user ${chatId}`);
+            await bot.sendMessage(chatId, 'halla på deg');
+            return;
+        }
+
+        if (msg.photo && Array.isArray(msg.photo) && msg.photo.length > 0) {
+            // ...existing code...
+        } else if (msg.text) {
+            // ...existing code...
+        } else {
+            // ...existing code...
+        }
+    } catch (error) {
+        console.error(`[ERROR] Error processing message: ${error.message}`);
+        const errorMessage = 'An error occurred while processing your message. Please try again later.';
+        await bot.sendMessage(chatId, errorMessage);
+    }
+});
 
 // Handle callback queries
 bot.on('callback_query', async (callbackQuery) => {
@@ -233,5 +274,6 @@ bot.onText(/\/view/, async (msg) => {
 router.get('/status', (req, res) => {
   res.json({ status: 'Running' });
 });
+
 
 export default router;
