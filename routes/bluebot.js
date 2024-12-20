@@ -11,6 +11,7 @@ import Mdfiles from '../models/Mdfiles.js';
 import logMessage from '../services/logMessage.js';
 import config from '../config/config.js'; // Import config.js
 import generateOpenAIResponseforBlueBot from '../services/bluBotOpenAiQuestions.js';
+import getChatHistory from '../services/getChatHistory.js';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -143,6 +144,17 @@ const performSearch = async (query) => {
     }
 };
 
+// Function to get chat history
+async function fetchChatHistory(chatId) {
+    try {
+        const chatHistory = await getChatHistory(TELEGRAM_BOT_TOKEN, chatId);
+        return chatHistory;
+    } catch (error) {
+        console.error('Error fetching chat history:', error.message);
+        throw error;
+    }
+}
+
 // Bot logic: handle all incoming messages
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
@@ -154,6 +166,10 @@ bot.on('message', async (msg) => {
         // Simple test for responding to "halla"
         if (msg.text.toLowerCase() === 'halla') {
             await bot.sendMessage(chatId, 'halla på deg');
+
+            console.log(`Chat ID: ${chatId}`);
+
+
             return;
         }
 
@@ -260,6 +276,19 @@ bot.on('message', async (msg) => {
                         },
                     });
                 }
+            } else if (msg.text.toLowerCase() === 'get chat history') {
+                // Fetch chat history
+                const chatHistory = await fetchChatHistory(chatId);
+                const formattedHistory = chatHistory.map((msg, index) => `${index + 1}. ${msg.text}`).join('\n');
+                
+                // Log the outgoing message
+                await logMessage({
+                    chat: { id: chatId },
+                    text: formattedHistory,
+                    from: { is_bot: true },
+                });
+
+                await bot.sendMessage(chatId, formattedHistory);
             } else {
                 console.log('Message does not contain a question mark.');
                 const noQuestionMarkMessage = 'Please include a `?` in your message to perform a search.';
@@ -346,6 +375,18 @@ telegramRouter.get('/status', (req, res) => {
     } catch (error) {
         console.error('Error retrieving bot status:', error.message);
         res.status(500).json({ error: 'Unable to retrieve bot status' });
+    }
+});
+
+// Endpoint to get chat history
+telegramRouter.get('/chat-history/:chatId', async (req, res) => {
+    const chatId = req.params.chatId;
+    try {
+        const chatHistory = await fetchChatHistory(chatId);
+        res.json(chatHistory);
+    } catch (error) {
+        console.error('Error retrieving chat history:', error.message);
+        res.status(500).json({ error: 'Unable to retrieve chat history' });
     }
 });
 
