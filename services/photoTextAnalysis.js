@@ -14,6 +14,7 @@ const openai = new OpenAI();
 
 
 export default async function analyzePhotoAndText(botToken, message) {
+    console.log('Analyzing photo and text for message:', message); // Log the incoming message
     try {
         const fileId = message.photo?.[message.photo.length - 1]?.file_id;
         if (!fileId) {
