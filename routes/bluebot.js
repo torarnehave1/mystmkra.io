@@ -158,7 +158,7 @@ bot.on('message', async (msg) => {
         await logMessage(msg);
 
         // Simple test for responding to "halla"
-        if (msg.text.toLowerCase() === 'halla') {
+        if (msg.text && msg.text.toLowerCase() === 'halla') {
             await bot.sendMessage(chatId, 'halla på deg');
 
             console.log(`Chat ID: ${chatId}`);
@@ -341,6 +341,7 @@ const telegramRouter = express.Router();
 if (config.NODE_ENV === 'production') {
     // Endpoint to handle incoming webhook requests
     telegramRouter.post(`/bot${TELEGRAM_BOT_TOKEN}`, (req, res) => {
+        console.log('Received webhook request:', req.body); // Log the incoming webhook request
         bot.processUpdate(req.body);
         res.sendStatus(200);
     });
