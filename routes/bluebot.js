@@ -42,7 +42,13 @@ if (config.NODE_ENV === 'production') {
 
     // Set the webhook URL
     const WEBHOOK_URL = `${config.webhookBaseUrl1}/bot${TELEGRAM_BOT_TOKEN}`;
-    bot.setWebHook(WEBHOOK_URL)
+
+    // Delete the existing webhook before setting a new one
+    bot.deleteWebHook()
+        .then(() => {
+            console.log('Existing webhook deleted.');
+            return bot.setWebHook(WEBHOOK_URL);
+        })
         .then(() => {
             console.log(`Webhook set to ${WEBHOOK_URL}`);
         })
