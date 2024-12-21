@@ -33,7 +33,7 @@ export default async function analyzePhotoAndText(botToken, message) {
 
         // Updated OpenAI prompt
         const response = await openai.chat.completions.create({
-            model: "gpt-4o",
+            model: "gpt-4",
             messages: [
                 {
                     role: "system",
@@ -64,10 +64,11 @@ export default async function analyzePhotoAndText(botToken, message) {
                 },
                 {
                     role: "user",
-                    content: [
-                        { type: "text", text: textContent },
-                        { type: "image_url", image_url: { url: imageUrl } },
-                    ],
+                    content: textContent,
+                },
+                {
+                    role: "user",
+                    content: imageUrl,
                 },
             ],
         });
