@@ -23,7 +23,7 @@ import User from '../models/User.js';
 
 import config from '../config/config.js';
 import {isAuthenticated} from '../auth/auth.js';
-
+import OpenAI from 'openai';
 
 console.log(`The application is running in ${config.NODE_ENV} mode.`);
 console.log(`REDIR = ${config.REDIRECT_URI}`)
@@ -37,6 +37,9 @@ app.use(cookieParser());
 
 dotenv.config();
 
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+});
 
 //Root for this endpoint are /w/endpointname app.use('/w', webpagesroutes);
 
@@ -1434,107 +1437,122 @@ router.get('/imgcollection/:filename', ensureValidToken, async (req, res) => {
 
 
 router.post('/save-markdown', isAuthenticated, ensureValidToken, async (req, res) => {
-  console.log('Request received to save markdown');
+    console.log('Request received to save markdown');
 
-  const { content, documentId } = req.body;  // Use documentId here
-  const userid = req.user.id;
+    const { content, documentId } = req.body;  // Use documentId here
+    const userid = req.user.id;
 
-  if (!content) {
-      console.log('No content provided');
-      return res.status(400).json({
-          message: 'Content is required to save the file'
-      });
-  }
+    if (!content) {
+        console.log('No content provided');
+        return res.status(400).json({
+            message: 'Content is required to save the file'
+        });
+    }
 
-  console.log('Content is provided');
+    console.log('Content is provided');
 
-  try {
-      console.log('User ID:', userid);
+    try {
+        console.log('User ID:', userid);
 
-      // Get the current user from the database
-      const user = await User.findById(userid).select('username');
+        // Get the current user from the database
+        const user = await User.findById(userid).select('username');
 
-      if (!user) {
-          console.log('User not found');
-          return res.status(404).json({
-              message: 'User not found'
-          });
-      }
+        if (!user) {
+            console.log('User not found');
+            return res.status(404).json({
+                message: 'User not found'
+            });
+        }
 
-      console.log('User found:', user);
+        console.log('User found:', user);
 
-      let fileDoc;
+        let fileDoc;
 
-      if (documentId) {  // Use documentId instead of id
-          console.log('Finding existing document by ID:', documentId);
-          // If a document ID is provided, find the document and update it
-          fileDoc = await MDfile.findById(documentId);
-          if (!fileDoc) {
-              console.log('Document not found');
-              return res.status(404).json({
-                  message: 'Document not found'
-              });
-          }
-          fileDoc.content = content;
-      } else {
-          console.log('Creating new document');
-          // If no document ID is provided, create a new document
-          fileDoc = new MDfile({
-              _id: new mongoose.Types.ObjectId(),
-              content: content,
-              User_id: userid
-          });
-      }
+        if (documentId) {  // Use documentId instead of id
+            console.log('Finding existing document by ID:', documentId);
+            // If a document ID is provided, find the document and update it
+            fileDoc = await MDfile.findById(documentId);
+            if (!fileDoc) {
+                console.log('Document not found');
+                return res.status(404).json({
+                    message: 'Document not found'
+                });
+            }
+            fileDoc.content = content;
+        } else {
+            console.log('Creating new document');
+            // If no document ID is provided, create a new document
+            fileDoc = new MDfile({
+                _id: new mongoose.Types.ObjectId(),
+                content: content,
+                User_id: userid
+            });
+        }
 
-      console.log('Saving document to MongoDB');
-      // Save to MongoDB
-      await fileDoc.save();
+        console.log('Saving document to MongoDB');
+        // Save to MongoDB
+        await fileDoc.save();
 
-      // Construct the full URL
-      const fullURL = `https://mystmkra.io/dropbox/blog/${userid}/${fileDoc._id}.md`;
+        // Construct the full URL
+        const fullURL = `https://mystmkra.io/dropbox/blog/${userid}/${fileDoc._id}.md`;
 
-      // Update the document with the full URL
-      fileDoc.URL = fullURL;
-      await fileDoc.save();
+        // Update the document with the full URL
+        fileDoc.URL = fullURL;
+        await fileDoc.save();
 
-      console.log('Full URL saved to document:', fullURL);
+        console.log('Full URL saved to document:', fullURL);
 
-      // Define the file path in the user's folder
-      const foldername = userid; // Use the user's ID as the folder name
-      const filename = `${fileDoc._id}.md`;
-      const filePath = `/mystmkra/${foldername}/${filename}`;
+        // Define the file path in the user's folder
+        const foldername = userid; // Use the user's ID as the folder name
+        const filename = `${fileDoc._id}.md`;
+        const filePath = `/mystmkra/${foldername}/${filename}`;
 
-      console.log('FilePath is:', filePath);  // This should output the file path
+        console.log('FilePath is:', filePath);  // This should output the file path
 
-      // Initialize Dropbox with the refreshed access token
-      const dbx = new Dropbox({
-          accessToken: accessToken, // Use the refreshed access token from middleware
-          fetch: fetch,
-      });
+        // Initialize Dropbox with the refreshed access token
+        const dbx = new Dropbox({
+            accessToken: accessToken, // Use the refreshed access token from middleware
+            fetch: fetch,
+        });
 
-      console.log('Uploading file to Dropbox');
-      // Upload the file to Dropbox
-      await dbx.filesUpload({
-          path: filePath,
-          contents: content,
-          mode: 'overwrite'
-      });
+        console.log('Uploading file to Dropbox');
+        // Upload the file to Dropbox
+        await dbx.filesUpload({
+            path: filePath,
+            contents: content,
+            mode: 'overwrite'
+        });
 
-      console.log('File uploaded successfully to Dropbox');
+        console.log('File uploaded successfully to Dropbox');
 
-      res.status(200).json({
-          message: 'File saved successfully',
-          id: fileDoc._id,
-          filePath: filePath,  // Ensure this variable is correctly passed
-          url: fullURL         // Return the full URL in the response
-      });
-  } catch (error) {
-      console.error('Error saving file to Dropbox or MongoDB:', error);
-      res.status(500).json({
-          message: 'Error saving file',
-          error: error.message
-      });
-  }
+        // Generate embeddings
+        const response = await openai.embeddings.create({
+            model: 'text-embedding-ada-002',
+            input: [content], // Single document embedding
+        });
+
+        const embeddings = response.data[0].embedding;
+
+        // Update the document with the new embeddings
+        fileDoc.embeddings = embeddings;
+        await fileDoc.save();
+
+        console.log('Embeddings generated and saved to document');
+
+        res.status(200).json({
+            message: 'File saved successfully',
+            id: fileDoc._id,
+            filePath: filePath,  // Ensure this variable is correctly passed
+            url: fullURL,        // Return the full URL in the response
+            embeddings: embeddings // Return the embeddings in the response
+        });
+    } catch (error) {
+        console.error('Error saving file to Dropbox or MongoDB:', error);
+        res.status(500).json({
+            message: 'Error saving file',
+            error: error.message
+        });
+    }
 });
 
 

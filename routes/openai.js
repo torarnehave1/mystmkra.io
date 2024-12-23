@@ -449,11 +449,13 @@ router.post('/webhook2/:botToken', async (req, res) => {
 router.get('/generate-embeddings', async (req, res) => {
     try {
         // Find all documents without valid embeddings
-        const documents = await MdFiles.find({
+        const documents = await Mdfiles.find({
             $or: [
-                { embedding: { $exists: false } },
-                { embedding: null },
-                { embedding: { $size: 0 } }
+                { embeddings: { $exists: false } },
+                { embeddings: null },
+                { embeddings: { $size: 0 } },
+                { embeddings: { $eq: "" } },
+                { embeddings: { $eq: null } }
             ]
         });
 
@@ -472,30 +474,39 @@ router.get('/generate-embeddings', async (req, res) => {
 
             console.log(`Generating embedding for document ${doc._id}...`);
 
-            const response = await openai.embeddings.create({
-                model: 'text-embedding-ada-002',
-                input: [content],
-            });
+            // Split content into smaller chunks if it exceeds the token limit
+            const maxTokens = 8192;
+            const contentChunks = [];
+            for (let i = 0; i < content.length; i += maxTokens) {
+                contentChunks.push(content.slice(i, i + maxTokens));
+            }
 
-            const embedding = response.data[0].embedding;
+            const embeddings = [];
+            for (const chunk of contentChunks) {
+                const response = await openai.embeddings.create({
+                    model: 'text-embedding-ada-002',
+                    input: [chunk],
+                });
+                embeddings.push(...response.data[0].embedding);
+            }
 
             // Validate that the embedding is an array of numbers
-            if (!Array.isArray(embedding) || !embedding.every(num => typeof num === 'number')) {
+            if (!Array.isArray(embeddings) || !embeddings.every(num => typeof num === 'number')) {
                 console.error(`Invalid embedding format for document ${doc._id}`);
                 continue;
             }
 
             // Update the document with the generated embedding
-            const updateResult = await MdFiles.updateOne(
+            const updateResult = await Mdfiles.updateOne(
                 { _id: doc._id },
-                { $set: { embedding } }
+                { $set: { embeddings } }
             );
 
             if (updateResult.modifiedCount === 1) {
                 console.log(`Successfully updated document ${doc._id}`);
                 updatedCount++;
             } else {
-                console.log(`Failed to update document ${doc._id}`);
+                console.log(`Failed to update document ${doc._id}:`, updateResult);
             }
         }
 
@@ -629,7 +640,7 @@ router.get('/search-documents-content', async (req, res) => {
       return {
         similarity: doc.similarity,
         ...extracted, // Include imageUrl, title, and excerpt
-      };
+      };1234
     });
 
     res.status(200).json(processedDocuments);
@@ -1665,5 +1676,7 @@ router.get('/createimage', async (req, res) => {
         res.status(500).json({ error: 'Failed to create image' });
     }
 });
+
+
 
 export default router;
