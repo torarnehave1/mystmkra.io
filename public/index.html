@@ -704,7 +704,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const matchNIBIQuestion = value.match(/^\s*\/\/\s*SYOU\s*(.+?)\s*\?$/im); // New pattern for NIBI questions
             const matchTag = value.match(/\/\/TAG:(.+)!/); // Updated pattern to handle //TAG:TAGNAME!
             const matchMentor = value.match(/^\s*\/\/\s*MMM\s*$/im);
-            console.log('matchMentor:', matchMentor);
+            //const matchBlueBot = value.match(/^\s*\/\/\s*BBOT\s*(.+?)\s*\?$/im);
+            const matchBlueBot = value.match(/^\s*\/\/\s*BBOT\s*$/im);
+           
+
             try {
                 // Handle //CIMG command: Create an image from the given prompt
                 if (matchCreateImage && matchCreateImage[1].trim() && !value.includes('<iframe')) {
@@ -742,7 +745,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                else if (matchMentor) {
+                // Handle //MMM command: Mentor analysis
+                if (matchMentor) {
+                    console.log('[DEBUG] MMM command triggered'); // Debug log
                     const transcription = value.trim(); // Use the full content of the textarea
                     if (transcription) {
                         if (progressBarContainer) {
@@ -776,6 +781,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                 }
+
                 // Handle //QTEXT command: Generate a response to a question
                 else if (matchQuestion && matchQuestion[1].trim()) {
                     const prompt = matchQuestion[1].trim();
@@ -985,6 +991,43 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.log("User chose No.");
                     }
                 }
+                // Handle //BBOT command: Search for relevant documents using bluebot
+                else if (matchBlueBot) {
+                     // Debug log
+                    const query = matchBlueBot[1].trim();
+                    if (query) {
+                        if (progressBarContainer) {
+                            progressBarContainer.style.display = 'block';
+                        }
+
+                        const response = await fetch('/blue/search-documents?' + new URLSearchParams({ query }), {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        const data = await response.json();
+
+                        if (progressBarContainer) {
+                            progressBarContainer.style.display = 'none';
+                        }
+
+                        if (data.length > 0) {
+                            const results = data.map(doc => `${doc.title}\n${doc.URL}`).join('\n\n');
+                            const beforeQuery = value.substring(0, matchBlueBot.index);
+                            const afterQuery = value.substring(matchBlueBot.index + matchBlueBot[0].length);
+                            const newText = `${beforeQuery}${results}\n${afterQuery}`;
+                            markdownTextarea.value = newText;
+                            markdownTextarea.selectionStart = markdownTextarea.selectionEnd = newText.length;
+                            markdownTextarea.focus();
+                        } else {
+                            console.error('No documents found');
+                            alert('No documents found. Please try again.');
+                        }
+                    }
+                }
+
             } catch (error) {
                 console.error('Error:', error);
                 alert('Failed to process request.');
