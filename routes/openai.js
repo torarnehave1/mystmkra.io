@@ -128,11 +128,22 @@ async function generateEmbedding(text) {
         throw new Error('Input text is required and must be a non-empty string.');
     }
     try {
-        const response = await openai.embeddings.create({
-            model: 'text-embedding-ada-002',
-            input: text,
-        });
-        return response.data[0].embedding;
+        const maxTokens = 8192;
+        const contentChunks = [];
+        for (let i = 0; i < text.length; i += maxTokens) {
+            contentChunks.push(text.slice(i, i + maxTokens));
+        }
+
+        const embeddings = [];
+        for (const chunk of contentChunks) {
+            const response = await openai.embeddings.create({
+                model: 'text-embedding-ada-002',
+                input: chunk,
+            });
+            embeddings.push(...response.data[0].embedding);
+        }
+
+        return embeddings;
     } catch (error) {
         console.error('Error generating embedding:', error.message);
         throw error;
