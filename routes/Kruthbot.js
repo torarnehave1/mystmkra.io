@@ -32,7 +32,7 @@ if (!TELEGRAM_BOT_TOKEN) {
 }
 
 
-console.log(`Telegram Bot Token for Blue: ${TELEGRAM_BOT_TOKEN}`);
+console.log(`Telegram Bot Token for Kruth: ${TELEGRAM_BOT_TOKEN}`);
 let bot;
 
 if (config.NODE_ENV === 'production') {
