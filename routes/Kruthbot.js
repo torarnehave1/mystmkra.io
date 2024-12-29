@@ -223,6 +223,47 @@ bot.on('message', async (msg) => {
 
                 // Send the OpenAI response to the user
                 await bot.sendMessage(chatId, openAIResponse);
+            } else if (msg.text.startsWith('SEARCH:')) {
+                const searchQuery = msg.text.replace('SEARCH:', '').trim();
+                const documents = await performSearch(searchQuery);
+
+                if (documents.length === 0) {
+                    const noDocsMessage = 'No relevant documents found.';
+                    
+                    // Log the outgoing message
+                    await logMessage({
+                        chat: { id: chatId },
+                        text: noDocsMessage,
+                        from: { is_bot: true },
+                    });
+
+                    await bot.sendMessage(chatId, noDocsMessage);
+                } else {
+                    const formattedResponse = documents
+                        .map((doc, index) => `${index + 1}. [${doc.title}](${doc.URL})`)
+                        .join('\n');
+                    
+                    // Log the outgoing message
+                    await logMessage({
+                        chat: { id: chatId },
+                        text: formattedResponse,
+                        from: { is_bot: true },
+                    });
+
+                    const responseWithQuestion = `${formattedResponse}\n\nAre you happy with the answer?`;
+
+                    await bot.sendMessage(chatId, responseWithQuestion, {
+                        parse_mode: 'Markdown',
+                        reply_markup: {
+                            inline_keyboard: [
+                                [
+                                    { text: 'YES', callback_data: 'search_yes' },
+                                    { text: 'NO', callback_data: 'search_no' },
+                                ],
+                            ],
+                        },
+                    });
+                }
             } else if (msg.text.includes('?')) {
                 // Perform a search for the provided text
                 const documents = await performSearch(msg.text);
