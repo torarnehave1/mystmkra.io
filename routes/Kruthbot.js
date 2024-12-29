@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import generateOpenAIResponseforKruthBot from '../services/KruthBothOpenAiQuestions.js';
 import logMessage from '../services/logMessage.js';
 import config from '../config/config.js'; // Import config.js
+import { getThread, saveMessage, clearThread } from '../services/threadService.js'; // Import thread service
 
 // Load environment variables from .env file
 dotenv.config();
@@ -63,8 +64,17 @@ bot.on('message', async (msg) => {
         await logMessage(msg);
 
         if (msg.text) {
+            // Save the user's message to the thread
+            await saveMessage(chatId, 'user', msg.text);
+
+            // Retrieve the current thread
+            const thread = await getThread(chatId);
+
             // Generate a response from OpenAI
-            const openAIResponse = await generateOpenAIResponseforKruthBot(msg.text);
+            const openAIResponse = await generateOpenAIResponseforKruthBot(msg.text, thread);
+
+            // Save the bot's response to the thread
+            await saveMessage(chatId, 'assistant', openAIResponse);
 
             // Log the outgoing message
             await logMessage({
