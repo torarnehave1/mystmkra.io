@@ -2,7 +2,7 @@
 import TelegramBot from 'node-telegram-bot-api';
 import express from 'express';
 import dotenv from 'dotenv';
-import generateOpenAIResponseforKruthBot from '../services/RuthBothOpenAiQuestions.js';
+import generateOpenAIResponseforKruthBot from '../services/KruthBothOpenAiQuestions.js';
 import logMessage from '../services/logMessage.js';
 import config from '../config/config.js'; // Import config.js
 
@@ -77,7 +77,7 @@ bot.on('message', async (msg) => {
             await bot.sendMessage(chatId, openAIResponse);
         } else {
             console.log('Unsupported message type.');
-            const unsupportedMessage = 'Sorry, I only understand text messages.';
+            const unsupportedMessage = 'Beklager, jeg forstår bare tekstmeldinger.';
             
             // Log the outgoing message
             await logMessage({
@@ -90,7 +90,7 @@ bot.on('message', async (msg) => {
         }
     } catch (error) {
         console.error('Error processing message:', error.message);
-        const errorMessage = 'An error occurred while processing your message. Please try again later.';
+        const errorMessage = 'En feil oppstod under behandlingen av meldingen din. Vennligst prøv igjen senere.';
         
         // Log the outgoing error message
         await logMessage({
