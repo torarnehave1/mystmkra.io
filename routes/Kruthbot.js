@@ -23,8 +23,8 @@ console.log(`Environment: ${config.NODE_ENV}`);
 
 // Access the Telegram bot token based on the environment
 const TELEGRAM_BOT_TOKEN = config.NODE_ENV === 'production'
-    ? process.env.TELEGRAM_BOT1_TOKEN_PROD // Production token
-    : process.env.TELEGRAM_BOT1_TOKEN_DEV; // Development token
+    ? process.env.TELEGRAM_BOT3_TOKEN_PROD // Production token
+    : process.env.TELEGRAM_BOT3_TOKEN_DEV; // Development token
 
 if (!TELEGRAM_BOT_TOKEN) {
     console.error('Error: Telegram bot token is not set in the environment variables.');
