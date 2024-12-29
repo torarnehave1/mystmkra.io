@@ -42,6 +42,7 @@ export default {
   botToken2,
   webhookBaseUrl1,
   webhookBaseUrl2,
+  webhookBaseUrl3,
   botToken3,
 
 };
