@@ -10,7 +10,7 @@ import mongoose from 'mongoose';
 import Mdfiles from '../models/Mdfiles.js';
 import logMessage from '../services/logMessage.js';
 import config from '../config/config.js'; // Import config.js
-import generateOpenAIResponseforBlueBot from '../services/bluBotOpenAiQuestions.js';
+import generateOpenAIResponseforBlueBot from '../services/RuthBothOpenAiQuestions.js';
 
 // Load environment variables from .env file
 dotenv.config();
