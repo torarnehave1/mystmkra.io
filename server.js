@@ -16,6 +16,7 @@ import config from './config/config.js';
 import imgroutes from './routes/images.js';
 import telegramRouter1 from './routes/bluebot.js';
 import telegramRouter2 from './routes/greenbot.js';
+import telegramRouter3 from './routes/Kruthbot.js';
 
 // Load environment variables
 dotenv.config();
@@ -86,6 +87,7 @@ app.use('/openai', ChatGPT);
 app.use('/img', imgroutes);
 app.use('/blue', telegramRouter1);
 app.use('/green', telegramRouter2);
+app.use('/kruth', telegramRouter3);
 
 // Support page
 app.get('/support', (req, res) => {

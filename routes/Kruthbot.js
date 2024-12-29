@@ -336,11 +336,11 @@ bot.on('callback_query', async (callbackQuery) => {
 
 
 // Express router for Telegram-related routes
-const telegramRouter1 = express.Router();
+const telegramRouter3 = express.Router();
 
 if (config.NODE_ENV === 'production') {
     // Endpoint to handle incoming webhook requests
-    telegramRouter1.post(`/bot${TELEGRAM_BOT_TOKEN}`, (req, res) => {
+    telegramRouter3.post(`/bot${TELEGRAM_BOT_TOKEN}`, (req, res) => {
         console.log('Received webhook request:', req.body); // Log the incoming webhook request
         bot.processUpdate(req.body);
         res.sendStatus(200);
@@ -348,7 +348,7 @@ if (config.NODE_ENV === 'production') {
 }
 
 // Endpoint to check bot status
-telegramRouter1.get('/status', (req, res) => {
+telegramRouter3.get('/status', (req, res) => {
     try {
         res.json({ status: 'Bot is running', uptime: process.uptime(), environment: config.NODE_ENV });
     } catch (error) {
@@ -358,7 +358,7 @@ telegramRouter1.get('/status', (req, res) => {
 });
 
 // Endpoint to search for relevant documents
-telegramRouter1.get('/search-documents', async (req, res) => {
+telegramRouter3.get('/search-documents', async (req, res) => {
     const { query } = req.query;
 
     try {
@@ -372,4 +372,4 @@ telegramRouter1.get('/search-documents', async (req, res) => {
 });
 
 // Export the router for use in the main app
-export default telegramRouter1;
+export default telegramRouter3;
