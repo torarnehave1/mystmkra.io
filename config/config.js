@@ -22,9 +22,11 @@ console.log(`Selected bot username: ${botUsername}`);
 
 const botToken1 = NODE_ENV === 'production' ? process.env.TELEGRAM_BOT1_TOKEN_PROD : process.env.TELEGRAM_BOT1_TOKEN_DEV;
 const botToken2 = NODE_ENV === 'production' ? process.env.TELEGRAM_BOT2_TOKEN_PROD : process.env.TELEGRAM_BOT2_TOKEN_DEV;
+const botToken3 = NODE_ENV === 'production' ? process.env.TELEGRAM_BOT3_TOKEN_PROD : process.env.TELEGRAM_BOT3_TOKEN_DEV;
 
 const webhookBaseUrl1 = process.env.WEBHOOK_BASE_URL1 || 'https://mystmkra.io/blue';
 const webhookBaseUrl2 = process.env.WEBHOOK_BASE_URL2 || 'https://mystmkra.io/green';
+const webhookBaseUrl3 = process.env.WEBHOOK_BASE_URL3 || 'https://mystmkra.io/kruth';
 
 export default {
   PYTHON_VERSION,
@@ -40,4 +42,6 @@ export default {
   botToken2,
   webhookBaseUrl1,
   webhookBaseUrl2,
+  botToken3,
+
 };

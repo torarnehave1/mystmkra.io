@@ -60,6 +60,19 @@ const MdFilesSchema = new mongoose.Schema({
     type: [Number], // Array of numbers for embeddings
     required: false,
     default: [] // Default to an empty array
+  },
+
+  part: {
+    type: Number,
+    default: 1
+  },
+  totalParts: {
+    type: Number,
+    default: 1
+  },
+  documentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'MdFiles'
   }
 
 });

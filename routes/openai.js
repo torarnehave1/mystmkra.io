@@ -5,7 +5,7 @@ import multer from 'multer';
 import util from 'util';
 import mongoose from 'mongoose';
 import Mdfiles from '../models/Mdfiles.js';
-
+import {isAuthenticated} from '../auth/auth.js';
 
 import FormData from 'form-data';
 import path from 'path';
@@ -14,6 +14,7 @@ import { fileURLToPath } from 'url';
 
 import axios from 'axios';
 import sharp from 'sharp';
+import { Dropbox } from 'dropbox'; // Import the Dropbox class
 
 import config from '../config/config.js';
 
@@ -23,29 +24,77 @@ import analyzePhotoAndText  from '../services/photoTextAnalysis.js';
 import  searchDocuments  from '../services/documentSearchService.js';
 import extractContentElements from '../services/extractContentfromMarkdown.js';
 import { title } from 'process';
+import { encoding_for_model } from 'tiktoken';
 
 
 // List of Endpoints:
 // - /ask: Test endpoint to verify OpenAI connection
-// - /translate-audio: Endpoint to translate audio files using the Whisper model
 // - /process-text: Endpoint to process text for different operations (answer-question, spellcheck-rewrite, generate-image-prompt)
 // - /create-image: Endpoint to generate and save an image using DALL-E 3
 // - /createimage: Endpoint to generate and save an image using DALL-E 2
 
 
-console.log(`The application is running in ${config.NODE_ENV} mode.`);
-console.log(`The base URL is ${config.BASE_URL}`);
+console.error(`The application is running in ${config.NODE_ENV} mode.`);
+console.error(`The base URL is ${config.BASE_URL}`);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config();
 
 const router = Router();
+dotenv.config();
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
+
+let accessToken = null; // Initialize accessToken
+let expiryTime = 0; // Initialize expiryTime
+
+async function refreshAccessToken() {
+    const params = new URLSearchParams();
+    params.append('grant_type', 'refresh_token');
+    params.append('refresh_token', process.env.DROPBOX_REFRESH_TOKEN); // Ensure refreshToken is defined
+  
+    try {
+      const response = await axios.post('https://api.dropboxapi.com/oauth2/token', params, {
+        auth: {
+          username: process.env.DROPBOX_APP_KEY,
+          password: process.env.DROPBOX_APP_SECRET,
+        },
+      });
+  
+      const newAccessToken = response.data.access_token;
+      const expiresIn = response.data.expires_in; // Expiry time in seconds
+      expiryTime = Date.now() + expiresIn * 1000; // Current time + expiry duration in ms
+  
+      // Update the global access token
+      accessToken = newAccessToken;
+  
+      return newAccessToken;
+    } catch (error) {
+      console.error('Error refreshing access token:', error);
+      throw error;
+    }
+  }
+  
+  // Middleware to refresh the access token if expired
+  async function ensureValidToken(req, res, next) {
+    if (!accessToken || Date.now() >= expiryTime) {
+      try {
+        accessToken = await refreshAccessToken();
+      } catch (error) {
+        return res.status(500).json({
+          message: 'Error refreshing access token',
+          error: error.message,
+        });
+      }
+    }
+    next();
+  }
+
+
+
 
 let currentThreadId = null;  // In-memory store for the current thread ID
 
@@ -91,7 +140,7 @@ const performSearch = async (query) => {
                 },
             },
             { $sort: { similarity: -1 } },
-            { $limit: 10 }, // Limit to top 5 most similar documents
+            { $limit: 10 }, // Limit to top 10 most similar documents
             {
                 $project: {
                     _id: 0, // Exclude the _id field
@@ -111,42 +160,148 @@ const performSearch = async (query) => {
     }
 };
 
-
-
-
-
-
-
-
 /**
  * Function to generate embeddings using OpenAI
  * @param {string} text - The text content to generate embeddings for
- * @returns {Array} - The generated embedding
+ * @returns {Array} - The combined embeddings for all chunks
  */
 async function generateEmbedding(text) {
     if (!text || typeof text !== 'string') {
         throw new Error('Input text is required and must be a non-empty string.');
     }
+
     try {
-        const maxTokens = 8192;
-        const contentChunks = [];
-        for (let i = 0; i < text.length; i += maxTokens) {
-            contentChunks.push(text.slice(i, i + maxTokens));
-        }
+        console.error('Starting to generate embeddings...');
+        const maxTokens = 8191; // Token limit for the OpenAI model
+        const chunkSize = maxTokens - 100; // Leave buffer for overhead
+        const contentChunks = splitIntoChunks(text, chunkSize);
+
+        console.error(`Total chunks created: ${contentChunks.length}`); // Log the number of chunks
 
         const embeddings = [];
         for (const chunk of contentChunks) {
+            console.error(`Processing chunk of size ${chunk.length} tokens: ${chunk.substring(0, 100)}...`); // Log the first 100 chars of the chunk
+            console.error('Sending request to OpenAI API...');
             const response = await openai.embeddings.create({
                 model: 'text-embedding-ada-002',
                 input: chunk,
             });
-            embeddings.push(...response.data[0].embedding);
+            console.error('Received response from OpenAI API.');
+
+            if (response && response.data && response.data.length > 0) {
+                embeddings.push(...response.data.map(item => item.embedding));
+            } else {
+                console.warn('No embeddings returned for chunk:', chunk);
+            }
         }
 
-        return embeddings;
+        console.error(`Total embeddings generated: ${embeddings.length}`);
+        return embeddings.flat();
     } catch (error) {
-        console.error('Error generating embedding:', error.message);
+        console.error('Error generating embeddings:', error.message);
         throw error;
+    }
+}
+
+/**
+ * Utility function to split text into chunks
+ * @param {string} text - The input text
+ * @param {number} maxTokens - The maximum number of tokens per chunk
+ * @returns {Array} - Array of text chunks
+ */
+function splitIntoChunks(text, maxTokens) {
+    console.error('Starting to split text into chunks...');
+    const chunks = [];
+    let currentChunk = "";
+
+    for (const line of text.split("\n")) {
+        if ((currentChunk + line).length > maxTokens) {
+            chunks.push(currentChunk);
+            currentChunk = "";
+        }
+        currentChunk += `${line}\n`;
+    }
+
+    if (currentChunk.length > 0) {
+        chunks.push(currentChunk);
+    }
+
+    console.error(`Chunks created: ${chunks.length}`);
+    chunks.forEach((chunk, index) => {
+        console.error(`Chunk ${index + 1} size: ${chunk.length}`);
+    });
+
+    return chunks;
+}
+
+/**
+ * Function to check the length of the content and split it into multiple parts if necessary
+ * @param {string} content - The content to check and split
+ * @param {number} maxLength - The maximum length of each part
+ * @returns {Array} - An array of content parts
+ */
+function splitContentIntoParts(content, maxLength) {
+    const parts = [];
+    let currentPart = '';
+
+    for (const line of content.split('\n')) {
+        if ((currentPart + line).length > maxLength) {
+            parts.push(currentPart);
+            currentPart = '';
+        }
+        currentPart += `${line}\n`;
+    }
+
+    if (currentPart.length > 0) {
+        parts.push(currentPart);
+    }
+
+    return parts;
+}
+
+async function saveMarkdownContent(req, res) {
+    const { content, documentId } = req.body;
+
+    if (!content.trim()) {
+        return res.status(400).json({ error: 'Textarea is empty. Please enter some content.' });
+    }
+
+    // Retrieve the user ID from the request
+    const userId = req.user.id; // Assuming userId is available in the request
+
+    if (!userId) {
+        return res.status(400).json({ error: 'User ID not found. Please log in again.' });
+    }
+
+    try {
+        const maxLength = 8192;
+        const contentParts = splitContentIntoParts(content, maxLength);
+        const totalParts = contentParts.length;
+        const newDocumentId = new mongoose.Types.ObjectId();
+
+        const savedParts = await Promise.all(contentParts.map((part, index) => {
+            const newDocument = new Mdfiles({
+                _id: newDocumentId,
+                content: part,
+                User_id: userId, // Ensure User_id is set
+                part: index + 1,
+                totalParts: totalParts,
+                documentId: newDocumentId
+            });
+            return newDocument.save();
+        }));
+
+        const result = savedParts[0]; // Use the first part as the reference
+
+        res.json({
+            success: true,
+            message: 'File saved successfully',
+            documentId: result.documentId,
+            filePath: `/dropbox/blog/${userId}/${result.documentId}.md`,
+        });
+    } catch (error) {
+        console.error('Error saving file:', error);
+        res.status(500).json({ error: 'An error occurred while saving the file' });
     }
 }
 
@@ -156,11 +311,11 @@ router.post('/webhook_BAK/:botToken', async (req, res) => {
     const botToken = req.params.botToken; // Extract bot token from the URL
     const payload = req.body;
 
-    console.log(`Received webhook for bot: ${botToken}`);
-    console.log('Payload:', JSON.stringify(payload, null, 2));
+    console.error(`Received webhook for bot: ${botToken}`);
+    console.error('Payload:', JSON.stringify(payload, null, 2));
 
     if (botToken === process.env.TELEGRAM_BOT1_TOKEN || botToken === process.env.TELEGRAM_BOT2_TOKEN) {
-        console.log('Bot triggered');
+        console.error('Bot triggered');
 
         if (payload.message) {
             const chatId = payload.message.chat.id;
@@ -169,14 +324,14 @@ router.post('/webhook_BAK/:botToken', async (req, res) => {
 
             // Check if the message is from the bot itself
             if (payload.message.from.is_bot) {
-                console.log('Skipping message from the bot itself.');
+                console.error('Skipping message from the bot itself.');
                 res.status(200).send('OK');
                 return;
             }
 
             try {
                 if (text && text.includes('?')) {
-                    console.log(`Performing search for query: "${text}"`);
+                    console.error(`Performing search for query: "${text}"`);
 
                     // Perform the search
                     const urls = await performSearch(text); // Returns only URLs
@@ -187,7 +342,7 @@ router.post('/webhook_BAK/:botToken', async (req, res) => {
                             text: "No documents found matching your query.",
                         });
                     } else {
-                        console.log('Sending results to Telegram.');
+                        console.error('Sending results to Telegram.');
 
                         // Iterate through the URLs and send each as a separate message
                         for (const url of urls) {
@@ -200,14 +355,14 @@ router.post('/webhook_BAK/:botToken', async (req, res) => {
                             await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
                         }
 
-                        console.log('All URLs sent as separate messages.');
+                        console.error('All URLs sent as separate messages.');
                     }
 
                     // Return the original response to the HTTP client
                     res.status(200).json({ success: true, urlsSent: urls.length });
                     return; // Exit after sending the HTTP response
                 } else {
-                    console.log('Message does not contain a question mark.');
+                    console.error('Message does not contain a question mark.');
                     await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                         chat_id: chatId,
                         text: "Please include a `?` in your message to perform a search.",
@@ -226,7 +381,7 @@ router.post('/webhook_BAK/:botToken', async (req, res) => {
             }
         }
     } else {
-        console.log('Unknown bot token');
+        console.error('Unknown bot token');
         res.status(400).json({ error: 'Invalid bot token.' });
     }
 });
@@ -238,11 +393,11 @@ router.post('/webhook/:botToken', async (req, res) => {
     const botToken = req.params.botToken; // Extract bot token from the URL
     const payload = req.body;
 
-    console.log(`Received webhook for bot: ${botToken}`);
-    console.log('Payload:', JSON.stringify(payload, null, 2));
+    console.error(`Received webhook for bot: ${botToken}`);
+    console.error('Payload:', JSON.stringify(payload, null, 2));
 
     if (botToken === process.env.TELEGRAM_BOT1_TOKEN || botToken === process.env.TELEGRAM_BOT2_TOKEN) {
-        console.log('Bot triggered');
+        console.error('Bot triggered');
 
         if (payload.message) {
             const chatId = payload.message.chat.id;
@@ -250,14 +405,14 @@ router.post('/webhook/:botToken', async (req, res) => {
 
             // Check if the message is from the bot itself
             if (payload.message.from.is_bot) {
-                console.log('Skipping message from the bot itself.');
+                console.error('Skipping message from the bot itself.');
                 res.status(200).send('OK');
                 return;
             }
 
             try {
                 if (text && text.includes('?')) {
-                    console.log(`Performing search for query: "${text}"`);
+                    console.error(`Performing search for query: "${text}"`);
 
                     // Perform the search
                     const documents = await performSearch(text); // Should return an array of { title, URL }
@@ -268,7 +423,7 @@ router.post('/webhook/:botToken', async (req, res) => {
                             text: "No documents found matching your query.",
                         });
                     } else {
-                        console.log('Sending results to Telegram.');
+                        console.error('Sending results to Telegram.');
 
                         // Iterate through the documents and send each as a separate message
                         for (const doc of documents) {
@@ -284,14 +439,14 @@ router.post('/webhook/:botToken', async (req, res) => {
                             await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
                         }
 
-                        console.log('All documents sent as separate messages.');
+                        console.error('All documents sent as separate messages.');
                     }
 
                     // Return the original response to the HTTP client
                     res.status(200).json({ success: true, documentsSent: documents.length });
                     return; // Exit after sending the HTTP response
                 } else {
-                    console.log('Message does not contain a question mark.');
+                    console.error('Message does not contain a question mark.');
                     await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                         chat_id: chatId,
                         text: "Please include a `?` in your message to perform a search.",
@@ -310,7 +465,7 @@ router.post('/webhook/:botToken', async (req, res) => {
             }
         }
     } else {
-        console.log('Unknown bot token');
+        console.error('Unknown bot token');
         res.status(400).json({ error: 'Invalid bot token.' });
     }
 });
@@ -326,12 +481,12 @@ router.post('/webhook2/:botToken', async (req, res) => {
     const botToken = req.params.botToken; // Extract bot token from the URL
     const payload = req.body;
 
-    console.log(`Received webhook for bot: ${botToken}`);
-    console.log('Payload:', payload);
+    console.error(`Received webhook for bot: ${botToken}`);
+    console.error('Payload:', payload);
 
     // Handle logic for each bot
     if (botToken === process.env.TELEGRAM_BOT1_TOKEN) {
-        console.log('Bot 1 triggered');
+        console.error('Bot 1 triggered');
 
         if (payload.message) {
             const chatId = payload.message.chat.id;
@@ -353,7 +508,7 @@ router.post('/webhook2/:botToken', async (req, res) => {
                         return;
                     }
 
-                    console.log(`Performing search for query: "${text.trim()}"`);
+                    console.error(`Performing search for query: "${text.trim()}"`);
 
                     // Call the searchDocuments function
                     const documents = await searchDocuments(text.trim());
@@ -365,7 +520,7 @@ router.post('/webhook2/:botToken', async (req, res) => {
                         });
                     } else {
                         const processedDocuments = documents.map((doc) => {
-                            console.log('Document content:', doc.content || 'No content available.');
+                            console.error('Document content:', doc.content || 'No content available.');
                             const extracted = extractContentElements(doc.content || '');
                             return {
                                 similarity: doc.similarity,
@@ -385,13 +540,13 @@ router.post('/webhook2/:botToken', async (req, res) => {
                             parse_mode: "Markdown",
                         });
 
-                        console.log('Search results sent to user.');
+                        console.error('Search results sent to user.');
                     }
 
                     // Reset state after search
                     conversationStates[chatId] = 'default';
                 } else if (text?.startsWith('/search')) {
-                    console.log('Search command detected.');
+                    console.error('Search command detected.');
 
                     // Transition to 'awaitingSearchQuery' state
                     conversationStates[chatId] = 'awaitingSearchQuery';
@@ -401,7 +556,7 @@ router.post('/webhook2/:botToken', async (req, res) => {
                         text: "What would you like to search for? Please provide a query.",
                     });
                 } else {
-                    console.log(`Message detected in state '${currentState}': "${text}"`);
+                    console.error(`Message detected in state '${currentState}': "${text}"`);
 
                     if (chatType === 'private' && text === "Hvordan har du det?") {
                         const reply = "Jeg har det som et mirakel!";
@@ -409,12 +564,12 @@ router.post('/webhook2/:botToken', async (req, res) => {
                             chat_id: chatId,
                             text: reply,
                         });
-                        console.log('Reply sent: "Jeg har det som et mirakel!"');
+                        console.error('Reply sent: "Jeg har det som et mirakel!"');
                     } else if (chatType === 'group' || chatType === 'supergroup') {
-                        console.log(`Message detected in a group (${chatType}): "${text}"`);
+                        console.error(`Message detected in a group (${chatType}): "${text}"`);
 
                         if (payload.message.photo || payload.message.caption) {
-                            console.log("Photo or caption detected in group. Sending for analysis.");
+                            console.error("Photo or caption detected in group. Sending for analysis.");
 
                             const analysisResult = await analyzePhotoAndText(botToken, payload.message);
 
@@ -424,11 +579,11 @@ router.post('/webhook2/:botToken', async (req, res) => {
                                 parse_mode: "Markdown",
                             });
 
-                            console.log("Analysis result sent to group.");
+                            console.error("Analysis result sent to group.");
                         }
 
                         if (text && text.includes("?")) {
-                            console.log(`Sending question to OpenAI: "${text}"`);
+                            console.error(`Sending question to OpenAI: "${text}"`);
 
                             const groupReply = await generateOpenAIResponse(text);
 
@@ -438,7 +593,7 @@ router.post('/webhook2/:botToken', async (req, res) => {
                                 parse_mode: "Markdown",
                             });
 
-                            console.log(`Reply sent to group: "${groupReply}"`);
+                            console.error(`Reply sent to group: "${groupReply}"`);
                         }
                     }
                 }
@@ -447,10 +602,10 @@ router.post('/webhook2/:botToken', async (req, res) => {
             }
         }
     } else if (botToken === process.env.TELEGRAM_BOT2_TOKEN) {
-        console.log('Bot 2 triggered');
+        console.error('Bot 2 triggered');
         // Add your bot 2-specific logic here
     } else {
-        console.log('Unknown bot');
+        console.error('Unknown bot');
     }
 
     res.status(200).send('OK'); // Respond to Telegram
@@ -479,11 +634,11 @@ router.get('/generate-embeddings', async (req, res) => {
         for (const doc of documents) {
             const content = doc.content?.trim();
             if (!content) {
-                console.log(`Skipping document ${doc._id} - empty content`);
+                console.error(`Skipping document ${doc._id} - empty content`);
                 continue;
             }
 
-            console.log(`Generating embedding for document ${doc._id}...`);
+            console.error(`Generating embedding for document ${doc._id}...`);
 
             // Split content into smaller chunks if it exceeds the token limit
             const maxTokens = 8192;
@@ -514,10 +669,10 @@ router.get('/generate-embeddings', async (req, res) => {
             );
 
             if (updateResult.modifiedCount === 1) {
-                console.log(`Successfully updated document ${doc._id}`);
+                console.error(`Successfully updated document ${doc._id}`);
                 updatedCount++;
             } else {
-                console.log(`Failed to update document ${doc._id}:`, updateResult);
+                console.error(`Failed to update document ${doc._id}:`, updateResult);
             }
         }
 
@@ -680,7 +835,7 @@ router.get('/send-message', async (req, res) => {
         if (currentThreadId) {
             // If there's already a thread ID stored, use it
             threadId = currentThreadId;
-            console.log('Using existing thread ID:', threadId);
+            console.error('Using existing thread ID:', threadId);
         } else {
             // Otherwise, create a new thread
             const threadResponse = await axios.post(
@@ -697,7 +852,7 @@ router.get('/send-message', async (req, res) => {
 
             threadId = threadResponse.data.id;
             currentThreadId = threadId;  // Store the new thread ID
-            console.log('New thread created with ID:', threadId);
+            console.error('New thread created with ID:', threadId);
         }
 
         // Step 2: Send the User Message to the Thread
@@ -706,7 +861,7 @@ router.get('/send-message', async (req, res) => {
             content: question || 'Hva er bioenergetikk',  // Use provided question or default
         };
 
-        console.log("Sending message with payload:", messagePayload);
+        console.error("Sending message with payload:", messagePayload);
 
         const response = await axios.post(
             `https://api.openai.com/v1/assistants/${process.env.ASSISTANT_ID}/threads/${threadId}/messages`, 
@@ -721,7 +876,7 @@ router.get('/send-message', async (req, res) => {
         );
 
         // Log and return the API response
-        console.log('Message sent successfully:', response.data);
+        console.error('Message sent successfully:', response.data);
         res.json({
             success: true,
             data: response.data,
@@ -752,7 +907,7 @@ router.get('/get-or-create-thread', async (req, res) => {
         if (currentThreadId) {
             // If there's already a thread ID stored, use it
             threadId = currentThreadId;
-            console.log('Using existing thread ID:', threadId);
+            console.error('Using existing thread ID:', threadId);
         } else {
             // Otherwise, create a new thread
             const threadResponse = await axios.post(
@@ -768,7 +923,7 @@ router.get('/get-or-create-thread', async (req, res) => {
             );
             threadId = threadResponse.data.id;
             currentThreadId = threadId;  // Store the new thread ID
-            console.log('New thread created with ID:', threadId);
+            console.error('New thread created with ID:', threadId);
         }
 
         res.json({
@@ -796,7 +951,7 @@ router.get('/send-direct-message', async (req, res) => {
 
         if (currentThreadId) {
             threadId = currentThreadId;
-            console.log('Using existing thread ID:', threadId);
+            console.error('Using existing thread ID:', threadId);
         } else {
             const threadResponse = await axios.post(
                 `https://api.openai.com/v1/assistants/${process.env.ASSISTANT_ID}/threads`, 
@@ -811,7 +966,7 @@ router.get('/send-direct-message', async (req, res) => {
             );
             threadId = threadResponse.data.id;
             currentThreadId = threadId;  // Store the new thread ID
-            console.log('New thread created with ID:', threadId);
+            console.error('New thread created with ID:', threadId);
         }
 
         // Define the payload
@@ -835,7 +990,7 @@ router.get('/send-direct-message', async (req, res) => {
         );
 
         // Log and return the API response
-        console.log('Message sent successfully:', response.data);
+        console.error('Message sent successfully:', response.data);
         res.json({
             success: true,
             data: response.data,
@@ -868,7 +1023,7 @@ router.post('/send-message', async (req, res) => {
                 'OpenAI-Beta': 'assistants=v2',
             },
         });
-        console.log("Assistant retrieved successfully:", assistant);
+        console.error("Assistant retrieved successfully:", assistant);
 
         // Step 2: Create a Thread
         const thread = await openai.beta.threads.create({}, {
@@ -876,7 +1031,7 @@ router.post('/send-message', async (req, res) => {
                 'OpenAI-Beta': 'assistants=v2',
             },
         });
-        console.log("Thread created successfully:", thread);
+        console.error("Thread created successfully:", thread);
 
         // Step 3: Send the User Message to the Thread
         const messagePayload = {
@@ -885,7 +1040,7 @@ router.post('/send-message', async (req, res) => {
             content: question || "What is bioenergetic analysis?",  // The content of the message
         };
 
-        console.log("Sending message with payload:", messagePayload);
+        console.error("Sending message with payload:", messagePayload);
 
         const message = await openai.beta.threads.messages.create(messagePayload, {
             headers: {
@@ -893,7 +1048,7 @@ router.post('/send-message', async (req, res) => {
             },
         });
 
-        console.log("Message sent successfully:", message);
+        console.error("Message sent successfully:", message);
 
         // Respond to the client with a success message
         res.json({
@@ -923,7 +1078,7 @@ router.get('/create-thread-res', async (req, res) => {
                 'OpenAI-Beta': 'assistants=v2',
             },
         });
-        console.log("Assistant retrieved successfully:", assistant);
+        console.error("Assistant retrieved successfully:", assistant);
 
         // Step 2: Create a Thread with the Assistant ID
         const thread = await openai.beta.threads.create({
@@ -933,14 +1088,14 @@ router.get('/create-thread-res', async (req, res) => {
                 'OpenAI-Beta': 'assistants=v2',
             },
         });
-        console.log("Thread created successfully with ID:", thread.id);
+        console.error("Thread created successfully with ID:", thread.id);
 
         // Step 3: Send a Hardcoded Message
         const message = await openai.beta.threads.messages.create(
             thread.id,
             { role: "user", content: "Hva er NIBI?" }
         );
-        console.log("Message sent successfully:", message);
+        console.error("Message sent successfully:", message);
 
         // Step 4: Run the Assistant to process the message
         const run = await openai.beta.threads.runs.create({
@@ -951,7 +1106,7 @@ router.get('/create-thread-res', async (req, res) => {
                 'OpenAI-Beta': 'assistants=v2',
             },
         });
-        console.log("Run initiated successfully:", run);
+        console.error("Run initiated successfully:", run);
 
         // Step 5: Poll the status of the run until it's complete
         let runStatus;
@@ -964,7 +1119,7 @@ router.get('/create-thread-res', async (req, res) => {
                     'OpenAI-Beta': 'assistants=v2',
                 },
             });
-            console.log("Run status:", runStatus.status);
+            console.error("Run status:", runStatus.status);
             if (runStatus.status === 'completed') break;
             await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before checking again
         } while (runStatus.status !== 'completed');
@@ -977,7 +1132,7 @@ router.get('/create-thread-res', async (req, res) => {
                 'OpenAI-Beta': 'assistants=v2',
             },
         });
-        console.log("Messages retrieved successfully:", messages);
+        console.error("Messages retrieved successfully:", messages);
 
         // Extract the assistant's response from the messages
         const assistantResponse = messages.body.data
@@ -1017,7 +1172,7 @@ router.post('/ask-assistant', async (req, res) => {
         if (!assistant || assistant.error || assistant.status === 'failed') {
             throw new Error('Failed to retrieve assistant');
         }
-        console.log("Assistant retrieved successfully:", assistant);
+        console.error("Assistant retrieved successfully:", assistant);
 
         // Create a Thread
         const thread = await openai.beta.threads.create({}, {
@@ -1028,7 +1183,7 @@ router.post('/ask-assistant', async (req, res) => {
         if (!thread || thread.error || thread.status === 'failed') {
             throw new Error('Failed to create thread');
         }
-        console.log("Thread created successfully with ID:", thread.id);
+        console.error("Thread created successfully with ID:", thread.id);
 
         // Send the User's Question as a Message
         const message = await openai.beta.threads.messages.create(
@@ -1038,7 +1193,7 @@ router.post('/ask-assistant', async (req, res) => {
         if (!message || message.error || message.status === 'failed') {
             throw new Error('Failed to send message');
         }
-        console.log("Message sent successfully:", message);
+        console.error("Message sent successfully:", message);
 
         // Start the Assistant Run
         const run = await openai.beta.threads.runs.create(
@@ -1048,7 +1203,7 @@ router.post('/ask-assistant', async (req, res) => {
         if (!run || run.error || run.status === 'failed') {
             throw new Error('Failed to initiate run');
         }
-        console.log("Run initiated successfully:", run);
+        console.error("Run initiated successfully:", run);
 
         // Poll the status until the run is completed
         let runStatus;
@@ -1057,7 +1212,7 @@ router.post('/ask-assistant', async (req, res) => {
             if (!runStatus || runStatus.error || runStatus.status === 'failed') {
                 throw new Error('Failed to retrieve run status');
             }
-            console.log("Run status:", runStatus.status);
+            console.error("Run status:", runStatus.status);
             if (runStatus.status === 'completed') break;
             await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before checking again
         } while (runStatus.status !== 'completed');
@@ -1067,7 +1222,7 @@ router.post('/ask-assistant', async (req, res) => {
         if (!messages || messages.error || messages.status === 'failed') {
             throw new Error('Failed to retrieve messages');
         }
-        console.log("Messages retrieved successfully:", messages);
+        console.error("Messages retrieved successfully:", messages);
 
         // Extract the assistant's response
         const assistantResponse = messages.data
@@ -1108,26 +1263,26 @@ router.get('/emb/:docid', async (req, res) => {
 
         // Convert docid to ObjectId
         if (!mongoose.Types.ObjectId.isValid(docid)) {
+            console.error('Invalid document ID format');
             return res.status(400).json({ error: 'Invalid document ID format' });
         }
 
         const doc = await Mdfiles.findOne({ _id: docid });
         if (!doc) {
+            console.error('Document not found');
             return res.status(404).json({ error: 'Document not found' });
         }
 
         // Check if content exists and is non-empty
         if (!doc.content || doc.content.trim() === '') {
+            console.error('Document content is empty or invalid');
             return res.status(400).json({ error: 'Document content is empty or invalid' });
         }
 
-        // Generate embeddings
-        const response = await openai.embeddings.create({
-            model: 'text-embedding-ada-002',
-            input: [doc.content], // Single document embedding
-        });
+        console.error(`Generating embeddings for document ID: ${docid}`);
 
-        const embeddings = response.data[0].embedding;
+        // Generate embeddings
+        const embeddings = await generateEmbedding(doc.content);
 
         // Update the document with the new embeddings
         const updatedDoc = await Mdfiles.updateOne(
@@ -1136,8 +1291,10 @@ router.get('/emb/:docid', async (req, res) => {
         );
 
         if (updatedDoc.modifiedCount === 1) {
+            console.error('Embedding generated and saved successfully.');
             return res.json({ success: true, message: 'Embedding generated successfully' });
         } else {
+            console.error('Failed to update the document with embeddings.');
             return res.status(500).json({ error: 'Failed to update the document with embeddings' });
         }
     } catch (error) {
@@ -1145,7 +1302,6 @@ router.get('/emb/:docid', async (req, res) => {
         return res.status(500).json({ error: 'Internal server error' });
     }
 });
-
 
 router.get('/create-thread-msg', async (req, res) => {
     const openai = new OpenAI({
@@ -1159,7 +1315,7 @@ router.get('/create-thread-msg', async (req, res) => {
                 'OpenAI-Beta': 'assistants=v2',
             },
         });
-        console.log("Assistant retrieved successfully:", assistant);
+        console.error("Assistant retrieved successfully:", assistant);
 
         // Create a Thread
         const thread = await openai.beta.threads.create({}, {
@@ -1167,34 +1323,34 @@ router.get('/create-thread-msg', async (req, res) => {
                 'OpenAI-Beta': 'assistants=v2',
             },
         });
-        console.log("Thread created successfully with ID:", thread.id);
+        console.error("Thread created successfully with ID:", thread.id);
 
         // Send a Hardcoded Message
         const message = await openai.beta.threads.messages.create(
             thread.id,
             { role: "user", content: "Hva er NIBI?" }
         );
-        console.log("Message sent successfully:", message);
+        console.error("Message sent successfully:", message);
 
         // Start the Assistant Run
         const run = await openai.beta.threads.runs.create(
             thread.id,
             { assistant_id: process.env.ASSISTANT_ID }
         );
-        console.log("Run initiated successfully:", run);
+        console.error("Run initiated successfully:", run);
 
         // Poll the status until the run is completed
         let runStatus;
         do {
             runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
-            console.log("Run status:", runStatus.status);
+            console.error("Run status:", runStatus.status);
             if (runStatus.status === 'completed') break;
             await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before checking again
         } while (runStatus.status !== 'completed');
 
         // Once completed, retrieve the messages in the thread
         const messages = await openai.beta.threads.messages.list(thread.id);
-        console.log("Messages retrieved successfully:", messages);
+        console.error("Messages retrieved successfully:", messages);
 
         // Extract the assistant's response
         const assistantResponse = messages.data
@@ -1234,7 +1390,7 @@ router.get('/create-thread', async (req, res) => {
                 'OpenAI-Beta': 'assistants=v2',
             },
         });
-        console.log("Assistant retrieved successfully:", assistant);
+        console.error("Assistant retrieved successfully:", assistant);
 
         // Step 2: Create a Thread
         const thread = await openai.beta.threads.create({}, {
@@ -1242,7 +1398,7 @@ router.get('/create-thread', async (req, res) => {
                 'OpenAI-Beta': 'assistants=v2',
             },
         });
-        console.log("Thread created successfully with ID:", thread.id);
+        console.error("Thread created successfully with ID:", thread.id);
 
         // Return the thread ID to the client
         res.json({
@@ -1270,7 +1426,7 @@ router.post('/interact-with-assistant', async (req, res) => {
                 'OpenAI-Beta': 'assistants=v2',
             },
         });
-        console.log("Assistant retrieved successfully:", assistant);
+        console.error("Assistant retrieved successfully:", assistant);
 
         // Step 2: Create a Thread
         const thread = await openai.beta.threads.create({}, {
@@ -1278,7 +1434,7 @@ router.post('/interact-with-assistant', async (req, res) => {
                 'OpenAI-Beta': 'assistants=v2',
             },
         });
-        console.log("Thread created successfully:", thread);
+        console.error("Thread created successfully:", thread);
 
         // Step 3: Log the message payload before sending
         const messagePayload = {
@@ -1286,7 +1442,7 @@ router.post('/interact-with-assistant', async (req, res) => {
             role: 'user',           // This must be included to specify the message sender
             content: question || "What is bioenergetic analysis?",
         };
-        console.log("Sending message with payload:", messagePayload);
+        console.error("Sending message with payload:", messagePayload);
 
         // Step 3: Add the User Message to the Thread
         const message = await openai.beta.threads.messages.create(messagePayload, {
@@ -1294,7 +1450,7 @@ router.post('/interact-with-assistant', async (req, res) => {
                 'OpenAI-Beta': 'assistants=v2',
             },
         });
-        console.log("Message added successfully:", message);
+        console.error("Message added successfully:", message);
 
         // Step 4: Run the Assistant
         const run = await openai.beta.threads.runs.create({
@@ -1304,7 +1460,7 @@ router.post('/interact-with-assistant', async (req, res) => {
                 'OpenAI-Beta': 'assistants=v2',
             },
         });
-        console.log("Run initiated successfully:", run);
+        console.error("Run initiated successfully:", run);
 
         // Step 5: Retrieve the Run Status and Wait for Completion
         let runStatus;
@@ -1317,7 +1473,7 @@ router.post('/interact-with-assistant', async (req, res) => {
                     'OpenAI-Beta': 'assistants=v2',
                 },
             });
-            console.log("Run status:", runStatus.status);
+            console.error("Run status:", runStatus.status);
             if (runStatus.status === 'completed') break;
             await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before checking again
         } while (runStatus.status !== 'completed');
@@ -1330,7 +1486,7 @@ router.post('/interact-with-assistant', async (req, res) => {
                 'OpenAI-Beta': 'assistants=v2',
             },
         });
-        console.log("Messages retrieved successfully:", messages);
+        console.error("Messages retrieved successfully:", messages);
 
         // Format and send the response
         const responseMessages = messages.body.data.map(message => ({
@@ -1689,5 +1845,99 @@ router.get('/createimage', async (req, res) => {
 });
 
 
+router.post('/say-hello', isAuthenticated, ensureValidToken, async (req, res) => {
+    const { content, userId, documentId } = req.body;  // Get the user's ID and document ID from the request body
+
+    if (!content) {
+        return res.status(400).json({ error: 'Content is required' });
+    }
+
+    if (!userId) {
+        return res.status(400).json({ error: 'User ID not found. Please log in again.' });
+    }
+
+    try {
+        const enc = encoding_for_model("text-embedding-ada-002");
+        const tokens = enc.encode(content);
+        const tokenCount = tokens.length;
+
+        console.log(`Content length: ${content.length}`);
+        console.log(`Number of tokens: ${tokenCount}`);
+
+        // Generate embeddings
+        const embeddings = await generateEmbedding(content);
+
+        let fileDoc;
+
+        if (documentId) {  // Use documentId instead of id
+            console.log('Finding existing document by ID:', documentId);
+            // If a document ID is provided, find the document and update it
+            fileDoc = await Mdfiles.findById(documentId);
+            if (!fileDoc) {
+                console.log('Document not found');
+                return res.status(404).json({
+                    message: 'Document not found'
+                });
+            }
+            fileDoc.content = content;
+            fileDoc.embeddings = embeddings;
+        } else {
+            console.log('Creating new document');
+            // If no document ID is provided, create a new document
+            fileDoc = new Mdfiles({
+                _id: new mongoose.Types.ObjectId(),
+                content: content,
+                embeddings: embeddings,
+                User_id: userId,
+                title: 'Hello Document',
+            });
+        }
+
+        await fileDoc.save();
+
+        // Generate the full URL
+        const fullURL = `https://mystmkra.io/dropbox/blog/${userId}/${fileDoc._id}.md`;
+
+        // Update the document with the full URL
+        fileDoc.URL = fullURL;
+        await fileDoc.save();
+
+        console.log('Full URL saved to document:', fullURL);
+
+        // Define the file path in the user's folder
+        const foldername = userId; // Use the user's ID as the folder name
+        const filename = `${fileDoc._id}.md`;
+        const filePath = `/mystmkra/${foldername}/${filename}`;
+
+        console.log('FilePath is:', filePath);  // This should output the file path
+
+        // Initialize Dropbox with the refreshed access token
+        const dbx = new Dropbox({
+            accessToken: accessToken, // Use the refreshed access token from middleware
+            fetch: fetch,
+        });
+
+        console.log('Uploading file to Dropbox');
+        // Upload the file to Dropbox
+        await dbx.filesUpload({
+            path: filePath,
+            contents: content,
+            mode: 'overwrite'
+        });
+
+        console.log('File uploaded successfully to Dropbox');
+
+        res.status(200).json({
+            message: 'File saved successfully',
+            id: fileDoc._id,
+            filePath: filePath,  // Ensure this variable is correctly passed
+            url: fullURL,        // Return the full URL in the response
+            embeddings: embeddings // Return the embeddings in the response
+        });
+    } catch (error) {
+        console.error('Error calculating tokens or saving document:', error);
+        res.status(500).json({ error: 'Failed to calculate tokens or save document' });
+    }
+});
 
 export default router;

@@ -18,6 +18,7 @@
         <div class="button-container">
             <button class="btn btn-secondary btn-sm" id="DashboardButton">Dashboard</button>
             <button class="btn btn-secondary btn-sm" id="logoutButton">Logout</button>
+            <button class="btn btn-secondary btn-sm" id="savetomarkdownButton">Save to Markdown</button>
         </div>
     </div>
     
@@ -1215,70 +1216,64 @@ function applyGridClasses() {
         let currentDocumentId = null; // Store the current document ID
 
         async function saveMarkdownContent() {
-    const content = markdownTextarea.value;
-    const documentId = currentDocumentId;
+        const content = markdownTextarea.value;
 
-    if (!content.trim()) {
-        alert('Textarea is empty. Please enter some content.');
-        return;
-    }
-
-    if (!isChanged) {
-        alert('No changes detected.');
-        return;
-    }
-
-    // Retrieve the user ID from local storage
-    const userId = localStorage.getItem('userId');
-    if (!userId) {
-        alert('User ID not found. Please log in again.');
-        return;
-    }
-
-    saveButton.disabled = true;
-
-    try {
-        const response = await fetch('/dropbox/save-markdown', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ content, documentId })
-        });
-
-        if (response.ok) {
-            const result = await response.json();
-            console.log('File saved successfully:', result.id, result.filePath);
-            alert('File saved successfully');
-            currentDocumentId = result.id; // Update the current document ID
-
-            // Construct the file URL with the user ID
-            const fileUrl = `https://mystmkra.io/dropbox/blog/${userId}/${result.id}.md`;
-
-            // Update the return file URL in the DOM
-            const returnfileURL = document.querySelector('.ReturnfileURL');
-            returnfileURL.href = fileUrl;
-            returnfileURL.text = fileUrl;
-            returnfileURL.setAttribute('data-url', fileUrl);
-            isChanged = false;
-
-            // Update the PDF save button with the correct file name
-            const saveToPdfButton = document.getElementById('SaveasPDFButton');
-            saveToPdfButton.setAttribute('data-filename', `${result.id}.md`);
-            updateSaveToPdfButton();
-        } else {
-            const errorText = await response.text();
-            console.error('Error saving file:', errorText);
-            alert('Error saving file');
+        if (!content.trim()) {
+            alert('Textarea is empty. Please enter some content.');
+            return;
         }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('An error occurred while saving the file');
-    } finally {
-        saveButton.disabled = false;
-    }
-}
 
+        if (!isChanged) {
+            alert('No changes detected.');
+            return;
+        }
+
+        // Retrieve the user ID from local storage
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+            alert('User ID not found. Please log in again.');
+            return;
+        }
+
+        saveButton.disabled = true;
+
+        try {
+            const response = await fetch('/dropbox/save-markdown', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content, documentId: currentDocumentId }) // Include documentId in the request body
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log('File saved successfully:', result.documentId, result.filePath);
+                alert(`File saved successfully. Token Count: ${result.tokenCount}`);
+
+                // Update the return file URL in the DOM
+                const returnfileURL = document.querySelector('.ReturnfileURL');
+                returnfileURL.href = result.filePath;
+                returnfileURL.text = result.filePath;
+                returnfileURL.setAttribute('data-url', result.filePath);
+                isChanged = false;
+
+                // Update the PDF save button with the correct file name
+                const saveToPdfButton = document.getElementById('SaveasPDFButton');
+                saveToPdfButton.setAttribute('data-filename', `${result.documentId}.md`);
+                updateSaveToPdfButton();
+            } else {
+                const errorText = await response.text();
+                console.error('Error saving file:', errorText);
+                alert('Error saving file');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while saving the file');
+        } finally {
+            saveButton.disabled = false;
+        }
+    }
 
 
         // Update preview when user inputs text directly
@@ -1484,7 +1479,28 @@ async function openContent(id) {
             }
         });
 
-
+    document.getElementById('savetomarkdownButton').addEventListener('click', async () => {
+        const content = document.getElementById('markdownTextarea').value;
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+            alert('User ID not found. Please log in again.');
+            return;
+        }
+        try {
+            const response = await fetch('/openai/say-hello', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content, userId, documentId: currentDocumentId }) // Include documentId in the request body
+            });
+            const data = await response.json();
+            alert(`Message: ${data.message}, Token Count: ${data.tokenCount}`);
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to call the endpoint.');
+        }
+    });
 
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
