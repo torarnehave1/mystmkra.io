@@ -27,6 +27,7 @@ const botToken3 = NODE_ENV === 'production' ? process.env.TELEGRAM_BOT3_TOKEN_PR
 const webhookBaseUrl1 = process.env.WEBHOOK_BASE_URL1 || 'https://mystmkra.io/blue';
 const webhookBaseUrl2 = process.env.WEBHOOK_BASE_URL2 || 'https://mystmkra.io/green';
 const webhookBaseUrl3 = process.env.WEBHOOK_BASE_URL3 || 'https://mystmkra.io/kruth';
+const webhookBaseUrl4 = process.env.WEBHOOK_BASE_URL4 || 'https://mystmkra.io/mystmkra';
 
 export default {
   PYTHON_VERSION,
@@ -43,6 +44,7 @@ export default {
   webhookBaseUrl1,
   webhookBaseUrl2,
   webhookBaseUrl3,
+  webhookBaseUrl4,
   botToken3,
 
 };
