@@ -6,6 +6,7 @@ import generateOpenAIResponseforMystMkra from '../services/mystmkraOpenaiservice
 import logMessage from '../services/logMessage.js';
 import config from '../config/config.js'; // Import config.js
 import { getThread, saveMessage, clearThread } from '../services/threadService.js'; // Import thread service
+import { saveMarkdownFile, getMarkdownFileContent } from '../services/markdownService.js'; // Import markdown service
 
 // Load environment variables from .env file
 dotenv.config();
@@ -113,9 +114,29 @@ bot.on('message', async (msg) => {
 
             // Send the OpenAI response to the user
             await bot.sendMessage(chatId, openAIResponse);
+        } else if (msg.document && msg.document.mime_type === 'text/markdown') {
+            // Handle Markdown file upload
+            const fileId = msg.document.file_id;
+            const fileLink = await bot.getFileLink(fileId);
+            const markdownContent = await fetch(fileLink).then(res => res.text());
+
+            // Save the Markdown file content to MongoDB
+            await saveMarkdownFile(chatId, markdownContent);
+
+            const confirmationMessage = 'Markdown file received and saved. You can now ask questions about the document or request a summary.';
+            
+            // Log the outgoing message
+            await logMessage({
+                chat: { id: chatId },
+                text: confirmationMessage,
+                from: { is_bot: true },
+            });
+
+            // Send confirmation to the user
+            await bot.sendMessage(chatId, confirmationMessage);
         } else {
             console.log('Unsupported message type.');
-            const unsupportedMessage = 'Beklager, jeg forstår bare tekstmeldinger.';
+            const unsupportedMessage = 'Beklager, jeg forstår bare tekstmeldinger og Markdown-filer.';
             
             // Log the outgoing message
             await logMessage({
