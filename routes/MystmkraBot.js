@@ -134,6 +134,25 @@ bot.on('message', async (msg) => {
 
             // Send confirmation to the user
             await bot.sendMessage(chatId, confirmationMessage);
+
+            // If the message has a caption requesting a summary, generate the summary
+            if (msg.caption && msg.caption.toLowerCase().includes('summary')) {
+                const thread = await getThread(chatId);
+                const summaryResponse = await generateOpenAIResponseforMystMkra('summary', thread, chatId);
+
+                // Save the bot's response to the thread with the role 'assistant'
+                await saveMessage(chatId, 'assistant', summaryResponse, userName, botName);
+
+                // Log the outgoing message
+                await logMessage({
+                    chat: { id: chatId },
+                    text: summaryResponse,
+                    from: { is_bot: true },
+                });
+
+                // Send the summary response to the user
+                await bot.sendMessage(chatId, summaryResponse);
+            }
         } else {
             console.log('Unsupported message type.');
             const unsupportedMessage = 'Beklager, jeg forstår bare tekstmeldinger og Markdown-filer.';
