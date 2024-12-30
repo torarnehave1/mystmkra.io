@@ -75,11 +75,33 @@ function containsURL(text) {
     return urlPattern.test(text);
 }
 
+// Function to truncate or summarize the conversation history
+function truncateThread(thread, maxLength) {
+    let totalLength = 0;
+    const truncatedMessages = [];
+
+    for (let i = thread.length - 1; i >= 0; i--) {
+        const message = thread[i];
+        totalLength += message.content.length;
+
+        if (totalLength > maxLength) {
+            break;
+        }
+
+        truncatedMessages.unshift(message);
+    }
+
+    return truncatedMessages;
+}
+
 // Bot logic: handle all incoming messages
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const userName = msg.from.username || 'Unknown User'; // Get the username from the message
     const botName = bot.me?.username || 'MystmkraBot'; // Get the bot's username
+
+    // Debug log to see the received message
+    console.log('Received message:', msg);
 
     try {
         // Log the incoming message
@@ -90,16 +112,19 @@ bot.on('message', async (msg) => {
             await saveMessage(chatId, 'user', msg.text, userName, botName);
 
             // Retrieve the current thread
-            const thread = await getThread(chatId);
+            let thread = await getThread(chatId);
+
+            // Truncate the thread to a manageable length
+            thread = truncateThread(thread, 2000); // Adjust the maxLength as needed
 
             let openAIResponse;
 
             if (containsURL(msg.text)) {
                 // If the message contains a URL, summarize the content of the URL
-                openAIResponse = await generateOpenAIResponseforMystMkra(`Summarize the content of this URL: ${msg.text}`, thread);
+                openAIResponse = await generateOpenAIResponseforMystMkra(`Summarize the content of this URL: ${msg.text}. Focus on the most relevant information.`, thread);
             } else {
                 // Generate a response from OpenAI
-                openAIResponse = await generateOpenAIResponseforMystMkra(msg.text, thread);
+                openAIResponse = await generateOpenAIResponseforMystMkra(`${msg.text}. Focus on the most relevant information from the conversation.`, thread);
             }
 
             // Save the bot's response to the thread with the role 'assistant'
@@ -114,7 +139,7 @@ bot.on('message', async (msg) => {
 
             // Send the OpenAI response to the user
             await bot.sendMessage(chatId, openAIResponse);
-        } else if (msg.document && msg.document.mime_type === 'text/markdown') {
+        } else if (msg.document && msg.document.file_name.endsWith('.md')) {
             // Handle Markdown file upload
             const fileId = msg.document.file_id;
             const fileLink = await bot.getFileLink(fileId);
@@ -122,6 +147,9 @@ bot.on('message', async (msg) => {
 
             // Save the Markdown file content to MongoDB
             await saveMarkdownFile(chatId, markdownContent);
+
+            // Add the Markdown content to the thread
+            await saveMessage(chatId, 'user', markdownContent, userName, botName);
 
             const confirmationMessage = 'Markdown file received and saved. You can now ask questions about the document or request a summary.';
             
@@ -137,8 +165,12 @@ bot.on('message', async (msg) => {
 
             // If the message has a caption requesting a summary, generate the summary
             if (msg.caption && msg.caption.toLowerCase().includes('summary')) {
-                const thread = await getThread(chatId);
-                const summaryResponse = await generateOpenAIResponseforMystMkra('summary', thread, chatId);
+                let thread = await getThread(chatId);
+                
+                // Truncate the thread to a manageable length
+                thread = truncateThread(thread, 2000); // Adjust the maxLength as needed
+
+                const summaryResponse = await generateOpenAIResponseforMystMkra('summary. Focus on the most relevant information from the document.', thread);
 
                 // Save the bot's response to the thread with the role 'assistant'
                 await saveMessage(chatId, 'assistant', summaryResponse, userName, botName);

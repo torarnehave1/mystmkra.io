@@ -5,8 +5,8 @@ import MarkdownFile from '../models/MarkdownFile.js';
 // Load environment variables from .env file
 dotenv.config();
 
-const uri = process.env.MONGODB_URI;
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+// const uri = process.env.MONGODB_URI;
+// mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 async function saveMarkdownFile(chatId, content) {
     const markdownFile = new MarkdownFile({ chatId, content });
