@@ -89,7 +89,7 @@ bot.on('message', async (msg) => {
             const openAIResponse = await generateOpenAIResponseforMystMkra(msg.text, thread);
 
             // Save the bot's response to the thread with the role 'assistant'
-            await saveMessage(chatId, 'system', openAIResponse, userName, botName);
+            await saveMessage(chatId, 'assistant', openAIResponse, userName, botName);
 
             // Log the outgoing message
             await logMessage({
