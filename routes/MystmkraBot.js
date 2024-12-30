@@ -31,7 +31,7 @@ if (config.NODE_ENV === 'production') {
     bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { webHook: true });
 
     // Set the webhook URL
-    const WEBHOOK_URL = `${config.webhookBaseUrl3}/bot${TELEGRAM_BOT_TOKEN}`;
+    const WEBHOOK_URL = `${config.webhookBaseUrl4}/bot${TELEGRAM_BOT_TOKEN}`;
 
     // Delete the existing webhook before setting a new one
     bot.deleteWebHook()
