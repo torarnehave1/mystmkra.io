@@ -68,6 +68,12 @@ if (config.NODE_ENV === 'production') {
     });
 }
 
+// Function to check if a string contains a URL
+function containsURL(text) {
+    const urlPattern = /(https?:\/\/[^\s]+)/g;
+    return urlPattern.test(text);
+}
+
 // Bot logic: handle all incoming messages
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
@@ -85,8 +91,15 @@ bot.on('message', async (msg) => {
             // Retrieve the current thread
             const thread = await getThread(chatId);
 
-            // Generate a response from OpenAI
-            const openAIResponse = await generateOpenAIResponseforMystMkra(msg.text, thread);
+            let openAIResponse;
+
+            if (containsURL(msg.text)) {
+                // If the message contains a URL, summarize the content of the URL
+                openAIResponse = await generateOpenAIResponseforMystMkra(`Summarize the content of this URL: ${msg.text}`, thread);
+            } else {
+                // Generate a response from OpenAI
+                openAIResponse = await generateOpenAIResponseforMystMkra(msg.text, thread);
+            }
 
             // Save the bot's response to the thread with the role 'assistant'
             await saveMessage(chatId, 'assistant', openAIResponse, userName, botName);

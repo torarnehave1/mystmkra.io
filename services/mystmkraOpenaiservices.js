@@ -18,14 +18,9 @@ You can also summarize links, process uploads, and assist with custom workflows.
 Be helpful, approachable, and fun, while ensuring your responses are practical and action-oriented. 
 
 Use simple, user-friendly language and provide links or buttons for quick actions where possible.
+
+If the user's input contains a URL, summarize the content of the URL in a concise manner.
 `;
-
-//    Chnage const SYSTEM_CONTEXT so it does not answer long sentences
-
-
-
-
-
 
 /**
  * Generate a response from OpenAI based on input text and thread.
