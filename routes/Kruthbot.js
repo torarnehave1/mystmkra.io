@@ -89,7 +89,7 @@ bot.on('message', async (msg) => {
             const openAIResponse = await generateOpenAIResponseforKruthBot(msg.text, thread);
 
             // Save the bot's response to the thread with the role 'assistant'
-            await saveMessage(chatId, 'assistant', openAIResponse, username, botName);
+            await saveMessage(chatId, 'system', openAIResponse, username, botName);
 
             // Log the outgoing message
             await logMessage({
