@@ -58,14 +58,16 @@ if (config.NODE_ENV === 'production') {
 // Bot logic: handle all incoming messages
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
+    const username = msg.from.username || 'user';
+    const botName = bot.me.username; // Define the bot name
 
     try {
         // Log the incoming message
         await logMessage(msg);
 
         if (msg.text) {
-            // Save the user's message to the thread
-            await saveMessage(chatId, 'user', msg.text);
+            // Save the user's message to the thread with the actual username
+            await saveMessage(chatId, username, msg.text);
 
             // Retrieve the current thread
             const thread = await getThread(chatId);
@@ -73,8 +75,8 @@ bot.on('message', async (msg) => {
             // Generate a response from OpenAI
             const openAIResponse = await generateOpenAIResponseforKruthBot(msg.text, thread);
 
-            // Save the bot's response to the thread
-            await saveMessage(chatId, 'assistant', openAIResponse);
+            // Save the bot's response to the thread with the bot name
+            await saveMessage(chatId, botName, openAIResponse);
 
             // Log the outgoing message
             await logMessage({

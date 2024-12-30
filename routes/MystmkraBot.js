@@ -2,7 +2,7 @@
 import TelegramBot from 'node-telegram-bot-api';
 import express from 'express';
 import dotenv from 'dotenv';
-import generateOpenAIResponseforKruthBot from '../services/KruthBothOpenAiQuestions.js';
+import generateOpenAIResponseforMystMkra from '../services/mystmkraOpenaiservices.js';
 import logMessage from '../services/logMessage.js';
 import config from '../config/config.js'; // Import config.js
 import { getThread, saveMessage, clearThread } from '../services/threadService.js'; // Import thread service
@@ -58,6 +58,8 @@ if (config.NODE_ENV === 'production') {
 // Bot logic: handle all incoming messages
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
+    const userName = msg.from.username || 'Unknown User'; // Get the username from the message
+    const botName = bot.me.username || 'MystmkraBot'; // Get the bot's username
 
     try {
         // Log the incoming message
@@ -65,16 +67,16 @@ bot.on('message', async (msg) => {
 
         if (msg.text) {
             // Save the user's message to the thread
-            await saveMessage(chatId, 'user', msg.text);
+            await saveMessage(chatId, 'user', msg.text, userName, botName);
 
             // Retrieve the current thread
             const thread = await getThread(chatId);
 
             // Generate a response from OpenAI
-            const openAIResponse = await generateOpenAIResponseforKruthBot(msg.text, thread);
+            const openAIResponse = await generateOpenAIResponseforMystMkra(msg.text, thread);
 
             // Save the bot's response to the thread
-            await saveMessage(chatId, 'assistant', openAIResponse);
+            await saveMessage(chatId, 'assistant', openAIResponse, userName, botName);
 
             // Log the outgoing message
             await logMessage({
