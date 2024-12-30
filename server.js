@@ -17,6 +17,7 @@ import imgroutes from './routes/images.js';
 import telegramRouter1 from './routes/bluebot.js';
 import telegramRouter2 from './routes/greenbot.js';
 import telegramRouter3 from './routes/Kruthbot.js';
+import telegramRouter4 from './routes/MystmkraBot.js';
 
 // Load environment variables
 dotenv.config();
@@ -88,6 +89,7 @@ app.use('/img', imgroutes);
 app.use('/blue', telegramRouter1);
 app.use('/green', telegramRouter2);
 app.use('/kruth', telegramRouter3);
+app.use('/mystmkra', telegramRouter4);
 
 // Support page
 app.get('/support', (req, res) => {
