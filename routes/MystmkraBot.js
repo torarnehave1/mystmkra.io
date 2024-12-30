@@ -23,7 +23,7 @@ if (!TELEGRAM_BOT_TOKEN) {
     process.exit(1); // Exit the process if the bot token is missing
 }
 
-console.log(`Telegram Bot Token for Kruth: ${TELEGRAM_BOT_TOKEN}`);
+console.log(`Telegram Bot Token for MystMkra: ${TELEGRAM_BOT_TOKEN}`);
 let bot;
 
 if (config.NODE_ENV === 'production') {
