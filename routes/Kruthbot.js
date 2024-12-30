@@ -79,8 +79,8 @@ bot.on('message', async (msg) => {
         await logMessage(msg);
 
         if (msg.text) {
-            // Save the user's message to the thread with the actual username
-            await saveMessage(chatId, username, msg.text);
+            // Save the user's message to the thread with the role 'user'
+            await saveMessage(chatId, 'user', msg.text, username, botName);
 
             // Retrieve the current thread
             const thread = await getThread(chatId);
@@ -88,8 +88,8 @@ bot.on('message', async (msg) => {
             // Generate a response from OpenAI
             const openAIResponse = await generateOpenAIResponseforKruthBot(msg.text, thread);
 
-            // Save the bot's response to the thread with the bot name
-            await saveMessage(chatId, botName, openAIResponse);
+            // Save the bot's response to the thread with the role 'assistant'
+            await saveMessage(chatId, 'assistant', openAIResponse, username, botName);
 
             // Log the outgoing message
             await logMessage({

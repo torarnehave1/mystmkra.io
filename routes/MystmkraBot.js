@@ -79,7 +79,7 @@ bot.on('message', async (msg) => {
         await logMessage(msg);
 
         if (msg.text) {
-            // Save the user's message to the thread
+            // Save the user's message to the thread with the role 'user'
             await saveMessage(chatId, 'user', msg.text, userName, botName);
 
             // Retrieve the current thread
@@ -88,7 +88,7 @@ bot.on('message', async (msg) => {
             // Generate a response from OpenAI
             const openAIResponse = await generateOpenAIResponseforMystMkra(msg.text, thread);
 
-            // Save the bot's response to the thread
+            // Save the bot's response to the thread with the role 'assistant'
             await saveMessage(chatId, 'assistant', openAIResponse, userName, botName);
 
             // Log the outgoing message
