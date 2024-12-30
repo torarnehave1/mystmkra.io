@@ -41,6 +41,10 @@ if (config.NODE_ENV === 'production') {
         })
         .then(() => {
             console.log(`Webhook set to ${WEBHOOK_URL}`);
+            return bot.getMe(); // Fetch bot information
+        })
+        .then((botInfo) => {
+            bot.me = botInfo; // Store bot information
         })
         .catch((error) => {
             console.error(`Error setting webhook: ${error.message}`);
@@ -48,6 +52,15 @@ if (config.NODE_ENV === 'production') {
 } else {
     // Create a Telegram bot instance using polling
     bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
+
+    // Fetch bot information
+    bot.getMe()
+        .then((botInfo) => {
+            bot.me = botInfo; // Store bot information
+        })
+        .catch((error) => {
+            console.error('Error fetching bot information:', error.message);
+        });
 
     // Handle polling errors globally
     bot.on('polling_error', (error) => {
@@ -59,7 +72,7 @@ if (config.NODE_ENV === 'production') {
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
     const userName = msg.from.username || 'Unknown User'; // Get the username from the message
-    const botName = bot.me.username || 'MystmkraBot'; // Get the bot's username
+    const botName = bot.me?.username || 'MystmkraBot'; // Get the bot's username
 
     try {
         // Log the incoming message
