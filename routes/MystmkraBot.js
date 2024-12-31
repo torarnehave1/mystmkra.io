@@ -140,10 +140,16 @@ bot.on('message', async (msg) => {
             // Send the OpenAI response to the user
             await bot.sendMessage(chatId, openAIResponse);
         } else if (msg.document && msg.document.file_name.endsWith('.md')) {
+            // Debug log for document upload
+            console.log('Handling Markdown file upload:', msg.document);
+
             // Handle Markdown file upload
             const fileId = msg.document.file_id;
             const fileLink = await bot.getFileLink(fileId);
+            console.log('File link:', fileLink); // Debug log for file link
+
             const markdownContent = await fetch(fileLink).then(res => res.text());
+            console.log('Markdown content:', markdownContent); // Debug log for markdown content
 
             // Save the Markdown file content to MongoDB
             await saveMarkdownFile(chatId, markdownContent);
