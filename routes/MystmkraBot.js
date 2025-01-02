@@ -2,6 +2,7 @@
 import TelegramBot from 'node-telegram-bot-api';
 import express from 'express';
 import dotenv from 'dotenv';
+import axios from 'axios'; // Import axios
 import generateOpenAIResponseforMystMkra from '../services/mystmkraOpenaiservices.js';
 import logMessage from '../services/logMessage.js';
 import config from '../config/config.js'; // Import config.js
