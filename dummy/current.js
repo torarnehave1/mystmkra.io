@@ -26,17 +26,20 @@ import extractContentElements from '../services/extractContentfromMarkdown.js';
 import { title } from 'process';
 import { encoding_for_model } from 'tiktoken';
 
+
 // List of Endpoints:
 // - /ask: Test endpoint to verify OpenAI connection
 // - /process-text: Endpoint to process text for different operations (answer-question, spellcheck-rewrite, generate-image-prompt)
 // - /create-image: Endpoint to generate and save an image using DALL-E 3
 // - /createimage: Endpoint to generate and save an image using DALL-E 2
 
+
 console.error(`The application is running in ${config.NODE_ENV} mode.`);
 console.error(`The base URL is ${config.BASE_URL}`);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 
 const router = Router();
 dotenv.config();
@@ -89,6 +92,9 @@ async function refreshAccessToken() {
     }
     next();
   }
+
+
+
 
 let currentThreadId = null;  // In-memory store for the current thread ID
 
@@ -1075,7 +1081,9 @@ router.get('/create-thread-res', async (req, res) => {
         console.error("Assistant retrieved successfully:", assistant);
 
         // Step 2: Create a Thread with the Assistant ID
-        const thread = await openai.beta.threads.create({}, {
+        const thread = await openai.beta.threads.create({
+            assistant_id: process.env.ASSISTANT_ID,  // Ensure assistant_id is included here
+        }, {
             headers: {
                 'OpenAI-Beta': 'assistants=v2',
             },
@@ -1091,6 +1099,7 @@ router.get('/create-thread-res', async (req, res) => {
 
         // Step 4: Run the Assistant to process the message
         const run = await openai.beta.threads.runs.create({
+            assistant_id: process.env.ASSISTANT_ID,  // Ensure assistant_id is included here
             thread_id: thread.id,
         }, {
             headers: {
@@ -1143,6 +1152,226 @@ router.get('/create-thread-res', async (req, res) => {
         console.error("Error during assistant retrieval, thread creation, message sending, or response retrieval:", error.message);
         console.error("Error details:", error.response ? error.response.data : error);
         res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+router.post('/ask-assistant', async (req, res) => {
+    const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    const { question } = req.body; // Extract the question from the request body
+
+    try {
+        // Retrieve the Assistant
+        const assistant = await openai.beta.assistants.retrieve(process.env.ASSISTANT_ID, {
+            headers: {
+                'OpenAI-Beta': 'assistants=v2',
+            },
+        });
+        if (!assistant || assistant.error || assistant.status === 'failed') {
+            throw new Error('Failed to retrieve assistant');
+        }
+        console.error("Assistant retrieved successfully:", assistant);
+
+        // Create a Thread
+        const thread = await openai.beta.threads.create({}, {
+            headers: {
+                'OpenAI-Beta': 'assistants=v2',
+            },
+        });
+        if (!thread || thread.error || thread.status === 'failed') {
+            throw new Error('Failed to create thread');
+        }
+        console.error("Thread created successfully with ID:", thread.id);
+
+        // Send the User's Question as a Message
+        const message = await openai.beta.threads.messages.create(
+            thread.id,
+            { role: "user", content: question }  // Use the user's question here
+        );
+        if (!message || message.error || message.status === 'failed') {
+            throw new Error('Failed to send message');
+        }
+        console.error("Message sent successfully:", message);
+
+        // Start the Assistant Run
+        const run = await openai.beta.threads.runs.create(
+            thread.id,
+            { assistant_id: process.env.ASSISTANT_ID }
+        );
+        if (!run || run.error || run.status === 'failed') {
+            throw new Error('Failed to initiate run');
+        }
+        console.error("Run initiated successfully:", run);
+
+        // Poll the status until the run is completed
+        let runStatus;
+        do {
+            runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+            if (!runStatus || runStatus.error || runStatus.status === 'failed') {
+                throw new Error('Failed to retrieve run status');
+            }
+            console.error("Run status:", runStatus.status);
+            if (runStatus.status === 'completed') break;
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before checking again
+        } while (runStatus.status !== 'completed');
+
+        // Once completed, retrieve the messages in the thread
+        const messages = await openai.beta.threads.messages.list(thread.id);
+        if (!messages || messages.error || messages.status === 'failed') {
+            throw new Error('Failed to retrieve messages');
+        }
+        console.error("Messages retrieved successfully:", messages);
+
+        // Extract the assistant's response
+        const assistantResponse = messages.data
+            .filter(msg => msg.role === 'assistant')
+            .map(msg => msg.content.map(part => part.text.value).join(''))
+            .join('\n');
+
+        // Send the assistant's response back to the client
+        res.json({
+            success: true,
+            threadId: thread.id,
+            runStatus: runStatus.status,
+            response: assistantResponse,
+        });
+
+    } catch (error) {
+        console.error("Error during assistant retrieval, thread creation, or message sending:", error.message);
+        console.error("Error details:", error.response ? error.response.data : error);
+        if (!res.headersSent) {
+            res.status(500).json({ success: false, error: error.message });
+        }
+    }
+});
+
+// Create an Express.js endpoint to generate an embedding for a document in the "mdfiles" collection in MongoDB.
+// The document is selected using `req.params.docid` from the URL.
+// Use the OpenAI model "text-embedding-ada-002" to generate an embedding from the "content" field of the document.
+// Add the generated embedding to the "embeddings" field of the same document.
+// Return a success message or an error message in JSON format.
+
+router.get('/emb/:docid', async (req, res) => {
+    const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+    });
+   
+    try {
+        const docid = req.params.docid;
+
+        // Convert docid to ObjectId
+        if (!mongoose.Types.ObjectId.isValid(docid)) {
+            console.error('Invalid document ID format');
+            return res.status(400).json({ error: 'Invalid document ID format' });
+        }
+
+        const doc = await Mdfiles.findOne({ _id: docid });
+        if (!doc) {
+            console.error('Document not found');
+            return res.status(404).json({ error: 'Document not found' });
+        }
+
+        // Check if content exists and is non-empty
+        if (!doc.content || doc.content.trim() === '') {
+            console.error('Document content is empty or invalid');
+            return res.status(400).json({ error: 'Document content is empty or invalid' });
+        }
+
+        console.error(`Generating embeddings for document ID: ${docid}`);
+
+        // Generate embeddings
+        const embeddings = await generateEmbedding(doc.content);
+
+        // Update the document with the new embeddings
+        const updatedDoc = await Mdfiles.updateOne(
+            { _id: docid },
+            { $set: { embeddings } }
+        );
+
+        if (updatedDoc.modifiedCount === 1) {
+            console.error('Embedding generated and saved successfully.');
+            return res.json({ success: true, message: 'Embedding generated successfully' });
+        } else {
+            console.error('Failed to update the document with embeddings.');
+            return res.status(500).json({ error: 'Failed to update the document with embeddings' });
+        }
+    } catch (error) {
+        console.error('Error generating embedding:', error.message);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.get('/create-thread-msg', async (req, res) => {
+    const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    try {
+        // Retrieve the Assistant
+        const assistant = await openai.beta.assistants.retrieve(process.env.ASSISTANT_ID, {
+            headers: {
+                'OpenAI-Beta': 'assistants=v2',
+            },
+        });
+        console.error("Assistant retrieved successfully:", assistant);
+
+        // Create a Thread
+        const thread = await openai.beta.threads.create({}, {
+            headers: {
+                'OpenAI-Beta': 'assistants=v2',
+            },
+        });
+        console.error("Thread created successfully with ID:", thread.id);
+
+        // Send a Hardcoded Message
+        const message = await openai.beta.threads.messages.create(
+            thread.id,
+            { role: "user", content: "Hva er NIBI?" }
+        );
+        console.error("Message sent successfully:", message);
+
+        // Start the Assistant Run
+        const run = await openai.beta.threads.runs.create(
+            thread.id,
+            { assistant_id: process.env.ASSISTANT_ID }
+        );
+        console.error("Run initiated successfully:", run);
+
+        // Poll the status until the run is completed
+        let runStatus;
+        do {
+            runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+            console.error("Run status:", runStatus.status);
+            if (runStatus.status === 'completed') break;
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before checking again
+        } while (runStatus.status !== 'completed');
+
+        // Once completed, retrieve the messages in the thread
+        const messages = await openai.beta.threads.messages.list(thread.id);
+        console.error("Messages retrieved successfully:", messages);
+
+        // Extract the assistant's response
+        const assistantResponse = messages.data
+            .filter(msg => msg.role === 'assistant')
+            .map(msg => msg.content.map(part => part.text.value).join(''))
+            .join('\n');
+
+        // Send the assistant's response back to the client
+        res.json({
+            success: true,
+            threadId: thread.id,
+            runStatus: runStatus.status,
+            assistantResponse: assistantResponse,
+        });
+
+    } catch (error) {
+        console.error("Error during assistant retrieval, thread creation, or message sending:", error.message);
+        console.error("Error details:", error.response ? error.response.data : error);
+        if (!res.headersSent) {
+            res.status(500).json({ success: false, error: error.message });
+        }
     }
 });
 
@@ -1612,98 +1841,6 @@ router.get('/createimage', async (req, res) => {
     } catch (error) {
         console.error('Error creating image:', error);
         res.status(500).json({ error: 'Failed to create image' });
-    }
-});
-
-router.post('/ask-assistant', async (req, res) => {
-    const openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-    });
-
-    const { question } = req.body; // Extract the question from the request body
-
-    try {
-        // Retrieve the Assistant
-        const assistant = await openai.beta.assistants.retrieve(process.env.ASSISTANT_ID, {
-            headers: {
-                'OpenAI-Beta': 'assistants=v2',
-            },
-        });
-        if (!assistant || assistant.error || assistant.status === 'failed') {
-            throw new Error('Failed to retrieve assistant');
-        }
-        console.error("Assistant retrieved successfully:", assistant);
-
-        // Create a Thread
-        const thread = await openai.beta.threads.create({}, {
-            headers: {
-                'OpenAI-Beta': 'assistants=v2',
-            },
-        });
-        if (!thread || thread.error || thread.status === 'failed') {
-            throw new Error('Failed to create thread');
-        }
-        console.error("Thread created successfully with ID:", thread.id);
-
-        // Send the User's Question as a Message
-        const message = await openai.beta.threads.messages.create(
-            thread.id,
-            { role: "user", content: question }  // Use the user's question here
-        );
-        if (!message || message.error || message.status === 'failed') {
-            throw new Error('Failed to send message');
-        }
-        console.error("Message sent successfully:", message);
-
-        // Start the Assistant Run
-        const run = await openai.beta.threads.runs.create(
-            thread.id,
-            { assistant_id: process.env.ASSISTANT_ID }
-        );
-        if (!run || run.error || run.status === 'failed') {
-            throw new Error('Failed to initiate run');
-        }
-        console.error("Run initiated successfully:", run);
-
-        // Poll the status until the run is completed
-        let runStatus;
-        do {
-            runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
-            if (!runStatus || runStatus.error || runStatus.status === 'failed') {
-                throw new Error('Failed to retrieve run status');
-            }
-            console.error("Run status:", runStatus.status);
-            if (runStatus.status === 'completed') break;
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before checking again
-        } while (runStatus.status !== 'completed');
-
-        // Once completed, retrieve the messages in the thread
-        const messages = await openai.beta.threads.messages.list(thread.id);
-        if (!messages || messages.error || messages.status === 'failed') {
-            throw new Error('Failed to retrieve messages');
-        }
-        console.error("Messages retrieved successfully:", messages);
-
-        // Extract the assistant's response
-        const assistantResponse = messages.data
-            .filter(msg => msg.role === 'assistant')
-            .map(msg => msg.content.map(part => part.text.value).join(''))
-            .join('\n');
-
-        // Send the assistant's response back to the client
-        res.json({
-            success: true,
-            threadId: thread.id,
-            runStatus: runStatus.status,
-            response: assistantResponse,
-        });
-
-    } catch (error) {
-        console.error("Error during assistant retrieval, thread creation, or message sending:", error.message);
-        console.error("Error details:", error.response ? error.response.data : error);
-        if (!res.headersSent) {
-            res.status(500).json({ success: false, error: error.message });
-        }
     }
 });
 

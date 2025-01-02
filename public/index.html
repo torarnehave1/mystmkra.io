@@ -909,7 +909,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             progressBarContainer.style.display = 'block';
                         }
 
-                        const response = await fetch('/openai/ask-assistant', {
+                        const response = await fetch('/assistants/ask-assistant', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'

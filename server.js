@@ -12,6 +12,7 @@ import rateLimit from 'express-rate-limit'; // Security to protect from brute fo
 import morgan from 'morgan'; // Log functionality
 import { isAuthenticated } from './auth/auth.js';
 import ChatGPT from './routes/openai.js';
+import assistants from './routes/assistants.js';
 import config from './config/config.js';
 import imgroutes from './routes/images.js';
 import telegramRouter1 from './routes/bluebot.js';
@@ -90,6 +91,7 @@ app.use('/blue', telegramRouter1);
 app.use('/green', telegramRouter2);
 app.use('/kruth', telegramRouter3);
 app.use('/mystmkra', telegramRouter4);
+app.use('/assistants', assistants);
 
 // Support page
 app.get('/support', (req, res) => {

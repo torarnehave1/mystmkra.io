@@ -108,37 +108,69 @@ bot.on('message', async (msg) => {
         await logMessage(msg);
 
         if (msg.text) {
-            // Save the user's message to the thread with the role 'user'
-            await saveMessage(chatId, 'user', msg.text, userName, botName);
+            if (msg.text.startsWith('SYOU:')) {
+                const question = msg.text.replace('SYOU:', '').trim();
 
-            // Retrieve the current thread
-            let thread = await getThread(chatId);
+                // Determine the URL based on the environment
+                const apiUrl = config.NODE_ENV === 'production'
+                    ? `https://mystmakra.io/assistants/ask-assistant`
+                    : `http://localhost:${process.env.PORT || 3001}/assistants/ask-assistant`;
 
-            // Truncate the thread to a manageable length
-            thread = truncateThread(thread, 2000); // Adjust the maxLength as needed
+                // Send the question to the /ask-assistant endpoint
+                const response = await axios.post(
+                    apiUrl,
+                    { question },
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    }
+                );
 
-            let openAIResponse;
+                const assistantResponse = response.data.response;
 
-            if (containsURL(msg.text)) {
-                // If the message contains a URL, summarize the content of the URL
-                openAIResponse = await generateOpenAIResponseforMystMkra(`Summarize the content of this URL: ${msg.text}. Focus on the most relevant information.`, thread);
+                // Log the outgoing message
+                await logMessage({
+                    chat: { id: chatId },
+                    text: assistantResponse,
+                    from: { is_bot: true },
+                });
+
+                // Send the assistant's response to the user
+                await bot.sendMessage(chatId, assistantResponse);
             } else {
-                // Generate a response from OpenAI
-                openAIResponse = await generateOpenAIResponseforMystMkra(`${msg.text}. Focus on the most relevant information from the conversation.`, thread);
+                // Save the user's message to the thread with the role 'user'
+                await saveMessage(chatId, 'user', msg.text, userName, botName);
+
+                // Retrieve the current thread
+                let thread = await getThread(chatId);
+
+                // Truncate the thread to a manageable length
+                thread = truncateThread(thread, 2000); // Adjust the maxLength as needed
+
+                let openAIResponse;
+
+                if (containsURL(msg.text)) {
+                    // If the message contains a URL, summarize the content of the URL
+                    openAIResponse = await generateOpenAIResponseforMystMkra(`Summarize the content of this URL: ${msg.text}. Focus on the most relevant information.`, thread);
+                } else {
+                    // Generate a response from OpenAI
+                    openAIResponse = await generateOpenAIResponseforMystMkra(`${msg.text}. Focus on the most relevant information from the conversation.`, thread);
+                }
+
+                // Save the bot's response to the thread with the role 'assistant'
+                await saveMessage(chatId, 'assistant', openAIResponse, userName, botName);
+
+                // Log the outgoing message
+                await logMessage({
+                    chat: { id: chatId },
+                    text: openAIResponse,
+                    from: { is_bot: true },
+                });
+
+                // Send the OpenAI response to the user
+                await bot.sendMessage(chatId, openAIResponse);
             }
-
-            // Save the bot's response to the thread with the role 'assistant'
-            await saveMessage(chatId, 'assistant', openAIResponse, userName, botName);
-
-            // Log the outgoing message
-            await logMessage({
-                chat: { id: chatId },
-                text: openAIResponse,
-                from: { is_bot: true },
-            });
-
-            // Send the OpenAI response to the user
-            await bot.sendMessage(chatId, openAIResponse);
         } else if (msg.document && msg.document.file_name.endsWith('.md')) {
             // Debug log for document upload
             console.log('Handling Markdown file upload:', msg.document);
