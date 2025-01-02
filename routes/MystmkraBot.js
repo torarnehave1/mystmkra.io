@@ -114,7 +114,7 @@ bot.on('message', async (msg) => {
 
                 // Determine the URL based on the environment
                 const apiUrl = config.NODE_ENV === 'production'
-                    ? `https://mystmakra.io/assistants/ask-assistant`
+                    ? `https://mystmkra.io/assistants/ask-assistant`
                     : `http://localhost:${process.env.PORT || 3001}/assistants/ask-assistant`;
 
                 // Send the question to the /ask-assistant endpoint
