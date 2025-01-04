@@ -25,6 +25,7 @@ import  searchDocuments  from '../services/documentSearchService.js';
 import extractContentElements from '../services/extractContentfromMarkdown.js';
 import { title } from 'process';
 import { encoding_for_model } from 'tiktoken';
+import OpenaiFile from '../models/openaifiles.js';
 
 // List of Endpoints:
 // - /ask: Test endpoint to verify OpenAI connection
@@ -1800,6 +1801,58 @@ router.post('/say-hello', isAuthenticated, ensureValidToken, async (req, res) =>
     } catch (error) {
         console.error('Error calculating tokens or saving document:', error);
         res.status(500).json({ error: 'Failed to calculate tokens or save document' });
+    }
+});
+
+// New endpoint to list files using the OpenAI API
+router.get('/list-files', async (req, res) => {
+    try {
+        const list = await openai.files.list();
+
+        const files = [];
+        for await (const file of list) {
+            files.push(file);
+        }
+
+        res.json({ success: true, files });
+    } catch (error) {
+        console.error("Error fetching files:", error);
+        res.status(500).json({ success: false, error: 'Failed to fetch files' });
+    }
+});
+
+router.get('/list-and-save-files', async (req, res) => {
+    try {
+        const list = await openai.files.list();
+
+        const files = [];
+        for await (const file of list) {
+            files.push(file);
+
+            // Check if the file already exists in the database
+            const existingFile = await OpenaiFile.findOne({ file_id: file.id });
+            if (!existingFile) {
+                // Create a new document using the OpenaiFile schema
+                const newFile = new OpenaiFile({
+                    _id: new mongoose.Types.ObjectId(),
+                    file_id: file.id,
+                    filename: file.filename,
+                    purpose: file.purpose,
+                    bytes: file.bytes,
+                    created_at: file.created_at,
+                    status: file.status,
+                    status_details: file.status_details || null,
+                });
+
+                // Save the new document to the database
+                await newFile.save();
+            }
+        }
+
+        res.json({ success: true, files });
+    } catch (error) {
+        console.error("Error fetching or saving files:", error);
+        res.status(500).json({ success: false, error: 'Failed to fetch or save files' });
     }
 });
 

@@ -3,7 +3,8 @@ import OpenAI from 'openai';
 import dotenv from 'dotenv';
 import axios from 'axios';
 import mongoose from 'mongoose';
-import Assistant from '../models/assitants.js'; // Import the Assistant model
+import Assistant from '../models/assistants.js'; // Import the Assistant model
+import VectorStore from '../models/vectorStores.js'; // Import the VectorStore model
 
 dotenv.config();
 
@@ -32,9 +33,15 @@ router.get('/create-assistant', async (req, res) => {
 
 // Endpoint to retrieve the list of attached files for an assistant
 router.get('/assistant-files', async (req, res) => {
+    const assistantId = req.query.id; // Get the assistant ID from the query parameters
+
+    if (!assistantId) {
+        return res.status(400).json({ error: 'Assistant ID is required' });
+    }
+
     try {
         // Retrieve the Assistant
-        const assistant = await openai.beta.assistants.retrieve(process.env.ASSISTANT_ID, {
+        const assistant = await openai.beta.assistants.retrieve(assistantId, {
             headers: {
                 'OpenAI-Beta': 'assistants=v2',
             },
@@ -46,6 +53,34 @@ router.get('/assistant-files', async (req, res) => {
         const fileNames = attachedFiles.map(file => file.name);
         const assistantName = assistant.name;
 
+        res.json({
+            success: true,
+            assistantName: assistantName,
+            files: fileNames,
+        });
+    } catch (error) {
+        console.error("Error retrieving assistant files:", error.message);
+        res.status(500).json({ error: "Failed to retrieve assistant files" });
+    }
+});
+
+// Endpoint to retrieve the list of vector stores for an assistant
+router.get('/assistant-vector-stores', async (req, res) => {
+    const assistantId = req.query.id; // Get the assistant ID from the query parameters
+
+    if (!assistantId) {
+        return res.status(400).json({ error: 'Assistant ID is required' });
+    }
+
+    try {
+        // Retrieve the Assistant
+        const assistant = await openai.beta.assistants.retrieve(assistantId, {
+            headers: {
+                'OpenAI-Beta': 'assistants=v2',
+            },
+        });
+        console.error("Assistant retrieved successfully:", assistant);
+
         // Retrieve the list of vector stores
         const vectorStoresResponse = await axios.get('https://api.openai.com/v1/vector_stores', {
             headers: {
@@ -54,33 +89,50 @@ router.get('/assistant-files', async (req, res) => {
             },
         });
         const vectorStores = vectorStoresResponse.data.data || [];
-        const vectorStoreDetails = await Promise.all(vectorStores.map(async (store) => {
-            const filesResponse = await axios.get(`https://api.openai.com/v1/vector_stores/${store.id}/files`, {
-                headers: {
-                    'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-                    'OpenAI-Beta': 'assistants=v2',
-                },
-            });
-            const fileNames = filesResponse.data.data
-                .filter(file => file && file.id) // Ensure file and file.id are not null
-                .map(file => file.id);
-            return {
-                id: store.id,
-                name: store.name,
-                file_counts: store.file_counts,
-                files: fileNames,
-            };
-        }));
+
+        // Debugging: Log the vector stores and assistant details
+        console.log("Vector stores retrieved:", vectorStores);
+        console.log("Assistant details:", assistant);
+
+        // Filter vector stores using the tool_resources field
+        const vectorStoreIds = assistant.tool_resources?.file_search?.vector_store_ids || [];
+        const filteredVectorStores = vectorStores.filter(store => vectorStoreIds.includes(store.id));
 
         res.json({
             success: true,
-            assistantName: assistantName,
-            files: fileNames,
-            vectorStores: vectorStoreDetails,
+            vectorStores: filteredVectorStores,
         });
     } catch (error) {
-        console.error("Error retrieving assistant files or vector stores:", error.message);
-        res.status(500).json({ error: "Failed to retrieve assistant files or vector stores" });
+        console.error("Error retrieving vector stores:", error.message);
+        res.status(500).json({ error: "Failed to retrieve vector stores" });
+    }
+});
+
+// Endpoint to retrieve the list of files for a specific vector store
+router.get('/vector-store-files', async (req, res) => {
+    const vectorStoreId = req.query.id; // Get the vector store ID from the query parameters
+
+    if (!vectorStoreId) {
+        return res.status(400).json({ error: 'Vector store ID is required' });
+    }
+
+    try {
+        // Retrieve the files for the vector store
+        const filesResponse = await axios.get(`https://api.openai.com/v1/vector_stores/${vectorStoreId}/files`, {
+            headers: {
+                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+                'OpenAI-Beta': 'assistants=v2',
+            },
+        });
+        const files = filesResponse.data.data || [];
+
+        res.json({
+            success: true,
+            files: files.map(file => file.id),
+        });
+    } catch (error) {
+        console.error("Error retrieving vector store files:", error.message);
+        res.status(500).json({ error: "Failed to retrieve vector store files" });
     }
 });
 
@@ -521,6 +573,173 @@ router.get('/allmodels', async (req, res) => {
     } catch (error) {
         console.error('Error listing models:', error);
         res.status(500).json({ success: false, error: 'Failed to list models' });
+    }
+});
+
+// Endpoint to retrieve the list of vector stores for an assistant and save them to the database
+router.get('/save-assistant-vector-stores', async (req, res) => {
+    const assistantId = req.query.id; // Get the assistant ID from the query parameters
+
+    if (!assistantId) {
+        return res.status(400).json({ error: 'Assistant ID is required' });
+    }
+
+    try {
+        // Retrieve the Assistant
+        const assistant = await openai.beta.assistants.retrieve(assistantId, {
+            headers: {
+                'OpenAI-Beta': 'assistants=v2',
+            },
+        });
+        console.error("Assistant retrieved successfully:", assistant);
+
+        // Retrieve the list of vector stores
+        const vectorStoresResponse = await axios.get('https://api.openai.com/v1/vector_stores', {
+            headers: {
+                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+                'OpenAI-Beta': 'assistants=v2',
+            },
+        });
+        const vectorStores = vectorStoresResponse.data.data || [];
+
+        // Log the vector stores and assistant details
+        console.log("Vector stores retrieved:", vectorStores);
+        console.log("Assistant details:", assistant);
+
+        // Filter vector stores using the tool_resources field
+        const vectorStoreIds = assistant.tool_resources?.file_search?.vector_store_ids || [];
+        const filteredVectorStores = vectorStores.filter(store => vectorStoreIds.includes(store.id));
+
+        // Save the filtered vector stores to the database
+        for (const store of filteredVectorStores) {
+            const existingStore = await VectorStore.findOne({ store_id: store.id });
+            if (!existingStore) {
+                const newStore = new VectorStore({
+                    _id: new mongoose.Types.ObjectId(),
+                    store_id: store.id,
+                    name: store.name,
+                    description: store.description || null,
+                    created_at: store.created_at,
+                    status: store.status,
+                    status_details: store.status_details || null,
+                });
+
+                await newStore.save();
+                console.log(`Saved new vector store to database: ${store.name}`);
+            } else {
+                console.log(`Vector store already exists in database: ${store.name}`);
+            }
+        }
+
+        res.json({
+            success: true,
+            vectorStores: filteredVectorStores,
+        });
+    } catch (error) {
+        console.error("Error retrieving or saving vector stores:", error.message);
+        if (error.response) {
+            console.error('Response data:', error.response.data);
+            console.error('Response status:', error.response.status);
+        } else if (error.request) {
+            console.error('Request data:', error.request);
+        }
+        res.status(500).json({ error: "Failed to retrieve or save vector stores" });
+    }
+});
+
+// Endpoint to retrieve the list of vector stores and save them to the database
+router.get('/save-all-vector-stores', async (req, res) => {
+    try {
+        // Retrieve the list of vector stores
+        const vectorStoresResponse = await axios.get('https://api.openai.com/v1/vector_stores', {
+            headers: {
+                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+                'OpenAI-Beta': 'assistants=v2',
+            },
+        });
+        const vectorStores = vectorStoresResponse.data.data || [];
+
+        // Log the vector stores
+        console.log("Vector stores retrieved:", vectorStores);
+
+        // Save all vector stores to the database
+        for (const store of vectorStores) {
+            const existingStore = await VectorStore.findOne({ store_id: store.id });
+            if (!existingStore) {
+                const newStore = new VectorStore({
+                    _id: new mongoose.Types.ObjectId(),
+                    store_id: store.id,
+                    name: store.name,
+                    description: store.description || null,
+                    created_at: store.created_at,
+                    status: store.status,
+                    status_details: store.status_details || null,
+                    usage_bytes: store.usage_bytes,
+                    file_counts: store.file_counts,
+                    metadata: store.metadata || {},
+                    expires_after: store.expires_after || null,
+                    expires_at: store.expires_at || null,
+                    last_active_at: store.last_active_at,
+                });
+
+                await newStore.save();
+                console.log(`Saved new vector store to database: ${store.name}`);
+            } else {
+                console.log(`Vector store already exists in database: ${store.name}`);
+            }
+        }
+
+        res.json({
+            success: true,
+            vectorStores: vectorStores,
+        });
+    } catch (error) {
+        console.error("Error retrieving or saving vector stores:", error.message);
+        if (error.response) {
+            console.error('Response data:', error.response.data);
+            console.error('Response status:', error.response.status);
+        } else if (error.request) {
+            console.error('Request data:', error.request);
+        }
+        res.status(500).json({ error: "Failed to retrieve or save vector stores" });
+    }
+});
+
+// New endpoint to retrieve file content
+router.get('/file-content', async (req, res) => {
+    const fileId = req.query.id; // Get the file ID from the query parameters
+
+    if (!fileId) {
+        return res.status(400).json({ error: 'File ID is required' });
+    }
+
+    try {
+        const file = await openai.files.content(fileId);
+        res.json({ success: true, content: file });
+    } catch (error) {
+        console.error('Error retrieving file content:', error);
+        if (error.response && error.response.data && error.response.data.error && error.response.data.error.message === 'Not allowed to download files of purpose: assistants') {
+            res.status(403).json({ success: false, error: 'Not allowed to download files of purpose: assistants' });
+        } else {
+            res.status(500).json({ success: false, error: 'Failed to retrieve file content' });
+        }
+    }
+});
+
+// New endpoint to delete a specific file from a vector store
+router.delete('/delete-vector-store-file', async (req, res) => {
+    const { vectorStoreId, fileId } = req.query; // Get the vector store ID and file ID from the query parameters
+
+    if (!vectorStoreId || !fileId) {
+        return res.status(400).json({ error: 'Vector store ID and file ID are required' });
+    }
+
+    try {
+        const deletedVectorStoreFile = await openai.beta.vectorStores.files.del(vectorStoreId, fileId);
+        res.json({ success: true, deletedFile: deletedVectorStoreFile });
+    } catch (error) {
+        console.error('Error deleting file from vector store:', error);
+        res.status(500).json({ success: false, error: 'Failed to delete file from vector store' });
     }
 });
 

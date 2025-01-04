@@ -35,6 +35,7 @@
             </div>
             <div class="tab-pane fade" id="vector-stores" role="tabpanel" aria-labelledby="vector-stores-tab">
                 <div id="vector-stores-container"></div>
+                <div id="files-container"></div> <!-- Add this line to include a container for files -->
             </div>
             <div class="tab-pane fade" id="usage" role="tabpanel" aria-labelledby="usage-tab">
                 <div id="usage-container"></div>
@@ -48,7 +49,7 @@
 
         async function fetchAssistants() {
             try {
-                const response = await fetch('/assistantsdb/assistants');
+                const response = await fetch('/assistantsdb/assistantsdb'); // Fetch assistants from the database
                 const data = await response.json();
                 if (data.success) {
                     const assistantsList = document.getElementById('assistants-list');
@@ -70,6 +71,10 @@
 
             const updateButton = document.getElementById('update-button');
             updateButton.style.display = 'none'; // Hide the update button when switching assistants
+
+            // Clear the vector stores and files containers
+            document.getElementById('vector-stores-container').innerHTML = '';
+            document.getElementById('files-container').innerHTML = '';
 
             try {
                 const response = await fetch(`/assistantsdb/assistants/${id}`);
@@ -93,7 +98,7 @@
                     currentAssistantId = id;
 
                     // Fetch and display vector stores
-                    fetchVectorStores(id);
+                    await fetchVectorStores(id);
                     // Fetch and display usage
                     fetchUsage(id);
                 } else {
@@ -145,23 +150,83 @@
         }
 
         async function fetchVectorStores(id) {
+            console.debug('Fetching vector stores for assistant ID:', id); // Debug statement
             try {
-                const response = await fetch(`/assistantsdb/assistant-files?id=${id}`);
+                const response = await fetch(`/assistantsdb/vectorstoresdb?id=${id}`); // Fetch vector stores from the database
+                console.debug('Response received:', response); // Debug statement
                 const data = await response.json();
+                console.debug('Data received:', data); // Debug statement
                 if (data.success) {
                     const vectorStoresContainer = document.getElementById('vector-stores-container');
-                    vectorStoresContainer.innerHTML = data.vectorStores.map(store => `
+                    const store = data.vectorStore;
+                    vectorStoresContainer.innerHTML = `
                         <div>
                             <h3>${store.name}</h3>
-                            <p><strong>File Count:</strong> ${store.file_counts}</p>
-                            <p><strong>Files:</strong> ${store.files.join(', ')}</p>
+                            <p><strong>ID:</strong> ${store.store_id}</p>
+                            <p><strong>File Count:</strong> ${store.file_counts.completed}</p>
                         </div>
-                    `).join('');
+                    `;
+                    // Fetch and display vector store files
+                    await fetchVectorStoreFiles(store.store_id);
                 } else {
                     console.error('Failed to retrieve vector stores:', data.error);
                 }
             } catch (error) {
                 console.error('Error fetching vector stores:', error);
+            }
+        }
+
+        async function fetchVectorStoreFiles(vectorStoreId) {
+            try {
+                const response = await fetch(`/assistantsdb/vectorstorefilesdb?id=${vectorStoreId}`); // Updated endpoint
+                const data = await response.json();
+                if (data.success) {
+                    const filesContainer = document.getElementById('files-container');
+                    filesContainer.innerHTML = `
+                        <h3>Attached Files</h3>
+                        <ul>
+                            ${data.files.map(file => `
+                                <li>
+                                    ${file.filename} (${file.file_id})
+                                    <button class="delete-button" data-vector-store-id="${vectorStoreId}" data-file-id="${file.file_id}">Delete</button>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    `;
+                    addDeleteEventListeners(); // Add event listeners for delete buttons
+                } else {
+                    console.error('Failed to retrieve vector store files:', data.error);
+                }
+            } catch (error) {
+                console.error('Error fetching vector store files:', error);
+            }
+        }
+
+        function addDeleteEventListeners() {
+            const deleteButtons = document.querySelectorAll('.delete-button');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', async (event) => {
+                    const vectorStoreId = event.target.getAttribute('data-vector-store-id');
+                    const fileId = event.target.getAttribute('data-file-id');
+                    await deleteFile(vectorStoreId, fileId);
+                });
+            });
+        }
+
+        async function deleteFile(vectorStoreId, fileId) {
+            try {
+                const response = await fetch(`/assistants/delete-vector-store-file?vectorStoreId=${vectorStoreId}&fileId=${fileId}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('File deleted successfully');
+                    await fetchVectorStoreFiles(vectorStoreId); // Refresh the file list
+                } else {
+                    console.error('Failed to delete file:', data.error);
+                }
+            } catch (error) {
+                console.error('Error deleting file:', error);
             }
         }
 
@@ -246,7 +311,15 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', fetchAssistants);
+        function handleVectorStoresTabClick() {
+            
+            fetchVectorStores(currentAssistantId);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAssistants(); // Fetch assistants when the document is loaded
+            document.getElementById('vector-stores-tab').addEventListener('click', handleVectorStoresTabClick); // Add event listener for Vector Stores tab
+        });
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
