@@ -1253,9 +1253,9 @@ function applyGridClasses() {
 
                 // Update the return file URL in the DOM
                 const returnfileURL = document.querySelector('.ReturnfileURL');
-                returnfileURL.href = result.filePath;
-                returnfileURL.text = result.filePath;
-                returnfileURL.setAttribute('data-url', result.filePath);
+                returnfileURL.href = result.url;
+                returnfileURL.text = result.url;
+                returnfileURL.setAttribute('data-url', result.url);
                 isChanged = false;
 
                 // Update the PDF save button with the correct file name
