@@ -2,6 +2,8 @@ import { Router } from 'express';
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
 import axios from 'axios';
+import mongoose from 'mongoose';
+import Assistant from '../models/assitants.js'; // Import the Assistant model
 
 dotenv.config();
 
@@ -450,4 +452,76 @@ router.post('/ask-assistant', async (req, res) => {
         }
     }
 });
+
+// Endpoint to add assistants to the database
+router.get('/add-assistants', async (req, res) => {
+    try {
+        const myAssistants = await openai.beta.assistants.list({
+            order: "desc",
+            limit: "20",
+        });
+
+        for (const assistant of myAssistants.data) {
+            // Ensure tools is an array of strings
+            if (assistant.tools && !Array.isArray(assistant.tools)) {
+                assistant.tools = assistant.tools.map(tool => tool.type);
+            }
+
+            try {
+                await Assistant.updateOne(
+                    { id: assistant.id },
+                    { $set: {
+                        ...assistant,
+                        tools: assistant.tools.map(tool => tool.toString()) // Ensure tools are strings
+                    }},
+                    { upsert: true } // Create a new document if it doesn't exist
+                );
+            } catch (error) {
+                console.error(`Error updating assistant with ID ${assistant.id}:`, error);
+            }
+        }
+
+        res.json({ success: true, message: 'Assistants have been added to the database.' });
+    } catch (error) {
+        console.error("Error adding assistants to the database:", error);
+        res.status(500).json({ error: "Failed to add assistants to the database" });
+    }
+});
+
+// Endpoint to list available models
+router.get('/models', async (req, res) => {
+    try {
+        const list = await openai.models.list();
+        const models = [];
+        const allowedModels = ['gpt-4', 'gpt-4-turbo', 'gpt-3.5-turbo'];
+        for await (const model of list) {
+            if (allowedModels.includes(model.id)) {
+                models.push(model);
+            }
+        }
+        res.json({ success: true, models });
+    } catch (error) {
+        console.error('Error listing models:', error);
+        res.status(500).json({ success: false, error: 'Failed to list models' });
+    }
+});
+
+
+router.get('/allmodels', async (req, res) => {
+    try {
+        const list = await openai.models.list();
+        const models = [];
+       
+        for await (const model of list) {
+          
+                models.push(model);
+            
+        }
+        res.json({ success: true, models });
+    } catch (error) {
+        console.error('Error listing models:', error);
+        res.status(500).json({ success: false, error: 'Failed to list models' });
+    }
+});
+
 export default router;

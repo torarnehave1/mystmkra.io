@@ -19,6 +19,8 @@ import telegramRouter1 from './routes/bluebot.js';
 import telegramRouter2 from './routes/greenbot.js';
 import telegramRouter3 from './routes/Kruthbot.js';
 import telegramRouter4 from './routes/MystmkraBot.js';
+import assmongdb from './routes/assistantsmongodb.js';
+
 
 // Load environment variables
 dotenv.config();
@@ -92,6 +94,8 @@ app.use('/green', telegramRouter2);
 app.use('/kruth', telegramRouter3);
 app.use('/mystmkra', telegramRouter4);
 app.use('/assistants', assistants);
+app.use('/assistantsdb', assmongdb);
+
 
 // Support page
 app.get('/support', (req, res) => {

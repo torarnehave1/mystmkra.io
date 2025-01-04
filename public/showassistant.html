@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistants</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/styles.css" rel="stylesheet">
+   
+       
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Assistants</h2>
+        <ul id="assistants-list"></ul>
+        <button class="btn btn-primary mt-3" onclick="showAddAssistantForm()">Add New Assistant</button>
+    </div>
+    <div class="content">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="details-tab" data-toggle="tab" href="#details" role="tab" aria-controls="details" aria-selected="true">Assistant Details</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="vector-stores-tab" data-toggle="tab" href="#vector-stores" role="tab" aria-controls="vector-stores" aria-selected="false">Assistant Vector Stores</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="usage-tab" data-toggle="tab" href="#usage" role="tab" aria-controls="usage" aria-selected="false">Assistant Usage</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
+                <button id="update-button" class="update-button" onclick="updateAssistant()">Update</button>
+                <p id="success-message" class="success-message">Content has been successfully updated.</p>
+                <div id="assistants-container"></div>
+            </div>
+            <div class="tab-pane fade" id="vector-stores" role="tabpanel" aria-labelledby="vector-stores-tab">
+                <div id="vector-stores-container"></div>
+            </div>
+            <div class="tab-pane fade" id="usage" role="tabpanel" aria-labelledby="usage-tab">
+                <div id="usage-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let originalInstructions = '';
+        let currentAssistantId = '';
+
+        async function fetchAssistants() {
+            try {
+                const response = await fetch('/assistantsdb/assistants');
+                const data = await response.json();
+                if (data.success) {
+                    const assistantsList = document.getElementById('assistants-list');
+                    data.assistants.forEach(assistant => {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `<a href="#" onclick="showAssistantDetails('${assistant.id}')">${assistant.name}</a>`;
+                        assistantsList.appendChild(listItem);
+                    });
+                } else {
+                    console.error('Failed to retrieve assistants:', data.error);
+                }
+            } catch (error) {
+                console.error('Error fetching assistants:', error);
+            }
+        }
+
+        async function showAssistantDetails(id) {
+            if (id === currentAssistantId) return; // Do nothing if the same assistant is clicked
+
+            const updateButton = document.getElementById('update-button');
+            updateButton.style.display = 'none'; // Hide the update button when switching assistants
+
+            try {
+                const response = await fetch(`/assistantsdb/assistants/${id}`);
+                const data = await response.json();
+                if (data.success) {
+                    const assistant = data.assistant;
+                    const assistantsContainer = document.getElementById('assistants-container');
+                    assistantsContainer.innerHTML = `
+                        <div class="card">
+                            <h2>${assistant.name}</h2>
+                            <p><strong>ID:</strong> ${assistant.id}</p>
+                            <p><strong>Description:</strong> ${assistant.description}</p>
+                            <p><strong>Model:</strong> ${assistant.model}</p>
+                            <p><strong>Instructions:</strong></p>
+                            <textarea id="instructions-textarea" class="instructions-textarea" oninput="checkForChanges()">${assistant.instructions}</textarea>
+                            <p><strong>Tools:</strong> ${assistant.tools.join(', ')}</p>
+                            <p><strong>Created At:</strong> ${new Date(assistant.created_at * 1000).toLocaleString()}</p>
+                        </div>
+                    `;
+                    originalInstructions = assistant.instructions;
+                    currentAssistantId = id;
+
+                    // Fetch and display vector stores
+                    fetchVectorStores(id);
+                    // Fetch and display usage
+                    fetchUsage(id);
+                } else {
+                    console.error('Failed to retrieve assistant details:', data.error);
+                }
+            } catch (error) {
+                console.error('Error fetching assistant details:', error);
+            }
+        }
+
+        function checkForChanges() {
+            const textarea = document.getElementById('instructions-textarea');
+            const updateButton = document.getElementById('update-button');
+            if (textarea.value !== originalInstructions) {
+                updateButton.style.display = 'block';
+            } else {
+                updateButton.style.display = 'none';
+            }
+        }
+
+        async function updateAssistant() {
+            const textarea = document.getElementById('instructions-textarea');
+            const updateButton = document.getElementById('update-button');
+            const successMessage = document.getElementById('success-message');
+            const assistantId = currentAssistantId;
+
+            try {
+                const response = await fetch(`/assistantsdb/assistants/${assistantId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ instructions: textarea.value }),
+                });
+                const data = await response.json();
+                if (data.success) {
+                    originalInstructions = textarea.value;
+                    updateButton.style.display = 'none';
+                    successMessage.style.display = 'block';
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 3000);
+                } else {
+                    console.error('Failed to update assistant:', data.error);
+                }
+            } catch (error) {
+                console.error('Error updating assistant:', error);
+            }
+        }
+
+        async function fetchVectorStores(id) {
+            try {
+                const response = await fetch(`/assistantsdb/assistant-files?id=${id}`);
+                const data = await response.json();
+                if (data.success) {
+                    const vectorStoresContainer = document.getElementById('vector-stores-container');
+                    vectorStoresContainer.innerHTML = data.vectorStores.map(store => `
+                        <div>
+                            <h3>${store.name}</h3>
+                            <p><strong>File Count:</strong> ${store.file_counts}</p>
+                            <p><strong>Files:</strong> ${store.files.join(', ')}</p>
+                        </div>
+                    `).join('');
+                } else {
+                    console.error('Failed to retrieve vector stores:', data.error);
+                }
+            } catch (error) {
+                console.error('Error fetching vector stores:', error);
+            }
+        }
+
+        async function fetchUsage(id) {
+            // Implement the logic to fetch and display usage data
+            // This is a placeholder function
+            const usageContainer = document.getElementById('usage-container');
+            usageContainer.innerHTML = `<p>Usage data for assistant ${id} will be displayed here.</p>`;
+        }
+
+        async function showAddAssistantForm() {
+            const assistantsContainer = document.getElementById('assistants-container');
+            assistantsContainer.innerHTML = `
+                <div class="card">
+                    <h2>Add New Assistant</h2>
+                    <form id="add-assistant-form">
+                        <div class="form-group">
+                            <label for="assistant-name">Name</label>
+                            <input type="text" class="form-control" id="assistant-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="assistant-description">Description</label>
+                            <input type="text" class="form-control" id="assistant-description" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="assistant-model">Model</label>
+                            <select class="form-control" id="assistant-model" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="assistant-instructions">Instructions</label>
+                            <textarea class="form-control" id="assistant-instructions" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Assistant</button>
+                    </form>
+                </div>
+            `;
+
+            // Fetch and populate models in the dropdown
+            try {
+                const response = await fetch('/assistants/models');
+                const data = await response.json();
+                if (data.success) {
+                    const modelSelect = document.getElementById('assistant-model');
+                    data.models.forEach(model => {
+                        const option = document.createElement('option');
+                        option.value = model.id;
+                        option.textContent = model.id;
+                        modelSelect.appendChild(option);
+                    });
+                } else {
+                    console.error('Failed to retrieve models:', data.error);
+                }
+            } catch (error) {
+                console.error('Error fetching models:', error);
+            }
+
+            document.getElementById('add-assistant-form').addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const name = document.getElementById('assistant-name').value;
+                const description = document.getElementById('assistant-description').value;
+                const model = document.getElementById('assistant-model').value;
+                const instructions = document.getElementById('assistant-instructions').value;
+
+                try {
+                    const response = await fetch('/assistantsdb/add-assistant', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ name, description, model, instructions }),
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        fetchAssistants(); // Refresh the assistants list
+                        showAssistantDetails(data.assistant.id); // Show the newly added assistant details
+                    } else {
+                        console.error('Failed to add assistant:', data.error);
+                    }
+                } catch (error) {
+                    console.error('Error adding assistant:', error);
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchAssistants);
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
