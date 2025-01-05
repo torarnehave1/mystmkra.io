@@ -6,25 +6,27 @@
     <title>Assistants</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="/styles.css" rel="stylesheet">
-   
-       
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
     <div class="sidebar">
-        <h2>Assistants</h2>
+        <h2>Knowledge River Guides</h2>
         <ul id="assistants-list"></ul>
-        <button class="btn btn-primary mt-3" onclick="showAddAssistantForm()">Add New Assistant</button>
+        <button class="btn btn-primary mt-3" onclick="showAddAssistantForm()">Add New River Guide</button>
     </div>
     <div class="content">
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" id="details-tab" data-toggle="tab" href="#details" role="tab" aria-controls="details" aria-selected="true">Assistant Details</a>
+                <a class="nav-link active" id="details-tab" data-toggle="tab" href="#details" role="tab" aria-controls="details" aria-selected="true">Details</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="vector-stores-tab" data-toggle="tab" href="#vector-stores" role="tab" aria-controls="vector-stores" aria-selected="false">Assistant Vector Stores</a>
+                <a class="nav-link" id="vector-stores-tab" data-toggle="tab" href="#vector-stores" role="tab" aria-controls="vector-stores" aria-selected="false">Information Current</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="usage-tab" data-toggle="tab" href="#usage" role="tab" aria-controls="usage" aria-selected="false">Assistant Usage</a>
+                <a class="nav-link" id="usage-tab" data-toggle="tab" href="#usage" role="tab" aria-controls="usage" aria-selected="false">Knowledge River Flow</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="knowledge-droplets-tab" data-toggle="tab" href="#knowledge-droplets" role="tab" aria-controls="knowledge-droplets" aria-selected="false">Knowledge Droplets</a>
             </li>
         </ul>
         <div class="tab-content" id="myTabContent">
@@ -35,10 +37,22 @@
             </div>
             <div class="tab-pane fade" id="vector-stores" role="tabpanel" aria-labelledby="vector-stores-tab">
                 <div id="vector-stores-container"></div>
+                <form id="upload-file-form" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="file-input">Upload New Knowledge Droplet</label>
+                        <input type="file" class="form-control-file" id="file-input" name="file" required>
+                    </div>
+                    <input type="hidden" id="vector-store-id-input" name="vectorStoreId">
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </form>
                 <div id="files-container"></div> <!-- Add this line to include a container for files -->
+                
             </div>
             <div class="tab-pane fade" id="usage" role="tabpanel" aria-labelledby="usage-tab">
                 <div id="usage-container"></div>
+            </div>
+            <div class="tab-pane fade" id="knowledge-droplets" role="tabpanel" aria-labelledby="knowledge-droplets-tab">
+                <div id="knowledge-droplets-container"></div>
             </div>
         </div>
     </div>
@@ -46,6 +60,7 @@
     <script>
         let originalInstructions = '';
         let currentAssistantId = '';
+        let currentVectorStoreId = '';
 
         async function fetchAssistants() {
             try {
@@ -163,9 +178,11 @@
                         <div>
                             <h3>${store.name}</h3>
                             <p><strong>ID:</strong> ${store.store_id}</p>
-                            <p><strong>File Count:</strong> ${store.file_counts.completed}</p>
+                            <p><strong>File Count X:</strong> ${store.file_counts.completed}</p>
                         </div>
                     `;
+                    currentVectorStoreId = store.store_id; // Set the current vector store ID
+                    document.getElementById('vector-store-id-input').value = currentVectorStoreId; // Set the hidden input value
                     // Fetch and display vector store files
                     await fetchVectorStoreFiles(store.store_id);
                 } else {
@@ -183,17 +200,22 @@
                 if (data.success) {
                     const filesContainer = document.getElementById('files-container');
                     filesContainer.innerHTML = `
-                        <h3>Attached Files</h3>
-                        <ul>
+                        <h3>Connected Knowledge Droplets</h3>
+                        <ul class="list-group">
                             ${data.files.map(file => `
-                                <li>
-                                    ${file.filename} (${file.file_id})
-                                    <button class="delete-button" data-vector-store-id="${vectorStoreId}" data-file-id="${file.file_id}">Delete</button>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>${file.filename} (${file.file_id})</span>
+                                    <button class="btn btn-danger btn-sm delete-button" data-vector-store-id="${vectorStoreId}" data-file-id="${file.file_id}">Delete</button>
                                 </li>
                             `).join('')}
                         </ul>
                     `;
                     addDeleteEventListeners(); // Add event listeners for delete buttons
+
+                    // Update the file count
+                    const vectorStoresContainer = document.getElementById('vector-stores-container');
+                    const fileCount = data.files.length;
+                    vectorStoresContainer.querySelector('p strong').textContent = `File Count YC: ${fileCount}`;
                 } else {
                     console.error('Failed to retrieve vector store files:', data.error);
                 }
@@ -215,18 +237,24 @@
 
         async function deleteFile(vectorStoreId, fileId) {
             try {
-                const response = await fetch(`/assistants/delete-vector-store-file?vectorStoreId=${vectorStoreId}&fileId=${fileId}`, {
-                    method: 'DELETE'
-                });
-                const data = await response.json();
-                if (data.success) {
-                    alert('File deleted successfully');
-                    await fetchVectorStoreFiles(vectorStoreId); // Refresh the file list
-                } else {
-                    console.error('Failed to delete file:', data.error);
-                }
+            const response = await fetch(`/openai/delete-file?fileId=${fileId}`, {
+                method: 'DELETE'
+            });
+            const data = await response.json();
+            if (data.success) {
+                alert('File deleted successfully');
+                await fetchVectorStoreFiles(vectorStoreId); // Refresh the file list
+                // Call list-and-save-files to update the database
+                await fetch(`/openai/list-and-save-files`);
+
+                await fetch(`/assistants/save-assistant-vector-stores?id=${currentAssistantId}`);
+                // Refresh the vector stores tab
+                await fetchVectorStores(currentAssistantId);
+            } else {
+                console.error('Failed to delete file:', data.error);
+            }
             } catch (error) {
-                console.error('Error deleting file:', error);
+            console.error('Error deleting file:', error);
             }
         }
 
@@ -250,6 +278,7 @@
                         <div class="form-group">
                             <label for="assistant-description">Description</label>
                             <input type="text" class="form-control" id="assistant-description" required>
+                            <span class="material-icons" id="generate-description-icon" style="cursor: pointer; position: absolute; top: 10px; right: 10px;">auto_awesome</span>
                         </div>
                         <div class="form-group">
                             <label for="assistant-model">Model</label>
@@ -259,8 +288,24 @@
                             <label for="assistant-instructions">Instructions</label>
                             <textarea class="form-control" id="assistant-instructions" rows="4" required></textarea>
                         </div>
+                        <div class="form-group">
+                            <label for="assistant-tools">Tools</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="code_interpreter" id="tool-code-interpreter">
+                                <label class="form-check-label" for="tool-code-interpreter">Code Interpreter</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="file_search" id="tool-file-search">
+                                <label class="form-check-label" for="tool-file-search">File Search</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="function" id="tool-function">
+                                <label class="form-check-label" for="tool-function">Function</label>
+                            </div>
+                        </div>
                         <button type="submit" class="btn btn-primary">Add Assistant</button>
                     </form>
+                    <p id="success-message" class="success-message" style="display: none;">New Assistant added successfully.</p>
                 </div>
             `;
 
@@ -289,24 +334,52 @@
                 const description = document.getElementById('assistant-description').value;
                 const model = document.getElementById('assistant-model').value;
                 const instructions = document.getElementById('assistant-instructions').value;
+                const tools = Array.from(document.querySelectorAll('input[name="assistant-tools"]:checked')).map(tool => tool.value);
 
                 try {
-                    const response = await fetch('/assistantsdb/add-assistant', {
+                    const response = await fetch('/assistants/create-assistant', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({ name, description, model, instructions }),
+                        body: JSON.stringify({ name, description, model, instructions, tools }),
                     });
                     const data = await response.json();
                     if (data.success) {
                         fetchAssistants(); // Refresh the assistants list
                         showAssistantDetails(data.assistant.id); // Show the newly added assistant details
+                        document.getElementById('success-message').style.display = 'block'; // Show success message
                     } else {
                         console.error('Failed to add assistant:', data.error);
                     }
                 } catch (error) {
                     console.error('Error adding assistant:', error);
+                }
+            });
+
+            // Add event listener for the generate description icon
+            document.getElementById('generate-description-icon').addEventListener('click', async () => {
+                const name = document.getElementById('assistant-name').value;
+                const model = document.getElementById('assistant-model').value;
+                const instructions = document.getElementById('assistant-instructions').value;
+                const currentDescription = document.getElementById('assistant-description').value;
+
+                try {
+                    const response = await fetch('/services/generate-description', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ name, model, instructions, currentDescription }),
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        document.getElementById('assistant-description').value = data.description;
+                    } else {
+                        console.error('Failed to generate description:', data.error);
+                    }
+                } catch (error) {
+                    console.error('Error generating description:', error);
                 }
             });
         }
@@ -319,6 +392,177 @@
         document.addEventListener('DOMContentLoaded', () => {
             fetchAssistants(); // Fetch assistants when the document is loaded
             document.getElementById('vector-stores-tab').addEventListener('click', handleVectorStoresTabClick); // Add event listener for Vector Stores tab
+        });
+
+        // Security check to see if the user is logged in
+        async function updateLoggedInStatus() {
+            try {
+                const response = await fetch('/dropbox/protected', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+                    }
+                });
+
+                // Check for 401 status to handle unauthorized access
+                if (response.status === 401) {
+                    const data = await response.json(); // Parse the JSON response
+
+                    console.log('Not authenticated:', data);
+
+                    // Check if the response has a redirect flag, indicating the session has expired
+                    if (data.redirect) {
+                        window.location.href = '/login.html?message=session_expired';
+                    } else {
+                        // Handle other unauthorized scenarios
+                        alert(data.message || 'Unauthorized access.');
+                    }
+                    return;
+                }
+
+                if (response.ok) {
+                    const text = await response.text();
+                    document.getElementById('loggedinas').innerText = text;
+                } else {
+                    // Handle other non-OK responses
+                    document.getElementById('loggedinas').innerText = 'Failed to retrieve user information.';
+                }
+            } catch (error) {
+                console.error('Error fetching authentication status:', error);
+                document.getElementById('loggedinas').innerText = 'Error fetching authentication status.';
+            }
+        }
+
+        // Call this function when the page loads
+        document.addEventListener('DOMContentLoaded', updateLoggedInStatus);
+
+        // Add event listener for the file upload form
+        document.getElementById('upload-file-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            console.debug('Upload button clicked'); // Debug statement
+            const formData = new FormData(event.target);
+            formData.append('assistantId', currentAssistantId);
+
+            try {
+                const response = await fetch('/openai/upload-file', {
+                    method: 'POST',
+                    body: formData,
+                });
+                const data = await response.json();
+                if (data.success) {
+                    console.debug('File uploaded successfully:', data); // Debug statement
+                    alert('File uploaded successfully');
+                    await attachFileToVectorStore(data.file.id, formData.get('vectorStoreId')); // Attach file to vector store
+                    await fetchVectorStoreFiles(formData.get('vectorStoreId')); // Refresh the file list
+                    // Update the file count
+                    const vectorStoresContainer = document.getElementById('vector-stores-container');
+                    const fileCount = vectorStoresContainer.querySelectorAll('.list-group-item').length;
+                    vectorStoresContainer.querySelector('p strong').textContent = `File Count: ${fileCount}`;
+                    // Update vector store data
+                    await fetch(`/assistants/save-assistant-vector-stores?id=${currentAssistantId}`);
+                    // Refresh the vector stores tab
+                    await fetchVectorStores(currentAssistantId);
+                } else {
+                    console.error('Failed to upload file:', data.error);
+                }
+            } catch (error) {
+                console.error('Error uploading file:', error);
+            }
+        });
+
+        async function attachFileToVectorStore(fileId, vectorStoreId) {
+            try {
+                const response = await fetch(`/assistants/attach-file-to-vector-store`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ fileId, vectorStoreId }),
+                });
+                const data = await response.json();
+                if (data.success) {
+                    console.debug('File attached to vector store successfully:', data); // Debug statement
+                    // Call save-assistant-vector-stores to update the vector store
+                    await fetch(`/assistants/save-assistant-vector-stores?id=${vectorStoreId}`);
+                    // Call savetodb-vector-store-files to save vector store files to the database
+                    await fetch(`/assistantsdb/savetodb-vector-store-files?id=${vectorStoreId}`);
+                    // Call list-and-save-files to refresh the list of files
+                    await fetch(`/openai/list-and-save-files`);
+                } else {
+                    console.error('Failed to attach file to vector store:', data.error);
+                }
+            } catch (error) {
+                console.error('Error attaching file to vector store:', error);
+            }
+        }
+
+        async function fetchKnowledgeDroplets() {
+            try {
+                const response = await fetch(`/openai/list-files`);
+                const data = await response.json();
+                if (data.success) {
+                    const container = document.getElementById('knowledge-droplets-container');
+                    container.innerHTML = `
+                        <h3>Knowledge Droplets</h3>
+                        <ul class="list-group">
+                            ${data.files.map(file => `
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>Filename:</strong> ${file.filename} <br>
+                                        <strong>ID:</strong> ${file.id} <br>
+                                        <strong>Purpose:</strong> ${file.purpose} <br>
+                                        <strong>Created At:</strong> ${new Date(file.created_at * 1000).toLocaleString()}
+                                    </div>
+                                    <button class="btn btn-danger btn-sm delete-droplet-button" data-file-id="${file.id}">Delete</button>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    `;
+                    addDeleteDropletEventListeners(); // Add event listeners for delete buttons
+                } else {
+                    console.error('Failed to retrieve knowledge droplets:', data.error);
+                }
+            } catch (error) {
+                console.error('Error fetching knowledge droplets:', error);
+            }
+        }
+
+        function addDeleteDropletEventListeners() {
+            const deleteButtons = document.querySelectorAll('.delete-droplet-button');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', async (event) => {
+                    const fileId = event.target.getAttribute('data-file-id');
+                    await deleteDroplet(fileId);
+                });
+            });
+        }
+
+        async function deleteDroplet(fileId) {
+            try {
+                const response = await fetch(`/openai/delete-file?fileId=${fileId}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('File deleted successfully');
+                    await fetchKnowledgeDroplets(); // Refresh the file list
+                    // Call list-and-save-files to update the database
+                    await fetch(`/openai/list-and-save-files`);
+                    // Update vector store data
+                    await fetch(`/assistants/save-assistant-vector-stores?id=${currentAssistantId}`);
+                    // Refresh the vector stores tab
+                    await fetchVectorStores(currentAssistantId);
+                } else {
+                    console.error('Failed to delete file:', data.error);
+                }
+            } catch (error) {
+                console.error('Error deleting file:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // ...existing code...
+            document.getElementById('knowledge-droplets-tab').addEventListener('click', fetchKnowledgeDroplets);
         });
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

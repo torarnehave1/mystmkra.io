@@ -5,6 +5,9 @@ import axios from 'axios';
 import mongoose from 'mongoose';
 import Assistant from '../models/assistants.js'; // Import the Assistant model
 import VectorStore from '../models/vectorStores.js'; // Import the VectorStore model
+import VectorStoreFile from '../models/vectorStoreFileSchema.js'; // Import the VectorStoreFile model
+import multer from 'multer'; // Import multer for file uploads
+import fs from 'fs'; // Import fs for file system operations
 
 dotenv.config();
 
@@ -13,18 +16,44 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
+// Configure multer for file uploads
+const upload = multer({ dest: 'uploads/' });
+
 // Endpoint to create a new assistant
-router.get('/create-assistant', async (req, res) => {
+router.post('/create-assistant', async (req, res) => {
+    const { name, description, model, instructions, tools } = req.body;
+
     try {
         const myAssistant = await openai.beta.assistants.create({
-            instructions: "You are a expert in carpenting. When asked a question, write and run Python code to answer the question.",
-            name: "Snekker",
-            tools: [{ type: "code_interpreter" }],
-            model: "gpt-4o",
+            instructions,
+            name,
+            tools: tools.map(tool => ({ type: tool })),
+            model,
         });
 
         console.log(myAssistant);
-        res.json({ assistant: myAssistant });
+
+        // Add the new assistant to the database
+        const newAssistant = new Assistant({
+            _id: new mongoose.Types.ObjectId(),
+            id: myAssistant.id,
+            object: myAssistant.object,
+            created_at: myAssistant.created_at,
+            name: myAssistant.name,
+            description,
+            model: myAssistant.model,
+            instructions: myAssistant.instructions,
+            tools: myAssistant.tools.map(tool => tool.type),
+            tool_resources: myAssistant.tool_resources,
+            metadata: myAssistant.metadata,
+            temperature: myAssistant.temperature,
+            top_p: myAssistant.top_p,
+            response_format: myAssistant.response_format,
+        });
+
+        await newAssistant.save();
+
+        res.json({ success: true, message: 'New Assistant added successfully', assistant: myAssistant });
     } catch (error) {
         console.error("Error creating assistant:", error);
         res.status(500).json({ error: "Failed to create assistant" });
@@ -607,28 +636,41 @@ router.get('/save-assistant-vector-stores', async (req, res) => {
         console.log("Assistant details:", assistant);
 
         // Filter vector stores using the tool_resources field
-        const vectorStoreIds = assistant.tool_resources?.file_search?.vector_store_ids || [];
+        const rawResult = JSON.stringify(assistant);
+        const match = rawResult.match(/"vector_store_ids":\s*\[\s*"([^"]+)"/);
+        const vectorStoreIds = match ? [match[1]] : [];
+
         const filteredVectorStores = vectorStores.filter(store => vectorStoreIds.includes(store.id));
+
+        // Delete existing vector store documents for the assistant
+        await VectorStore.deleteMany({ store_id: { $in: vectorStoreIds } });
 
         // Save the filtered vector stores to the database
         for (const store of filteredVectorStores) {
-            const existingStore = await VectorStore.findOne({ store_id: store.id });
-            if (!existingStore) {
-                const newStore = new VectorStore({
-                    _id: new mongoose.Types.ObjectId(),
-                    store_id: store.id,
-                    name: store.name,
-                    description: store.description || null,
-                    created_at: store.created_at,
-                    status: store.status,
-                    status_details: store.status_details || null,
-                });
+            const newStore = new VectorStore({
+                _id: new mongoose.Types.ObjectId(),
+                store_id: store.id,
+                name: store.name,
+                description: store.description || null,
+                created_at: store.created_at,
+                status: store.status,
+                status_details: store.status_details || null,
+                usage_bytes: store.usage_bytes,
+                file_counts: {
+                    in_progress: store.file_counts.in_progress,
+                    completed: store.file_counts.completed,
+                    failed: store.file_counts.failed,
+                    cancelled: store.file_counts.cancelled,
+                    total: store.file_counts.total,
+                },
+                metadata: store.metadata || {},
+                expires_after: store.expires_after || null,
+                expires_at: store.expires_at || null,
+                last_active_at: store.last_active_at,
+            });
 
-                await newStore.save();
-                console.log(`Saved new vector store to database: ${store.name}`);
-            } else {
-                console.log(`Vector store already exists in database: ${store.name}`);
-            }
+            await newStore.save();
+            console.log(`Saved new vector store to database: ${store.name}`);
         }
 
         res.json({
@@ -662,31 +704,30 @@ router.get('/save-all-vector-stores', async (req, res) => {
         // Log the vector stores
         console.log("Vector stores retrieved:", vectorStores);
 
+        // Delete all existing vector stores from the database
+        await VectorStore.deleteMany({});
+        console.log("All existing vector stores deleted from the database.");
+
         // Save all vector stores to the database
         for (const store of vectorStores) {
-            const existingStore = await VectorStore.findOne({ store_id: store.id });
-            if (!existingStore) {
-                const newStore = new VectorStore({
-                    _id: new mongoose.Types.ObjectId(),
-                    store_id: store.id,
-                    name: store.name,
-                    description: store.description || null,
-                    created_at: store.created_at,
-                    status: store.status,
-                    status_details: store.status_details || null,
-                    usage_bytes: store.usage_bytes,
-                    file_counts: store.file_counts,
-                    metadata: store.metadata || {},
-                    expires_after: store.expires_after || null,
-                    expires_at: store.expires_at || null,
-                    last_active_at: store.last_active_at,
-                });
+            const newStore = new VectorStore({
+                _id: new mongoose.Types.ObjectId(),
+                store_id: store.id,
+                name: store.name,
+                description: store.description || null,
+                created_at: store.created_at,
+                status: store.status,
+                status_details: store.status_details || null,
+                usage_bytes: store.usage_bytes,
+                file_counts: store.file_counts,
+                metadata: store.metadata || {},
+                expires_after: store.expires_after || null,
+                expires_at: store.expires_at || null,
+                last_active_at: store.last_active_at,
+            });
 
-                await newStore.save();
-                console.log(`Saved new vector store to database: ${store.name}`);
-            } else {
-                console.log(`Vector store already exists in database: ${store.name}`);
-            }
+            await newStore.save();
+            console.log(`Saved new vector store to database: ${store.name}`);
         }
 
         res.json({
@@ -726,7 +767,7 @@ router.get('/file-content', async (req, res) => {
     }
 });
 
-// New endpoint to delete a specific file from a vector store
+// New endpoint to delete a specific file from a vector store and the database
 router.delete('/delete-vector-store-file', async (req, res) => {
     const { vectorStoreId, fileId } = req.query; // Get the vector store ID and file ID from the query parameters
 
@@ -735,11 +776,100 @@ router.delete('/delete-vector-store-file', async (req, res) => {
     }
 
     try {
-        const deletedVectorStoreFile = await openai.beta.vectorStores.files.del(vectorStoreId, fileId);
-        res.json({ success: true, deletedFile: deletedVectorStoreFile });
+        // Delete the file from the database
+        await VectorStoreFile.findOneAndDelete({ vector_store_id: vectorStoreId, file_id: fileId });
+
+        res.json({ success: true, message: 'File deleted from database' });
     } catch (error) {
-        console.error('Error deleting file from vector store:', error);
-        res.status(500).json({ success: false, error: 'Failed to delete file from vector store' });
+        console.error('Error deleting file from database:', error);
+        res.status(500).json({ success: false, error: 'Failed to delete file from database' });
+    }
+});
+
+// New endpoint to upload a file to the vector store and attach it to the assistant
+router.post('/upload-vector-store-file', upload.single('file'), async (req, res) => {
+    const { vectorStoreId, assistantId } = req.body;
+    const file = req.file;
+
+    console.debug('Received upload request:', { vectorStoreId, assistantId, file });
+
+    if (!vectorStoreId || !assistantId || !file) {
+        console.error('Missing required parameters:', { vectorStoreId, assistantId, file });
+        return res.status(400).json({ error: 'Vector store ID, assistant ID, and file are required' });
+    }
+
+    try {
+        // Upload the file to OpenAI
+        console.debug('Reading file from path:', file.path);
+        const fileData = fs.readFileSync(file.path);
+        console.debug('File data read successfully');
+
+        const uploadedFile = await openai.files.create({
+            purpose: 'assistants',
+            file: fileData,
+            filename: file.originalname,
+        });
+
+        console.debug('File uploaded to OpenAI:', uploadedFile);
+
+        // Attach the file to the vector store
+        await openai.beta.vectorStores.files.add(vectorStoreId, uploadedFile.id);
+        console.debug('File attached to vector store:', { vectorStoreId, fileId: uploadedFile.id });
+
+        // Save the file details to the database
+        const newVectorStoreFile = new VectorStoreFile({
+            _id: new mongoose.Types.ObjectId(),
+            vector_store_id: vectorStoreId,
+            file_id: uploadedFile.id,
+        });
+        await newVectorStoreFile.save();
+        console.debug('File details saved to database:', newVectorStoreFile);
+
+        // Clean up the uploaded file from the server
+        fs.unlinkSync(file.path);
+        console.debug('Uploaded file removed from server:', file.path);
+
+        // Call save-assistant-vector-stores to update the vector store
+        await axios.get(`/assistants/save-assistant-vector-stores?id=${vectorStoreId}`);
+        // Call savetodb-vector-store-files to save vector store files to the database
+        await axios.get(`/assistantsdb/savetodb-vector-store-files?id=${vectorStoreId}`);
+        // Call list-and-save-files to refresh the list of files
+        await axios.get(`/openai/list-and-save-files`);
+
+        res.json({ success: true, message: 'File uploaded and attached to vector store successfully', file: uploadedFile });
+    } catch (error) {
+        if (error.response && error.response.status === 413) {
+            console.error('Error uploading file to vector store: Payload Too Large');
+            res.status(413).json({ success: false, error: 'The data value transmitted exceeds the capacity limit.' });
+        } else {
+            console.error('Error uploading file to vector store:', error);
+            res.status(500).json({ success: false, error: 'Failed to upload file to vector store' });
+        }
+    }
+});
+
+// Endpoint to attach a file to a vector store
+router.post('/attach-file-to-vector-store', async (req, res) => {
+    const { fileId, vectorStoreId } = req.body;
+
+    console.debug('Received request to attach file to vector store:', { fileId, vectorStoreId });
+
+    if (!fileId || !vectorStoreId) {
+        console.error('Missing required parameters:', { fileId, vectorStoreId });
+        return res.status(400).json({ error: 'File ID and Vector Store ID are required' });
+    }
+
+    try {
+        // Attach the file to the vector store using the correct method
+        const myVectorStoreFile = await openai.beta.vectorStores.files.create(vectorStoreId, {
+            file_id: fileId
+        });
+        console.debug('File attached to vector store successfully:', myVectorStoreFile);
+
+        res.json({ success: true, message: 'File attached to vector store successfully' });
+    } catch (error) {
+        console.error('Error attaching file to vector store:', error);
+        res.status(500).json({ error: 'Failed to attach file to vector store' });
     }
 });
 

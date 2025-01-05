@@ -1826,6 +1826,10 @@ router.get('/list-and-save-files', async (req, res) => {
         const list = await openai.files.list();
 
         const files = [];
+        
+        // Delete all files before adding the current list
+        await OpenaiFile.deleteMany({});
+
         for await (const file of list) {
             files.push(file);
 
@@ -1853,6 +1857,127 @@ router.get('/list-and-save-files', async (req, res) => {
     } catch (error) {
         console.error("Error fetching or saving files:", error);
         res.status(500).json({ success: false, error: 'Failed to fetch or save files' });
+    }
+});
+
+// New endpoint to upload a file to OpenAI
+router.post('/upload-file', upload.single('file'), async (req, res) => {
+    try {
+        const file = req.file;
+
+        if (!file) {
+            return res.status(400).json({ error: 'File is required' });
+        }
+
+        const formData = new FormData();
+        formData.append('file', file.buffer, file.originalname);
+        formData.append('purpose', 'assistants'); // Specify the purpose of the file
+
+        const response = await axios.post('https://api.openai.com/v1/files', formData, {
+            headers: {
+                Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+                ...formData.getHeaders(),
+            },
+        });
+
+        // Save the file to the public/droplets folder with the correct file type
+        const fileId = response.data.id;
+        const fileExtension = path.extname(file.originalname);
+        const filePath = path.join(__dirname, '..', 'public', 'droplets', `${fileId}${fileExtension}`);
+        fs.writeFileSync(filePath, file.buffer);
+
+        res.json({ success: true, file: response.data, filePath });
+    } catch (error) {
+        console.error('Error uploading file:', error.message || error);
+        if (error.response) {
+            console.error('Response data:', error.response.data);
+            console.error('Response status:', error.response.status);
+        } else if (error.request) {
+            console.error('Request data:', error.request);
+        }
+        res.status(500).json({ error: 'Failed to upload file' });
+    }
+});
+
+// Endpoint to delete a file from OpenAI
+router.delete('/delete-file', async (req, res) => {
+    const { fileId } = req.query;
+
+    if (!fileId) {
+        return res.status(400).json({ error: 'File ID is required' });
+    }
+
+    try {
+        const response = await axios.delete(`https://api.openai.com/v1/files/${fileId}`, {
+            headers: {
+                Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+            },
+        });
+
+        res.json({ success: true, message: 'File deleted successfully', data: response.data });
+    } catch (error) {
+        console.error('Error deleting file:', error.message || error);
+        if (error.response) {
+            console.error('Response data:', error.response.data);
+            console.error('Response status:', error.response.status);
+        } else if (error.request) {
+            console.error('Request data:', error.request);
+        }
+        res.status(500).json({ error: 'Failed to delete file' });
+    }
+    
+});
+
+router.get('/download-file', async (req, res) => {
+    const { fileId } = req.query;
+
+    if (!fileId) {
+        return res.status(400).json({ error: 'File ID is required' });
+    }
+
+    try {
+        // First, retrieve the file metadata to check its purpose
+        const fileMetadataResponse = await axios.get(`https://api.openai.com/v1/files/${fileId}`, {
+            headers: {
+                Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+            },
+        });
+
+        const filePurpose = fileMetadataResponse.data.purpose;
+
+        if (filePurpose !== 'fine-tune') {
+            return res.status(400).json({
+                error: 'Failed to download file',
+                details: `Not allowed to download files of purpose: ${filePurpose}`
+            });
+        }
+
+        // If the file purpose is allowed, proceed to download the file content
+        const response = await axios.get(`https://api.openai.com/v1/files/${fileId}/content`, {
+            headers: {
+                Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+            },
+            responseType: 'arraybuffer',
+        });
+
+        res.setHeader('Content-Disposition', `attachment; filename="${fileId}.txt"`);
+        res.setHeader('Content-Type', 'application/octet-stream');
+        res.send(response.data);
+    } catch (error) {
+        console.error('Error downloading file:', error.message || error);
+        if (error.response) {
+            console.error('Response data:', error.response.data.toString('utf8'));
+            console.error('Response status:', error.response.status);
+            res.status(error.response.status).json({
+                error: 'Failed to download file',
+                details: error.response.data.toString('utf8')
+            });
+        } else if (error.request) {
+            console.error('Request data:', error.request);
+            res.status(500).json({ error: 'Failed to download file', details: 'No response received from OpenAI' });
+        } else {
+            res.status(500).json({ error: 'Failed to download file', details: error.message });
+        }
     }
 });
 
