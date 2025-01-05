@@ -12,9 +12,9 @@ export async function generateDescription(name, model, instructions, currentDesc
         const prompt = `Generate a description for an assistant named "${name}" using the model "${model}" with the following instructions: "${instructions}". Current description: "${currentDescription}".`;
 
         const response = await openai.completions.create({
-            model: 'text-davinci-003',
+            model: 'gpt-4',
             prompt: prompt,
-            max_tokens: 150,
+            max_tokens: 1500,
         });
 
         if (response.choices && response.choices.length > 0) {
