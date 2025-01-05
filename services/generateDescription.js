@@ -9,16 +9,25 @@ const openai = new OpenAI({
 
 export async function generateDescription(name, model, instructions, currentDescription) {
     try {
-        const prompt = `Generate a description for an assistant named "${name}" using the model "${model}" with the following instructions: "${instructions}". Current description: "${currentDescription}".`;
+        const messages = [
+            {
+                role: 'system',
+                content: 'You are a helpful assistant.',
+            },
+            {
+                role: 'user',
+                content: `Generate a description for an assistant named "${name}" using the model "${model}" with the following instructions: "${instructions}". Current description: "${currentDescription}".`,
+            },
+        ];
 
-        const response = await openai.completions.create({
+        const response = await openai.chat.completions.create({
             model: 'gpt-4',
-            prompt: prompt,
+            messages: messages,
             max_tokens: 1500,
         });
 
         if (response.choices && response.choices.length > 0) {
-            return response.choices[0].text.trim();
+            return response.choices[0].message.content.trim();
         } else {
             throw new Error('No description generated');
         }
