@@ -374,7 +374,7 @@
                     });
                     const data = await response.json();
                     if (data.success) {
-                        document.getElementById('assistant-description').value = data.description;
+                        document.getElementById('assistant-instructions').value = data.description;
                     } else {
                         console.error('Failed to generate description:', data.error);
                     }
