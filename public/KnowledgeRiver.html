@@ -7,6 +7,35 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="/styles.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .create-image-container {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        .circle-plus {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: white;
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        .image-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1024px;
+            height: 341px;
+            border: 2px dashed #007bff;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
     <div class="sidebar">
@@ -34,6 +63,15 @@
                 <button id="update-button" class="update-button" onclick="updateAssistant()">Update</button>
                 <p id="success-message" class="success-message">Content has been successfully updated.</p>
                 <div id="assistants-container"></div>
+                <div class="create-image-container">
+                    <div class="circle-plus" id="create-image-button">
+                        <span class="material-icons">add_circle_outline</span>
+                    </div>
+                    <p>Create AI-generated Image</p>
+                </div>
+                <div class="image-placeholder" id="image-placeholder">
+                    <p>Image will be displayed here</p>
+                </div>
             </div>
             <div class="tab-pane fade" id="vector-stores" role="tabpanel" aria-labelledby="vector-stores-tab">
                 <div id="vector-stores-container"></div>
@@ -560,8 +598,35 @@
             }
         }
 
+        async function createImage() {
+            const instructionsTextarea = document.getElementById('instructions-textarea');
+            const prompt = `Create an avatar for the assistant with the following instructions: ${instructionsTextarea.value}`;
+
+            try {
+                const response = await fetch('/services/createImageService', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt }),
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Image created successfully');
+                    const imagePlaceholder = document.getElementById('image-placeholder');
+                    imagePlaceholder.innerHTML = `<img src="${data.ReturnimageUrl}" alt="Generated Image" style="max-width: 100%; max-height: 100%;">`;
+                } else {
+                    console.error('Failed to create image:', data.error);
+                }
+            } catch (error) {
+                console.error('Error creating image:', error);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            // ...existing code...
+            fetchAssistants(); // Fetch assistants when the document is loaded
+            document.getElementById('vector-stores-tab').addEventListener('click', handleVectorStoresTabClick); // Add event listener for Vector Stores tab
+            document.getElementById('create-image-button').addEventListener('click', createImage);
             document.getElementById('knowledge-droplets-tab').addEventListener('click', fetchKnowledgeDroplets);
         });
     </script>

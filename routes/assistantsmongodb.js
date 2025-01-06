@@ -5,6 +5,7 @@ import VectorStoreFile from '../models/vectorStoreFileSchema.js'; // Import the 
 import VectorStore from '../models/vectorStores.js'; // Import the VectorStore model
 import File from '../models/openaifiles.js'; // Import the File model
 import OpenAI from "openai";
+import createImageService from '../services/createImageService.js';
 
 const router = Router();
 const openai = new OpenAI();
@@ -271,6 +272,19 @@ router.get('/vectorstorefilesdb', async (req, res) => {
     } catch (error) {
         console.error('Error retrieving vector store files from MongoDB:', error);
         res.status(500).json({ success: false, error: 'Failed to retrieve vector store files from MongoDB' });
+    }
+});
+
+// Service to create an image using OpenAI
+router.post('/create-image', async (req, res) => {
+    const { prompt, size } = req.body;
+
+    try {
+        const result = await createImageService(prompt, size);
+        res.json(result);
+    } catch (error) {
+        console.error('Error creating image:', error.message);
+        res.status(500).json({ error: 'Failed to create image' });
     }
 });
 
