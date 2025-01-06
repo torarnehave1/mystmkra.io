@@ -33,6 +33,20 @@ router.post('/create-assistant', async (req, res) => {
 
         console.log(myAssistant);
 
+        // Create a new vector store for the assistant
+        const vectorStoreResponse = await axios.post('https://api.openai.com/v1/vector_stores', {
+            name: `${name}-vector-store`,
+            description: `Vector store for assistant ${name}`,
+        }, {
+            headers: {
+                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+                'OpenAI-Beta': 'assistants=v2',
+            },
+        });
+
+        const vectorStore = vectorStoreResponse.data;
+        console.log('Vector store created:', vectorStore);
+
         // Add the new assistant to the database
         const newAssistant = new Assistant({
             _id: new mongoose.Types.ObjectId(),
@@ -53,10 +67,29 @@ router.post('/create-assistant', async (req, res) => {
 
         await newAssistant.save();
 
-        res.json({ success: true, message: 'New Assistant added successfully', assistant: myAssistant });
+        // Save the vector store to the database
+        const newVectorStore = new VectorStore({
+            _id: new mongoose.Types.ObjectId(),
+            store_id: vectorStore.id,
+            name: vectorStore.name,
+            description: vectorStore.description || null,
+            created_at: vectorStore.created_at,
+            status: vectorStore.status,
+            status_details: vectorStore.status_details || null,
+            usage_bytes: vectorStore.usage_bytes,
+            file_counts: vectorStore.file_counts,
+            metadata: vectorStore.metadata || {},
+            expires_after: vectorStore.expires_after || null,
+            expires_at: vectorStore.expires_at || null,
+            last_active_at: vectorStore.last_active_at,
+        });
+
+        await newVectorStore.save();
+
+        res.json({ success: true, message: 'New Assistant and Vector Store added successfully', assistant: myAssistant, vectorStore });
     } catch (error) {
-        console.error("Error creating assistant:", error);
-        res.status(500).json({ error: "Failed to create assistant" });
+        console.error("Error creating assistant or vector store:", error);
+        res.status(500).json({ error: "Failed to create assistant or vector store" });
     }
 });
 
