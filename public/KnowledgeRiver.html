@@ -35,6 +35,41 @@
             border: 2px dashed #007bff;
             margin-top: 20px;
         }
+        .details-container {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+        }
+        .details-text {
+            flex: 1;
+            margin-right: 20px;
+        }
+        .image-placeholder {
+            width: 200px;
+            height: 200px;
+            border: 2px dashed #007bff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .create-image-container {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        .circle-plus {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: white;
+            font-size: 24px;
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
@@ -62,15 +97,17 @@
             <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
                 <button id="update-button" class="update-button" onclick="updateAssistant()">Update</button>
                 <p id="success-message" class="success-message">Content has been successfully updated.</p>
-                <div id="assistants-container"></div>
+                <div class="details-container">
+                    <div class="details-text" id="assistants-container"></div>
+                    <div class="image-placeholder" id="image-placeholder">
+                        <p>Image will be displayed here</p>
+                    </div>
+                </div>
                 <div class="create-image-container">
                     <div class="circle-plus" id="create-image-button">
                         <span class="material-icons">add_circle_outline</span>
                     </div>
                     <p>Create AI-generated Image</p>
-                </div>
-                <div class="image-placeholder" id="image-placeholder">
-                    <p>Image will be displayed here</p>
                 </div>
             </div>
             <div class="tab-pane fade" id="vector-stores" role="tabpanel" aria-labelledby="vector-stores-tab">
