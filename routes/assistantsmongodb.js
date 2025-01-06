@@ -4,8 +4,10 @@ import Assistant from '../models/assistants.js'; // Import the Assistant model
 import VectorStoreFile from '../models/vectorStoreFileSchema.js'; // Import the VectorStoreFile model
 import VectorStore from '../models/vectorStores.js'; // Import the VectorStore model
 import File from '../models/openaifiles.js'; // Import the File model
+import OpenAI from "openai";
 
 const router = Router();
+const openai = new OpenAI();
 
 // Endpoint to add assistants to the database
 router.post('/add-assistant', async (req, res) => {
@@ -186,26 +188,34 @@ router.get('/vectorstoresdb', async (req, res) => {
     }
 });
 
+// Endpoint to create a new vector store using OpenAI and save it to the database
+router.post('/create-vectorstore', async (req, res) => {
+    const { name, description, metadata } = req.body;
 
+    try {
+        // Create a new vector store using OpenAI
+        const vectorStore = await openai.beta.vectorStores.create({
+            name,
+            description,
+            metadata
+        });
 
+        // Save the vector store to the database
+        const newVectorStore = new VectorStore({
+            _id: new mongoose.Types.ObjectId(),
+            store_id: vectorStore.id,
+            name: vectorStore.name,
+            description: vectorStore.description,
+            metadata: vectorStore.metadata,
+        });
 
-
-
-
-
-
-
-
-
-
-
-    
-    
-
-
-
-
-
+        await newVectorStore.save();
+        res.status(201).json({ success: true, message: 'Vector store created successfully', vectorStore: newVectorStore });
+    } catch (error) {
+        console.error('Error creating vector store:', error);
+        res.status(500).json({ success: false, error: 'Failed to create vector store' });
+    }
+});
 
 // New endpoint to get vector stores connected to a specific assistant from MongoDB
 router.get('/vectorstoresdbbk', async (req, res) => {
