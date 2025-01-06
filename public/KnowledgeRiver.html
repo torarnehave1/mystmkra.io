@@ -8,68 +8,100 @@
     <link href="/styles.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
+         .grid-container {
+            display: grid;
+            grid-template-columns: max-content 1fr;
+            gap: 10px;
+            padding-top: 20px;
+            padding-left: 20px;
+        }
+        .grid-item {
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+        .item1 { 
+            background-color: #e7ccc6; 
+            width: 300px; 
+        }
+        .item2 { 
+            background-color: #8dad93; 
+        }
+        .textarea-item {
+            grid-column: span 2;
+            padding: 20px;
+            height: 20em;
+            resize: vertical;
+        }
+        .approve-buttons button {
+            padding: 5px 15px; /* Small button size */
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 0 5px; /* Space between buttons */
+            display: none;
+        }
+
+        .approve-buttons .btn-success {
+            background-color: #28a745; /* Green for Yes */
+        }
+
+        .approve-buttons .btn-danger {
+            background-color: #dc3545; /* Red for No */
+        }
+
         .create-image-container {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            margin-top: 20px;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 5px;
+            margin-top: 5 px;
+        }
+
+        .progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background-color: #76c7c0;
+            transition: width 0.3s ease-in-out;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            resize: vertical;
+        }
+
+        .image-placeholder {
+            width: 280px;
+            height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #4839d5;
+            border-radius: 10px;
+            border-color: aqua;
+            margin-bottom: 5px;
+            padding: 2px;
+        }
+
+        .circle-plus {
+            font-size: 68px;
+            color: #2f00ff;
             cursor: pointer;
         }
-        .circle-plus {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: #007bff;
-            color: white;
-            font-size: 24px;
-            margin-right: 10px;
-        }
-        .image-placeholder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 1024px;
-            height: 341px;
-            border: 2px dashed #007bff;
-            margin-top: 20px;
-        }
-        .details-container {
-            display: flex;
-            flex-direction: row;
-            align-items: flex-start;
-        }
-        .details-text {
-            flex: 1;
-            margin-right: 20px;
-        }
-        .image-placeholder {
-            width: 200px;
-            height: 200px;
-            border: 2px dashed #007bff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .create-image-container {
-            display: flex;
-            align-items: center;
-            margin-top: 20px;
-            cursor: pointer;
-        }
-        .circle-plus {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: #007bff;
-            color: white;
-            font-size: 24px;
-            margin-right: 10px;
-        }
+
     </style>
 </head>
 <body>
@@ -99,16 +131,10 @@
                 <p id="success-message" class="success-message">Content has been successfully updated.</p>
                 <div class="details-container">
                     <div class="details-text" id="assistants-container"></div>
-                    <div class="image-placeholder" id="image-placeholder">
-                        <p>Image will be displayed here</p>
-                    </div>
+                    
+                   
                 </div>
-                <div class="create-image-container">
-                    <div class="circle-plus" id="create-image-button">
-                        <span class="material-icons">add_circle_outline</span>
-                    </div>
-                    <p>Create AI-generated Image</p>
-                </div>
+                
             </div>
             <div class="tab-pane fade" id="vector-stores" role="tabpanel" aria-labelledby="vector-stores-tab">
                 <div id="vector-stores-container"></div>
@@ -173,19 +199,52 @@
                     const assistant = data.assistant;
                     const assistantsContainer = document.getElementById('assistants-container');
                     assistantsContainer.innerHTML = `
-                        <div class="card">
-                            <h2>${assistant.name}</h2>
-                            <p><strong>ID:</strong> ${assistant.id}</p>
-                            <p><strong>Description:</strong> ${assistant.description}</p>
-                            <p><strong>Model:</strong> ${assistant.model}</p>
-                            <p><strong>Instructions:</strong></p>
-                            <textarea id="instructions-textarea" class="instructions-textarea" oninput="checkForChanges()">${assistant.instructions}</textarea>
-                            <p><strong>Tools:</strong> ${assistant.tools.join(', ')}</p>
-                            <p><strong>Created At:</strong> ${new Date(assistant.created_at * 1000).toLocaleString()}</p>
-                        </div>
+                        
+<div class="grid-container">
+        <div class="grid-item item1"><div class="cell-image-container">
+        <div class="create-image-container">
+            <div class="image-placeholder" id="image-placeholder">
+                <div class="circle-plus" id="create-image-button">
+                    <span class="material-icons">add_circle_outline</span>
+                </div>
+            </div>
+        </div>
+        <div class="progress-bar" id="progress-bar">
+            <div class="progress-bar-fill" id="progress-bar-fill"></div>
+        </div>
+        <div class="approve-buttons" id="approve-buttons">
+            <button class="btn btn-success" onclick="approveImage(true)">Yes</button>
+            <button class="btn btn-danger" onclick="approveImage(false)">No</button>
+        </div>
+    </div></div>
+        <div class="grid-item item2">
+        <div class="cell-assistant-details">
+        <h2>${assistant.name}</h2>
+    <p><strong>ID:</strong> ${assistant.id}</p>
+    <p><strong>Description:</strong> ${assistant.description}</p>
+    <p><strong>Model:</strong> ${assistant.model}</p>
+    
+    <p><strong>Tools:</strong> ${assistant.tools.join(', ')}</p>
+    <p><strong>Created At:</strong> ${new Date(assistant.created_at * 1000).toLocaleString()}</p>
+    </div>
+        </div>
+        
+       
+        <label for="instructions-textarea">Instructions:</label>
+       
+    <textarea id="instructions-textarea" class="textarea-item" oninput="checkForChanges()">
+      ${assistant.instructions}
+    </textarea>
+    
+    </div>
+
+
                     `;
                     originalInstructions = assistant.instructions;
                     currentAssistantId = id;
+
+                    // Add event listener to the create-image-button
+                    document.getElementById('create-image-button').addEventListener('click', createImage);
 
                     // Fetch and display vector stores
                     await fetchVectorStores(id);
@@ -637,26 +696,81 @@
 
         async function createImage() {
             const instructionsTextarea = document.getElementById('instructions-textarea');
-            const prompt = `Create an avatar for the assistant with the following instructions: ${instructionsTextarea.value}`;
+            const prompt = `Create an avatar (only an avatar no text) for the assistant that is inspired by the following instructions: ${instructionsTextarea.value}`;
+            const progressBarFill = document.getElementById('progress-bar-fill');
+            const approveButtons = document.getElementById('approve-buttons ');
 
             try {
-                const response = await fetch('/services/createImageService', {
+                progressBarFill.style.width = '0%';
+                approveButtons.style.display = 'none';
+
+                // Simulate gradual progress
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 10;
+                    progressBarFill.style.width = `${progress}%`;
+                    if (progress >= 50) {
+                        clearInterval(interval);
+                    }
+                }, 500);
+
+                const response = await fetch('/openai/createAssistantAvatar', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ prompt }),
                 });
+
+                clearInterval(interval);
+                progressBarFill.style.width = '75%';
+
                 const data = await response.json();
                 if (data.success) {
                     alert('Image created successfully');
                     const imagePlaceholder = document.getElementById('image-placeholder');
                     imagePlaceholder.innerHTML = `<img src="${data.ReturnimageUrl}" alt="Generated Image" style="max-width: 100%; max-height: 100%;">`;
+                    progressBarFill.style.width = '100%';
+                    approveButtons.style.display = 'flex';
+                    
+
+                    // Ensure the approve buttons are displayed
                 } else {
                     console.error('Failed to create image:', data.error);
+                    progressBarFill.style.width = '0%';
                 }
             } catch (error) {
                 console.error('Error creating image:', error);
+                progressBarFill.style.width = '0%';
+            }
+        }
+
+        async function approveImage(isApproved) {
+            const imagePlaceholder = document.getElementById('image-placeholder');
+            const imageUrl = imagePlaceholder.querySelector('img').src;
+            const imagePath = imageUrl.split('/').slice(-2).join('/');
+
+            if (isApproved) {
+                alert('Image approved');
+            } else {
+                try {
+                    const response = await fetch('/openai/deleteImage', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ imagePath }),
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('Image deleted, creating a new one...');
+                        createImage();
+                    } else {
+                        console.error('Failed to delete image:', data.error);
+                    }
+                } catch (error) {
+                    console.error('Error deleting image:', error);
+                }
             }
         }
 
@@ -672,3 +786,4 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+</style>

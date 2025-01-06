@@ -26,6 +26,7 @@ import extractContentElements from '../services/extractContentfromMarkdown.js';
 import { title } from 'process';
 import { encoding_for_model } from 'tiktoken';
 import OpenaiFile from '../models/openaifiles.js';
+import createImageService from '../services/createImageService.js';
 
 // List of Endpoints:
 // - /ask: Test endpoint to verify OpenAI connection
@@ -1978,6 +1979,43 @@ router.get('/download-file', async (req, res) => {
         } else {
             res.status(500).json({ error: 'Failed to download file', details: error.message });
         }
+    }
+});
+
+router.post('/createAssistantAvatar', async (req, res) => {
+    const { prompt } = req.body;
+
+    if (!prompt) {
+        return res.status(400).json({ error: 'Prompt is required' });
+    }
+
+    try {
+        const result = await createImageService(prompt);
+        res.json({ success: true, ...result });
+    } catch (error) {
+        console.error('Error creating assistant avatar:', error.message || error);
+        res.status(500).json({ error: 'Failed to create assistant avatar' });
+    }
+});
+
+router.post('/deleteImage', async (req, res) => {
+    const { imagePath } = req.body;
+
+    if (!imagePath) {
+        return res.status(400).json({ error: 'Image path is required' });
+    }
+
+    try {
+        const fullPath = path.join(__dirname, '..', 'public', imagePath);
+        if (fs.existsSync(fullPath)) {
+            fs.unlinkSync(fullPath);
+            res.json({ success: true, message: 'Image deleted successfully' });
+        } else {
+            res.status(404).json({ error: 'Image not found' });
+        }
+    } catch (error) {
+        console.error('Error deleting image:', error.message || error);
+        res.status(500).json({ error: 'Failed to delete image' });
     }
 });
 

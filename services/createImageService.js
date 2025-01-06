@@ -36,7 +36,7 @@ const createImageService = async (prompt, size = "1024x1024") => {
         const imageBuffer = Buffer.from(imageResponse.data, 'binary');
 
         const croppedImageBuffer = await sharp(imageBuffer)
-            .resize(1024, 341)
+            .resize(200, 200)
             .toBuffer();
 
         const timestamp = Date.now();

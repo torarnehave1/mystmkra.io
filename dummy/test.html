@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+   
+    <title>Grid Layout Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        .grid-details {
+            display: grid;
+            grid-template-columns: 1fr 300px; /* First column fills the remaining space, second column is 300px */
+            grid-template-rows: auto auto; /* Two rows */
+            gap: 10px; /* Spacing between grid items */
+            background-color: rgb(255, 255, 255);
+            border: 2px solid black;
+            padding: 10px;
+        }
+
+        .grid-details > * {
+            border: 1px dashed gray; /* Visualize grid items */
+            padding: 10px;
+        }
+
+        .cell-assistant-details {
+            background-color: rgba(255, 0, 0, 0.1); /* Light red background */
+        }
+
+        .cell-image-container {
+            background-color: rgba(0, 255, 0, 0.1); /* Light green background */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .cell-instructions {
+            grid-column: span 2;
+            background-color: rgba(255, 255, 0, 0.1); /* Light yellow background */
+        }
+
+        .cell-create-image {
+            background-color: rgba(255, 0, 0, 0.1); /* Light red background */
+        }
+
+        .cell-additional-data {
+            background-color: rgba(0, 255, 0, 0.1); /* Light green background */
+        }
+
+        .cell-approve-buttons {
+            display: flex; /* Center content */
+            justify-content: center; /* Horizontally center */
+            align-items: center; /* Vertically center */
+            background-color: rgba(0, 0, 255, 0.1); /* Light blue background */
+        }
+
+        .approve-buttons button {
+            padding: 5px 15px; /* Small button size */
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 0 5px; /* Space between buttons */
+        }
+
+        .approve-buttons .btn-success {
+            background-color: #28a745; /* Green for Yes */
+        }
+
+        .approve-buttons .btn-danger {
+            background-color: #dc3545; /* Red for No */
+        }
+
+        .create-image-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background-color: #76c7c0;
+            transition: width 0.3s ease-in-out;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            resize: vertical;
+        }
+
+        .image-placeholder {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+        }
+
+        .circle-plus {
+            font-size: 48px;
+            color: #ccc;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Grid Layout Test</h1>
+<div class="grid-details">
+    <!-- Row 1 -->
+    <div class="cell-assistant-details">
+        <h2>${assistant.name}</h2>
+    <p><strong>ID:</strong> ${assistant.id}</p>
+    <p><strong>Description:</strong> ${assistant.description}</p>
+    <p><strong>Model:</strong> ${assistant.model}</p>
+    
+    <p><strong>Tools:</strong> ${assistant.tools.join(', ')}</p>
+    <p><strong>Created At:</strong> ${new Date(assistant.created_at * 1000).toLocaleString()}</p>
+    </div>
+    <div class="cell-image-container">
+        <div class="create-image-container">
+            <div class="image-placeholder">
+                <div class="circle-plus" id="create-image-button">
+                    <span class="material-icons">add_circle_outline</span>
+                </div>
+            </div>
+        </div>
+        <div class="progress-bar" id="progress-bar">
+            <div class="progress-bar-fill" id="progress-bar-fill"></div>
+        </div>
+        <div class="approve-buttons" id="approve-buttons">
+            <button class="btn btn-success" onclick="approveImage(true)">Yes</button>
+            <button class="btn btn-danger" onclick="approveImage(false)">No</button>
+        </div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="cell-instructions">
+        <label for="instructions-textarea">Instructions:</label>
+       
+    <textarea id="instructions-textarea" class="item-span-2" oninput="checkForChanges()">
+      ${assistant.instructions}
+    </textarea>
+    </div>
+</div>
+
+</body>
+</html>
