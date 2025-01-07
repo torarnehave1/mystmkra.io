@@ -157,7 +157,7 @@
             </div>
         </div>
     </div>
-
+    <div id="loggedinas"></div> <!-- Add this line to ensure the element exists -->
     <script>
         let originalInstructions = '';
         let currentAssistantId = '';
@@ -698,20 +698,17 @@
             const instructionsTextarea = document.getElementById('instructions-textarea');
             const prompt = `Create an avatar (only an avatar no text) for the assistant that is inspired by the following instructions: ${instructionsTextarea.value}`;
             const progressBarFill = document.getElementById('progress-bar-fill');
-            const approveButtons = document.getElementById('approve-buttons ');
+            const approveButtons = document.getElementById('approve-buttons'); // Fixed element selection
 
             try {
                 progressBarFill.style.width = '0%';
                 approveButtons.style.display = 'none';
 
-                // Simulate gradual progress
+                // Simulate progress in a loop
                 let progress = 0;
                 const interval = setInterval(() => {
-                    progress += 10;
+                    progress = (progress + 10) % 100;
                     progressBarFill.style.width = `${progress}%`;
-                    if (progress >= 50) {
-                        clearInterval(interval);
-                    }
                 }, 500);
 
                 const response = await fetch('/openai/createAssistantAvatar', {
@@ -723,18 +720,14 @@
                 });
 
                 clearInterval(interval);
-                progressBarFill.style.width = '75%';
+                progressBarFill.style.width = '100%';
 
                 const data = await response.json();
                 if (data.success) {
                     alert('Image created successfully');
                     const imagePlaceholder = document.getElementById('image-placeholder');
                     imagePlaceholder.innerHTML = `<img src="${data.ReturnimageUrl}" alt="Generated Image" style="max-width: 100%; max-height: 100%;">`;
-                    progressBarFill.style.width = '100%';
-                    approveButtons.style.display = 'flex';
-                    
-
-                    // Ensure the approve buttons are displayed
+                    approveButtons.style.display = 'flex'; // Ensure the approve buttons are displayed
                 } else {
                     console.error('Failed to create image:', data.error);
                     progressBarFill.style.width = '0%';
