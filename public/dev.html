@@ -9,32 +9,26 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
     <link rel="stylesheet" href="dev.css">
-
-   
-   
+    <style>
+        .preview img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            grid-column: span 2;
+        }
+        .preview.full-width {
+            grid-column: span 2;
+        }
+    </style>
 </head>
-
-
-
-
-
-
-
-
 <body>
-    <div class="background-image">
+    <div class="background-image"></div>
         <div class="navbar-brand">MystMkra.io</div>
     </div>
     <div class="main-container">
         <!-- Container for top menus -->
         <div class="top-menu">
-            <!-- First row: Search bar -->
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark top-menu">
-                <div class="search-bar">
-                    <textarea class="search-box"  rows="3"
-                        placeholder="Search inside your mailbox and database for all relevant documents using natural language..."></textarea>
-                </div>
-            </nav>
+           
             <!-- Second row: Navigation links -->
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark top-menu">
                 <a id="toggleSidebarBtn" class="toggle-btn">
@@ -80,12 +74,52 @@
             </ul>
         </nav>
         <div class="content-area">
-            <div class="markdown-editor">
-                <textarea id="markdownTextarea" class="form-control textarea-full" placeholder="Write your markdown here..." rows="15"></textarea>
-            </div>
-            <div class="preview">
-                <h3>Preview</h3>
-                <div id="previewContent">Your preview will appear here...</div>
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="content-tab" data-toggle="tab" href="#content" role="tab" aria-controls="content" aria-selected="true">Content</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="search-tab" data-toggle="tab" href="#search" role="tab" aria-controls="search" aria-selected="false">Search</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="content" role="tabpanel" aria-labelledby="content-tab">
+                    <div class="markdown-editor">
+                        <textarea id="markdownTextarea" class="form-control textarea-full" placeholder="Write your markdown here..." rows="15"></textarea>
+                    </div>
+                    <div class="preview">
+                        <h3>Preview</h3>
+                        <div id="previewContent">Your preview will appear here...</div>
+                    </div>
+                    <div id="selectedContent1" class="preview" style="height: 400px; overflow-y: auto;" placeholder="Selected document content will appear here..."></div>
+                </div>
+                <div class="tab-pane fade" id="search" role="tabpanel" aria-labelledby="search-tab">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="search-bar">
+                                    <textarea class="search-box" rows="3" placeholder="Search inside your mailbox and database for all relevant documents using natural language..."></textarea>
+                                    <button class="btn btn-outline-success my-2 my-sm-0" id="searchButton" type="submit">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <button class="btn btn-secondary mb-2" id="toggleSearchResultsButton">Toggle Search Results</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6" id="searchResultsColumn">
+                                <div id="searchResultsWrapper" style="height: 100%; overflow-y: auto;">
+                                    <div id="searchResults" class="list-group" tabindex="0" style="height: 100%; overflow-y: auto;"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" id="previewColumn">
+                                <div id="selectedContent" class="preview" style="height: 100%; overflow-y: auto;" placeholder="Selected document content will appear here..."></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -96,6 +130,158 @@
     <script type="module" src="app_marked.js"></script>
     <script type="module" src="js/app_sidebar.js"></script>
     <script src="js/copyCode.js"></script>
+    <script type="module">
+        import { searchFiles } from './js/searchService.js';
+        import { marked } from 'https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js';
 
+        document.getElementById('searchButton').addEventListener('click', async () => {
+            const query = document.querySelector('.search-box').value.trim();
+            if (!query) {
+                alert('Please enter a search term');
+                return;
+            }
+
+            try {
+                const results = await searchFiles(query);
+                displaySearchResults(results);
+            } catch (error) {
+                console.error('Error searching files:', error);
+                alert('Error searching files');
+            }
+        });
+
+        document.querySelector('.search-box').addEventListener('keydown', async (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                document.getElementById('searchButton').click();
+            }
+        });
+
+        document.getElementById('toggleSearchResultsButton').addEventListener('click', () => {
+            const searchResultsWrapper = document.getElementById('searchResultsWrapper');
+            const previewColumn = document.getElementById('previewColumn');
+            if (searchResultsWrapper.style.display === 'none') {
+                searchResultsWrapper.style.display = 'block';
+                previewColumn.classList.remove('col-12');
+                previewColumn.classList.add('col-md-6');
+            } else {
+                searchResultsWrapper.style.display = 'none';
+                previewColumn.classList.remove('col-md-6');
+                previewColumn.classList.add('col-12');
+            }
+        });
+
+        function displaySearchResults(results) {
+            const searchResults = document.getElementById('searchResults');
+            searchResults.innerHTML = '';
+
+            if (results.length === 0) {
+                searchResults.innerHTML = '<p>No results found.</p>';
+                return;
+            }
+
+            results.forEach((result, index) => {
+                const resultItem = document.createElement('a');
+                resultItem.classList.add('list-group-item', 'list-group-item-action');
+                resultItem.setAttribute('data-id', result.id);
+                resultItem.setAttribute('tabindex', index + 1);
+                resultItem.textContent = result.abs;
+                resultItem.addEventListener('click', () => loadDocumentContent(result.id));
+                searchResults.appendChild(resultItem);
+            });
+
+            // Add keyboard navigation
+            searchResults.addEventListener('keydown', async (event) => {
+                const activeElement = document.activeElement;
+                if (activeElement.parentElement === searchResults) {
+                    if (event.key === 'ArrowDown') {
+                        event.preventDefault();
+                        const nextElement = activeElement.nextElementSibling;
+                        if (nextElement) {
+                            nextElement.focus();
+                            await loadDocumentContent(nextElement.getAttribute('data-id'));
+                        }
+                    } else if (event.key === 'ArrowUp') {
+                        event.preventDefault();
+                        const previousElement = activeElement.previousElementSibling;
+                        if (previousElement) {
+                            previousElement.focus();
+                            await loadDocumentContent(previousElement.getAttribute('data-id'));
+                        }
+                    }
+                }
+            });
+        }
+
+        async function loadDocumentContent(id) {
+            try {
+                const response = await fetch(`/dropbox/file/${id}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch document content');
+                }
+                const data = await response.json();
+                const htmlContent = marked(data.content);
+                document.getElementById('selectedContent').innerHTML = htmlContent;
+            } catch (error) {
+                console.error('Error loading document content:', error);
+                alert('Error loading document content');
+            }
+        }
+
+        async function fetchUserId() {
+            try {
+                const response = await fetch('/dropbox/get-user-id', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setUserId(data.userId); // Store the user ID using the previously defined function
+                } else if (response.status === 401) {
+                    // Handle unauthorized access, e.g., redirect to login
+                    window.location.href = '/login.html?message=session_expired';
+                } else {
+                    console.error('Failed to fetch user ID');
+                }
+            } catch (error) {
+                console.error('Error fetching user ID:', error);
+            }
+        }
+
+        function setUserId(userId) {
+            if (!userId) {
+                console.error('No user ID provided');
+                return;
+            }
+            localStorage.setItem('userId', userId);
+            console.log(`User ID set to: ${userId}`);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof localStorage !== 'undefined') {
+                fetchUserId();
+            } else {
+                console.error('Local storage is not available in this context.');
+            }
+        });
+
+        // Replace deprecated DOMSubtreeModified event listener with MutationObserver
+        const targetNode = document.getElementById('searchResults');
+        const config = { childList: true, subtree: true };
+
+        const callback = function(mutationsList, observer) {
+            for (const mutation of mutationsList) {
+                if (mutation.type === 'childList') {
+                    console.log('A child node has been added or removed.');
+                }
+            }
+        };
+
+        const observer = new MutationObserver(callback);
+        observer.observe(targetNode, config);
+    </script>
 </body>
 </html>

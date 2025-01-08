@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dropbox Chooser Example</title>
+</head>
+
+
+<body>
+    <button id="dropbox-chooser">Choose from Dropbox</button>
+    <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="ec0oajmbu9u908a"></script>
+    <script>
+        document.getElementById('dropbox-chooser').addEventListener('click', function() {
+            Dropbox.choose({
+                success: function(files) {
+                    alert("Here's the file link: " + files[0].link);
+                },
+                cancel: function() {
+                    // Optional: handle when the user cancels the chooser
+                },
+                linkType: "preview", // or "direct"
+                multiselect: false, // or true
+                extensions: ['.pdf', '.doc', '.docx', '.png', '.jpg']
+            });
+        });
+    </script>
+</body>
+
+</html>
+

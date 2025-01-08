@@ -124,6 +124,102 @@ async function ensureValidToken(req, res, next) {
 }
 
 
+router.get('/select-md-files', ensureValidToken, async (req, res) => {
+  try {
+      const dbx = new Dropbox({
+          accessToken: accessToken,
+          fetch: fetch,
+      });
+
+      // Define the folder path where Markdown files are stored
+      const folderPath = '/mystmkra';
+
+      // Fetch the list of Markdown files from Dropbox
+      const response = await dbx.filesListFolder({ path: folderPath });
+      const mdFiles = response.result.entries
+          .filter(file => file['.tag'] === 'file' && file.name.endsWith('.md'))
+          .map(file => ({
+              name: file.name,
+              path_lower: file.path_lower,
+          }));
+
+      // Serve the selection page
+      res.send(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <title>Select Markdown File</title>
+              <script>
+                  async function previewFile(filePath) {
+                      const response = await fetch('/dropbox/preview-md-file?path=' + encodeURIComponent(filePath));
+                      const content = await response.text();
+                      document.getElementById('preview').innerHTML = content;
+                  }
+              </script>
+          </head>
+          <body>
+              <h1>Select a Markdown File</h1>
+              <ul>
+                  ${mdFiles
+                      .map(
+                          file =>
+                              `<li>
+                                  <button onclick="previewFile('${file.path_lower}')">${file.name}</button>
+                              </li>`
+                      )
+                      .join('')}
+              </ul>
+              <div id="preview" style="border: 1px solid #ccc; margin-top: 20px; padding: 10px;">
+                  <h2>Preview</h2>
+                  <p>Select a file to view its content here.</p>
+              </div>
+          </body>
+          </html>
+      `);
+  } catch (error) {
+      console.error('Error fetching markdown files:', error);
+      res.status(500).json({
+          message: 'Error fetching markdown files',
+          error: error.message,
+      });
+  }
+});
+
+
+
+router.get('/preview-md-file', ensureValidToken, async (req, res) => {
+  const filePath = req.query.path;
+
+  if (!filePath) {
+      return res.status(400).send('File path is required.');
+  }
+
+  try {
+      const dbx = new Dropbox({
+          accessToken: accessToken,
+          fetch: fetch,
+      });
+
+      // Download the Markdown file content
+      const response = await dbx.filesDownload({ path: filePath });
+      const fileContent = response.result.fileBinary.toString('utf-8');
+
+      // Convert Markdown to HTML
+      const htmlContent = marked(fileContent);
+
+      // Sanitize the HTML for safe rendering
+      const sanitizedContent = sanitizeHtml(htmlContent);
+
+      res.send(sanitizedContent);
+  } catch (error) {
+      console.error('Error fetching markdown file:', error);
+      res.status(500).send('Error fetching markdown file.');
+  }
+});
+
+
+
+
 router.get('/current-access-token', async (req, res) => {
   try {
     // Refresh the access token using the existing function
