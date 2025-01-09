@@ -133,8 +133,9 @@ html, body {
 .navbar-brand {
     font-size: 24px;
     font-weight: bold;
-    color: #ffffff;
-    margin-left: 20px;
+    color: #cf560b;
+    margin-left: 50px;
+    
 }
 
 .navbar-nav .nav-link {
@@ -274,11 +275,24 @@ html, body {
 
 .background-image {
     width: 100%;
-    height: 200px;
-    background-image: url('https://cdn.midjourney.com/f7c1a775-d0ca-48f4-9e53-c80d9c6762c4/0_1.png'); /* Replace with your image path */
+    height: 100px;
+    background-image: url('https://cdn.midjourney.com/8eae13e7-6f74-4ff7-a473-f61df4aba738/0_1.png'); /* Replace with your image path */
     background-size: cover; /* Ensure the image covers the entire div */
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Prevent the image from repeating */
+    animation: easeInFromBottom 1s ease-in-out; /* Add animation */
+    margin-bottom: 2px;
+}
+
+@keyframes easeInFromBottom {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .search-bar {

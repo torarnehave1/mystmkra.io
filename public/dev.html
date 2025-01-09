@@ -23,8 +23,11 @@
 </head>
 <body>
     <div class="background-image"></div>
-        <div class="navbar-brand">MystMkra.io</div>
+    <div class="navbar-brand">MystMkra.io - 
+        <span id="loggedinas"></span>
+        
     </div>
+    
     <div class="main-container">
         <!-- Container for top menus -->
         <div class="top-menu">
@@ -81,6 +84,18 @@
                 <li class="nav-item" role="presentation">
                     <a class="nav-link" id="search-tab" data-toggle="tab" href="#search" role="tab" aria-controls="search" aria-selected="false">Search</a>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="snippets-tab" data-toggle="tab" href="#snippets" role="tab" aria-controls="snippets" aria-selected="false">Snippets</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="codewords-tab" data-toggle="tab" href="#codewords" role="tab" aria-controls="codewords" aria-selected="false">Codewords</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="flowguides-tab" data-toggle="tab" href="#flowguides" role="tab" aria-controls="flowguides" aria-selected="false">Flow Guides</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="projects-tab" data-toggle="tab" href="#projects" role="tab" aria-controls="projects" aria-selected="false">Projects</a>
+                </li>
             </ul>
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="content" role="tabpanel" aria-labelledby="content-tab">
@@ -91,7 +106,7 @@
                         <h3>Preview</h3>
                         <div id="previewContent">Your preview will appear here...</div>
                     </div>
-                    <div id="selectedContent1" class="preview" style="height: 400px; overflow-y: auto;" placeholder="Selected document content will appear here..."></div>
+                   
                 </div>
                 <div class="tab-pane fade" id="search" role="tabpanel" aria-labelledby="search-tab">
                     <div class="container-fluid">
@@ -108,6 +123,7 @@
                                 <button class="btn btn-secondary mb-2" id="toggleSearchResultsButton">
                                     <span class="material-symbols-outlined">menu</span>
                                 </button>
+                    
                             </div>
                         </div>
                         <div class="row">
@@ -117,10 +133,140 @@
                                 </div>
                             </div>
                             <div class="col-md-6" id="previewColumn">
+                                <div class="row">
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    
+                                    <button type="button" id="openContentButton" class="btn btn-secondary">Open</button>
+                                    <button type="button" class="btn btn-secondary">Delete</button>
+                                    <button type="button" class="btn btn-secondary" id="sendMailButton">Send Mail</button>
+                                    <button type="button" class="btn btn-secondary" id="sendTelegramButton">Send to Telegram</button>
+                                    <button type="button" class="btn btn-secondary" id="sendWhatsAppButton">Send to WhatsApp</button>
+
+                                    <script>
+                                        document.getElementById('sendWhatsAppButton').addEventListener('click', () => {
+                                            const content = document.getElementById('selectedContent').innerText;
+                                            const phoneNumber = prompt('Enter the WhatsApp phone number (with country code):');
+                                            if (!phoneNumber) {
+                                                alert('Phone number is required');
+                                                return;
+                                            }
+
+                                            const url = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(content)}`;
+                                            window.open(url, '_blank');
+                                        });
+                                    </script>
+                                    <script>
+                                        document.getElementById('sendTelegramButton').addEventListener('click', async () => {
+                                            const content = document.getElementById('selectedContent').innerText;
+                                            const chatId = prompt('Enter the Telegram chat ID:');
+                                            if (!chatId) {
+                                                alert('Chat ID is required');
+                                                return;
+                                            }
+
+                                            try {
+                                                const response = await fetch('/send-telegram', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json'
+                                                    },
+                                                    body: JSON.stringify({ chatId, content })
+                                                });
+
+                                                if (response.ok) {
+                                                    alert('Message sent to Telegram successfully');
+                                                } else {
+                                                    alert('Failed to send message to Telegram');
+                                                }
+                                            } catch (error) {
+                                                console.error('Error sending message to Telegram:', error);
+                                                alert('Error sending message to Telegram');
+                                            }
+                                        });
+                                    </script>
+                                    <script>
+                                        document.getElementById('sendMailButton').addEventListener('click', async () => {
+                                            const content = document.getElementById('selectedContent').innerText;
+                                            const email = prompt('Enter the recipient email:');
+                                            if (!email) {
+                                                alert('Email is required');
+                                                return;
+                                            }
+
+                                            try {
+                                                const response = await fetch('/send-mail', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json'
+                                                    },
+                                                    body: JSON.stringify({ email, content })
+                                                });
+
+                                                if (response.ok) {
+                                                    alert('Email sent successfully');
+                                                } else {
+                                                    alert('Failed to send email');
+                                                }
+                                            } catch (error) {
+                                                console.error('Error sending email:', error);
+                                                alert('Error sending email');
+                                            }
+                                        });
+                                    </script>
+                                    <button type="button" class="btn btn-secondary" id="shareTwitter">Share on Twitter</button>
+                                    <button type="button" class="btn btn-secondary" id="shareFacebook">Share on Facebook</button>
+                                    <button type="button" class="btn btn-secondary" id="shareLinkedIn">Share on LinkedIn</button>
+
+                                    <script>
+                                        document.getElementById('shareTwitter').addEventListener('click', () => {
+                                            const url = encodeURIComponent(window.location.href);
+                                            const text = encodeURIComponent(document.title);
+                                            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+                                        });
+
+                                        document.getElementById('shareFacebook').addEventListener('click', () => {
+                                            const url = encodeURIComponent(window.location.href);
+                                            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+                                        });
+
+                                        document.getElementById('shareLinkedIn').addEventListener('click', () => {
+                                            const url = encodeURIComponent(window.location.href);
+                                            const title = encodeURIComponent(document.title);
+                                            window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}`, '_blank');
+                                        });
+                                    </script>
+
+                                </div>
+                            </div>
                                 <div id="selectedContent" class="preview" style="height: 100%; overflow-y: auto;" placeholder="Selected document content will appear here..."></div>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="tab-pane fade" id="snippets" role="tabpanel" aria-labelledby="snippets-tab">
+                    <div class="container">
+                        <div class="form-group">
+                            <label for="snippetTextarea">Snippet Content:</label>
+                            <textarea class="form-control" id="snippetTextarea" rows="5" placeholder="Write your snippet here...
+
+Example:
+snippetname: MySnippet
+Author: YourName
+
+Your snippet content goes here..."></textarea>
+                        </div>
+                        <button class="btn btn-primary" id="saveSnippetButton">Save Snippet</button>
+                        <ul class="list-group" id="snippetList"></ul>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="codewords" role="tabpanel" aria-labelledby="codewords-tab">
+                    <!-- Content for Codewords tab -->
+                </div>
+                <div class="tab-pane fade" id="flowguides" role="tabpanel" aria-labelledby="flowguides-tab">
+                    <!-- Content for Flow Guides tab -->
+                </div>
+                <div class="tab-pane fade" id="projects" role="tabpanel" aria-labelledby="projects-tab">
+                    <!-- Content for Projects tab -->
                 </div>
             </div>
         </div>
@@ -170,6 +316,18 @@
                 searchResultsWrapper.style.display = 'none';
                 previewColumn.classList.remove('col-md-6');
                 previewColumn.classList.add('col-12');
+            }
+        });
+
+        document.getElementById('openContentButton').addEventListener('click', async () => {
+            const activeElement = document.activeElement;
+            if (activeElement && activeElement.parentElement === document.getElementById('searchResults')) {
+                const id = activeElement.getAttribute('data-id');
+                if (id) {
+                    await loadDocumentContent(id);
+                    document.querySelector('#myTab a[href="#content"]').click();
+                    updatePreviewContent();
+                }
             }
         });
 
@@ -224,11 +382,23 @@
                 const data = await response.json();
                 const htmlContent = marked(data.content);
                 document.getElementById('selectedContent').innerHTML = htmlContent;
+                document.getElementById('markdownTextarea').value = data.content;
+                updatePreviewContent(); // Ensure preview is updated when content is loaded
             } catch (error) {
                 console.error('Error loading document content:', error);
                 alert('Error loading document content');
             }
         }
+
+        function updatePreviewContent() {
+            const markdownTextarea = document.getElementById('markdownTextarea');
+            const previewContent = document.getElementById('previewContent');
+            const markdownContent = markdownTextarea.value;
+            const htmlContent = marked(markdownContent);
+            previewContent.innerHTML = htmlContent;
+        }
+
+        document.getElementById('markdownTextarea').addEventListener('input', updatePreviewContent);
 
         async function fetchUserId() {
             try {
@@ -262,9 +432,42 @@
             console.log(`User ID set to: ${userId}`);
         }
 
+        async function updateLoggedInStatus() {
+            try {
+                const response = await fetch('/dropbox/protected', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+                    }
+                });
+
+                if (response.status === 401) {
+                    const data = await response.json();
+                    if (data.redirect) {
+                        window.location.href = '/login.html?message=session_expired';
+                    } else {
+                        alert(data.message || 'Unauthorized access.');
+                    }
+                    return;
+                }
+
+                if (response.ok) {
+                    const text = await response.text();
+                    document.getElementById('loggedinas').innerText = text;
+                } else {
+                    document.getElementById('loggedinas').innerText = 'Failed to retrieve user information.';
+                }
+            } catch (error) {
+                console.error('Error fetching authentication status:', error);
+                document.getElementById('loggedinas').innerText = 'Error fetching authentication status.';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof localStorage !== 'undefined') {
                 fetchUserId();
+                updateLoggedInStatus();
+                loadSnippets(); // Load snippets when the page loads
             } else {
                 console.error('Local storage is not available in this context.');
             }
@@ -284,6 +487,155 @@
 
         const observer = new MutationObserver(callback);
         observer.observe(targetNode, config);
+
+        async function loadSnippets() {
+            const snippetListContainer = document.getElementById('snippetList');
+            const textarea = document.getElementById('markdownTextarea'); // Assuming your textarea has this ID
+            
+            try {
+                // Fetch the snippets from the server
+                const response = await fetch('/md/snippets');
+                const snippets = await response.json();
+
+                // Clear the existing list items
+                snippetListContainer.innerHTML = '';
+
+                // Iterate over the snippets and create list items
+                snippets.forEach(snippet => {
+                    const snippetElement = document.createElement('a');
+                    snippetElement.className = 'list-item';
+                    snippetElement.href = '#';
+                    snippetElement.dataset.snippet = snippet._id; // Use the snippet ID for reference
+                    snippetElement.textContent = snippet.snippetname;
+
+                    // Create a delete button
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.className = 'btn btn-danger btn-sm ml-2';
+                    deleteButton.addEventListener('click', function(event) {
+                        event.preventDefault();
+                        deleteSnippet(snippet._id);
+                    });
+
+                    // Create an insert button
+                    const insertButton = document.createElement('button');
+                    insertButton.textContent = 'Insert ' + snippet.snippetname;
+                    insertButton.className = 'btn btn-primary btn-sm ml-2';
+                    insertButton.addEventListener('click', function(event) {
+                        event.preventDefault();
+                        insertSnippetIntoTextarea(snippet.content, textarea);
+                    });
+
+                    // Append the snippet element, insert button, and delete button to the list item
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item';
+                    //listItem.appendChild(snippetElement);
+                    listItem.appendChild(insertButton);
+                    listItem.appendChild(deleteButton);
+
+                    // Append the list item to the list container
+                    snippetListContainer.appendChild(listItem);
+                });
+
+            } catch (error) {
+                console.error('Error loading snippets:', error);
+                alert('An error occurred while loading snippets.');
+            }
+        }
+
+        function insertSnippetIntoTextarea(snippetContent, textarea) {
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const currentText = textarea.value;
+
+            const before = currentText.substring(0, start);
+            const after = currentText.substring(end);
+
+            textarea.value = before + snippetContent + after;
+            textarea.selectionStart = textarea.selectionEnd = start + snippetContent.length;
+            textarea.focus();
+        }
+
+        async function deleteSnippet(snippetId) {
+            try {
+                const response = await fetch(`/md/snippet/${snippetId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('Snippet deleted successfully.');
+                    loadSnippets(); // Reload the list after deletion
+                } else {
+                    alert('Failed to delete snippet.');
+                }
+            } catch (error) {
+                console.error('Error deleting snippet:', error);
+                alert('An error occurred while deleting the snippet.');
+            }
+        }
+
+        document.getElementById('saveSnippetButton').addEventListener('click', saveSnippet);
+        
+        function saveSnippet() {
+            // Get the textarea element where the markdown content is written
+            const textarea = document.getElementById('snippetTextarea');
+
+            // Retrieve the entire content from the textarea
+            const contentText = textarea.value;
+            console.log('Textarea Content:', contentText);
+
+            // Extract the snippet name using a regular expression
+            const snippetNameMatch = contentText.match(/^snippetname: (.*)$/m);
+            if (!snippetNameMatch) {
+                console.warn('Snippet name not found in the textarea content.');
+                alert('No snippet name found in the textarea content.');
+                return;
+            }
+            const snippetname = snippetNameMatch[1];
+            console.log('Snippet Name:', snippetname);
+
+            // Extract the author name using a regular expression
+            const authorMatch = contentText.match(/^Author: (.*)$/m);
+            if (!authorMatch) {
+                console.warn('Author not found in the textarea content.');
+                alert('No author found in the textarea content.');
+                return;
+            }
+            const author = authorMatch[1];
+            console.log('Author:', author);
+
+            // Remove the snippet name and author lines from the content
+            const content = contentText.replace(/^snippetname: .*$/m, '').replace(/^Author: .*$/m, '').trim();
+            console.log('Content to be saved:', content);
+
+            // Define the endpoint URL for saving the snippet
+            const url = '/md/save/';
+            console.log('Saving snippet to URL:', url);
+
+            // Send the data to the server using a POST request
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ snippetname, content, author })
+            })
+            .then(response => {
+                console.log('Server response status:', response.status);
+                if (response.ok) {
+                    console.info('Snippet saved successfully.');
+                    alert('Snippet saved successfully.');
+                    loadSnippets(); // Reload the list after saving
+                } else {
+                    console.error('Failed to save snippet. Server returned status:', response.status);
+                    alert('Failed to save snippet.');
+                }
+            })
+            .catch(error => {
+                console.error('Error occurred while saving the snippet:', error);
+                alert('An error occurred while saving the snippet.');
+            });
+        }
     </script>
 </body>
 </html>
