@@ -42,6 +42,9 @@
             color: rgb(225, 209, 27);
             
         }
+        .search-box {
+            border-radius: 10px; /* Rounded corners */
+        }
     </style>
 </head>
 <body>
@@ -63,13 +66,13 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Save</a>
+                            <a class="nav-link active" href="/dashboard.html">Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Load</a>
+                            <a class="nav-link" href="/knowledgeriver.html">KnowledgeRiver></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Settings</a>
+                            <a class="nav-link" href="#">yyyyy</a>
                         </li>
                     </ul>
                 </div>
@@ -79,7 +82,7 @@
         <nav id="sidebar">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link active" href="/dashboard.html">Dashboard</a>
+                    <a class="nav-link" href="#">Save</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Files</a>
@@ -89,14 +92,15 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Help</a>
-                </li>
-                <li class="nav-item">
-                    <textarea class="nav-box" id="customContextInput" rows="5"
-                        placeholder="Define your context (e.g., 'You are a marketing expert')"></textarea>
-                </li>
-                <li class="nav-item">
-                    <textarea class="nav-box" id="dynamicInput" rows="5" placeholder="Write your prompt here..."></textarea>
-                </li>
+                <!--
+                                <li class="nav-item">
+                                    <textarea class="nav-box" id="customContextInput" rows="5"
+                                        placeholder="Define your context (e.g., 'You are a marketing expert')"></textarea>
+                                </li>
+                                <li class="nav-item">
+                                    <textarea class="nav-box" id="dynamicInput" rows="5" placeholder="Write your prompt here..."></textarea>
+                                </li>
+                -->
             </ul>
         </nav>
         <div class="content-area">
@@ -331,7 +335,11 @@ Your snippet content goes here..."></textarea>
                 displaySearchResults(results);
             } catch (error) {
                 console.error('Error searching files:', error);
-                alert('Error searching files');
+                if (error.message.includes('Initialization failed')) {
+                    alert('Initialization failed! Please try again later.');
+                } else {
+                    alert('Error searching files');
+                }
             }
         });
 
@@ -827,6 +835,36 @@ Your snippet content goes here..."></textarea>
 
         document.addEventListener('DOMContentLoaded', () => {
             loadProjects(); // Load projects when the page loads
+        });
+
+        // Add event listener for generating project description
+        document.getElementById('generate-description-icon').addEventListener('click', async () => {
+            console.log('Generate description icon clicked'); // Debug message
+            const projectDescription = document.getElementById('projectDescription').value;
+            if (!projectDescription) {
+            alert('Please enter the project description first');
+            return;
+            }
+
+            try {
+            const response = await fetch('/openai/generate-project-description', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ projectDescription })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('projectDescription').value = data.description;
+            } else {
+                alert('Failed to generate project description');
+            }
+            } catch (error) {
+            console.error('Error generating project description:', error);
+            alert('An error occurred while generating the project description');
+            }
         });
     </script>
 </body>

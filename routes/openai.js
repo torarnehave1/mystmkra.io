@@ -6,6 +6,7 @@ import util from 'util';
 import mongoose from 'mongoose';
 import Mdfiles from '../models/Mdfiles.js';
 import {isAuthenticated} from '../auth/auth.js';
+import { generateDescription } from '../services/openAiGenerateProjectDescription.js';
 
 import FormData from 'form-data';
 import path from 'path';
@@ -2016,6 +2017,22 @@ router.post('/deleteImage', async (req, res) => {
     } catch (error) {
         console.error('Error deleting image:', error.message || error);
         res.status(500).json({ error: 'Failed to delete image' });
+    }
+});
+
+router.post('/generate-project-description', async (req, res) => {
+    const { projectDescription } = req.body;
+
+    if (!projectDescription) {
+        return res.status(400).json({ error: 'A basic project description is required' });
+    }
+
+    try {
+        const description = await generateDescription(projectDescription);
+        res.json({ description });
+    } catch (error) {
+        console.error('Error generating project description:', error);
+        res.status(500).json({ error: 'Failed to generate project description' });
     }
 });
 
