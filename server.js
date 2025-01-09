@@ -21,6 +21,7 @@ import telegramRouter3 from './routes/Kruthbot.js';
 import telegramRouter4 from './routes/MystmkraBot.js';
 import assmongdb from './routes/assistantsmongodb.js';
 import servicesRouter from './routes/services.js'; // Import the new services router
+import projectRouter from './routes/project.js'; // Import the project router
 
 // Load environment variables
 dotenv.config();
@@ -96,6 +97,7 @@ app.use('/mystmkra', telegramRouter4);
 app.use('/assistants', assistants);
 app.use('/assistantsdb', assmongdb);
 app.use('/services', servicesRouter); // Add the new services router
+app.use('/projects', projectRouter); // Add the project router
 
 // Support page
 app.get('/support', (req, res) => {

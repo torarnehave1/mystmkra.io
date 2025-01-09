@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Markdown Editor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
    
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
@@ -18,6 +19,28 @@
         }
         .preview.full-width {
             grid-column: span 2;
+        }
+        .snippet-container {
+            text-align: left;
+            margin-left: 0; /* Align to the left of the page */
+        }
+        .project-container {
+            text-align: left;
+            margin-left: 0; /* Align to the left of the page */
+            position: relative; /* Ensure the icon is positioned relative to this container */
+       padding: 20px;
+       font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        
+        }
+        #generate-description-icon {
+            cursor: pointer;
+            position: absolute;
+            top: 80px;
+            right: 50px;
+            color: rgb(225, 209, 27);
+            
         }
     </style>
 </head>
@@ -244,7 +267,7 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="snippets" role="tabpanel" aria-labelledby="snippets-tab">
-                    <div class="container">
+                    <div class="container-fluid snippet-container">
                         <div class="form-group">
                             <label for="snippetTextarea">Snippet Content:</label>
                             <textarea class="form-control" id="snippetTextarea" rows="5" placeholder="Write your snippet here...
@@ -266,7 +289,19 @@ Your snippet content goes here..."></textarea>
                     <!-- Content for Flow Guides tab -->
                 </div>
                 <div class="tab-pane fade" id="projects" role="tabpanel" aria-labelledby="projects-tab">
-                    <!-- Content for Projects tab -->
+                    <div class="container-fluid project-container">
+                        <div class="form-group">
+                            <label for="projectName">Project Name:</label>
+                            <input type="text" class="form-control" id="projectName" placeholder="Enter project name">
+                        </div>
+                        <div class="form-group">
+                            <label for="projectDescription" class="project-description-label">Project Description:</label>
+                            <textarea class="form-control" id="projectDescription" rows="5" placeholder="Enter project description"></textarea>
+                            <span class="material-icons" id="generate-description-icon">auto_awesome</span>
+                        </div>
+                        <button class="btn btn-primary" id="saveProjectButton">Save Project</button>
+                        <ul class="list-group" id="projectList"></ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -281,6 +316,8 @@ Your snippet content goes here..."></textarea>
     <script type="module">
         import { searchFiles } from './js/searchService.js';
         import { marked } from 'https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js';
+
+        let currentProjectId = null;
 
         document.getElementById('searchButton').addEventListener('click', async () => {
             const query = document.querySelector('.search-box').value.trim();
@@ -636,6 +673,161 @@ Your snippet content goes here..."></textarea>
                 alert('An error occurred while saving the snippet.');
             });
         }
+
+        // Project-related functions
+        document.getElementById('saveProjectButton').addEventListener('click', saveProject);
+
+        async function saveProject() {
+            const name = document.getElementById('projectName').value;
+            const description = document.getElementById('projectDescription').value;
+
+            if (!name || !description) {
+                alert('Please enter both project name and description');
+                return;
+            }
+
+            try {
+                const response = await fetch('/projects/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, description })
+                });
+
+                if (response.ok) {
+                    alert('Project saved successfully');
+                    loadProjects(); // Reload the list after saving
+                } else {
+                    alert('Failed to save project');
+                }
+            } catch (error) {
+                console.error('Error saving project:', error);
+                alert('An error occurred while saving the project');
+            }
+        }
+
+        async function loadProjects() {
+            const projectListContainer = document.getElementById('projectList');
+
+            try {
+                const response = await fetch('/projects/list');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch projects');
+                }
+                const projects = await response.json();
+
+                projectListContainer.innerHTML = '';
+
+                projects.forEach(project => {
+                    const projectElement = document.createElement('a');
+                    projectElement.className = 'list-item';
+                    projectElement.href = '#';
+                    projectElement.dataset.project = project._id;
+                    projectElement.textContent = `${project.name} (${project._id})`;
+
+                    projectElement.addEventListener('click', function(event) {
+                        event.preventDefault();
+                        loadProjectDetails(project._id);
+                    });
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.className = 'btn btn-danger btn-sm ml-2';
+                    deleteButton.addEventListener('click', function(event) {
+                        event.preventDefault();
+                        deleteProject(project._id);
+                    });
+
+                    const updateButton = document.createElement('button');
+                    updateButton.textContent = 'Update';
+                    updateButton.className = 'btn btn-primary btn-sm ml-2';
+                    updateButton.addEventListener('click', function(event) {
+                        event.preventDefault();
+                        updateProject(project._id);
+                    });
+
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item';
+                    listItem.appendChild(projectElement);
+                    listItem.appendChild(updateButton);
+                    listItem.appendChild(deleteButton);
+
+                    projectListContainer.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error('Error loading projects:', error);
+                alert('An error occurred while loading projects');
+            }
+        }
+
+        async function loadProjectDetails(projectId) {
+            try {
+                const response = await fetch(`/projects/${projectId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch project details');
+                }
+                const project = await response.json();
+                document.getElementById('projectName').value = project.name;
+                document.getElementById('projectDescription').value = project.description;
+                currentProjectId = projectId; // Set the current project ID
+            } catch (error) {
+                console.error('Error loading project details:', error);
+                alert('An error occurred while loading project details');
+            }
+        }
+
+        async function deleteProject(projectId) {
+            try {
+                const response = await fetch(`/projects/delete/${projectId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('Project deleted successfully');
+                    loadProjects(); // Reload the list after deletion
+                } else {
+                    alert('Failed to delete project');
+                }
+            } catch (error) {
+                console.error('Error deleting project:', error);
+                alert('An error occurred while deleting the project');
+            }
+        }
+
+        async function updateProject(projectId) {
+            const name = document.getElementById('projectName').value;
+            const description = document.getElementById('projectDescription').value;
+
+            if (!name || !description) {
+                alert('Please enter both project name and description');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/projects/update/${projectId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, description })
+                });
+
+                if (response.ok) {
+                    alert('Project updated successfully');
+                    loadProjects(); // Reload the list after updating
+                } else {
+                    alert('Failed to update project');
+                }
+            } catch (error) {
+                console.error('Error updating project:', error);
+                alert('An error occurred while updating the project');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProjects(); // Load projects when the page loads
+        });
     </script>
 </body>
 </html>
