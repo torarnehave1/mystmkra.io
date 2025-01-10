@@ -154,6 +154,7 @@
             </div>
             <div class="tab-pane fade" id="knowledge-droplets" role="tabpanel" aria-labelledby="knowledge-droplets-tab">
                 <div id="knowledge-droplets-container"></div>
+                <button class="btn btn-primary mt-3" onclick="fetchKnowledgeDroplets()">Fetch Knowledge Droplets</button> <!-- Add this line -->
             </div>
         </div>
     </div>
@@ -169,6 +170,7 @@
                 const data = await response.json();
                 if (data.success) {
                     const assistantsList = document.getElementById('assistants-list');
+                    assistantsList.innerHTML = ''; // Clear the existing list
                     data.assistants.forEach(assistant => {
                         const listItem = document.createElement('li');
                         listItem.innerHTML = `<a href="#" onclick="showAssistantDetails('${assistant.id}')">${assistant.name}</a>`;
@@ -246,6 +248,9 @@
                     // Add event listener to the create-image-button
                     document.getElementById('create-image-button').addEventListener('click', createImage);
 
+                    // Fetch and display the assistant's image
+                    await fetchAssistantImage(id);
+
                     // Fetch and display vector stores
                     await fetchVectorStores(id);
                     // Fetch and display usage
@@ -255,6 +260,21 @@
                 }
             } catch (error) {
                 console.error('Error fetching assistant details:', error);
+            }
+        }
+
+        async function fetchAssistantImage(assistantId) {
+            try {
+                const response = await fetch(`/assistantsdb/assistant-image/${assistantId}`);
+                const data = await response.json();
+                if (data.success) {
+                    const imagePlaceholder = document.getElementById('image-placeholder');
+                    imagePlaceholder.innerHTML = `<img src="${data.imageUrl}" alt="Generated Image" style="max-width: 100%; max-height: 100%;">`;
+                } else {
+                    console.error('Failed to retrieve assistant image:', data.error);
+                }
+            } catch (error) {
+                console.error('Error fetching assistant image:', error);
             }
         }
 
@@ -631,9 +651,12 @@
         }
 
         async function fetchKnowledgeDroplets() {
+            console.debug('Fetching knowledge droplets...'); // Debug statement
             try {
-                const response = await fetch(`/openai/list-files`);
+                const response = await fetch('/assistantsdb/openaifiles'); // Updated endpoint
+                console.debug('Response received:', response); // Debug statement
                 const data = await response.json();
+                console.debug('Data received:', data); // Debug statement
                 if (data.success) {
                     const container = document.getElementById('knowledge-droplets-container');
                     container.innerHTML = `
@@ -643,11 +666,9 @@
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <div>
                                         <strong>Filename:</strong> ${file.filename} <br>
-                                        <strong>ID:</strong> ${file.id} <br>
-                                        <strong>Purpose:</strong> ${file.purpose} <br>
-                                        <strong>Created At:</strong> ${new Date(file.created_at * 1000).toLocaleString()}
+                                        <strong>ID:</strong> ${file.file_id} <br>
                                     </div>
-                                    <button class="btn btn-danger btn-sm delete-droplet-button" data-file-id="${file.id}">Delete</button>
+                                    <button class="btn btn-danger btn-sm delete-droplet-button" data-file-id="${file.file_id}">Delete</button>
                                 </li>
                             `).join('')}
                         </ul>
@@ -711,12 +732,12 @@
                     progressBarFill.style.width = `${progress}%`;
                 }, 500);
 
-                const response = await fetch('/openai/createAssistantAvatar', {
+                const response = await fetch('/assistantsdb/createAssistantAvatar', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ prompt }),
+                    body: JSON.stringify({ prompt, assistantId: currentAssistantId }),
                 });
 
                 clearInterval(interval);
@@ -726,7 +747,7 @@
                 if (data.success) {
                     alert('Image created successfully');
                     const imagePlaceholder = document.getElementById('image-placeholder');
-                    imagePlaceholder.innerHTML = `<img src="${data.ReturnimageUrl}" alt="Generated Image" style="max-width: 100%; max-height: 100%;">`;
+                    imagePlaceholder.innerHTML = `<img src="${data.imageUrl}" alt="Generated Image" style="max-width: 100%; max-height: 100%;">`;
                     approveButtons.style.display = 'flex'; // Ensure the approve buttons are displayed
                 } else {
                     console.error('Failed to create image:', data.error);
@@ -771,7 +792,10 @@
             fetchAssistants(); // Fetch assistants when the document is loaded
             document.getElementById('vector-stores-tab').addEventListener('click', handleVectorStoresTabClick); // Add event listener for Vector Stores tab
             document.getElementById('create-image-button').addEventListener('click', createImage);
-            document.getElementById('knowledge-droplets-tab').addEventListener('click', fetchKnowledgeDroplets);
+            document.getElementById('knowledge-droplets-tab').addEventListener('click', fetchKnowledgeDroplets); // Ensure this event listener is set up
+
+            // Add event listener for tab change to trigger fetchKnowledgeDroplets
+            document.querySelector('a[href="#knowledge-droplets"]').addEventListener('click', fetchKnowledgeDroplets);
         });
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

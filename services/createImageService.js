@@ -20,11 +20,10 @@ const createImageService = async (prompt, size = "1024x1024") => {
     }
 
     try {
-        const response = await openai.images.generate({
-            model: "dall-e-3",
-            prompt: prompt,
+        const response = await openai.images.create({
+            prompt,
             n: 1,
-            size: size
+            size
         });
 
         if (!response || !response.data || !response.data[0] || !response.data[0].url) {

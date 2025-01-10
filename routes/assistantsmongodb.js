@@ -4,6 +4,7 @@ import Assistant from '../models/assistants.js'; // Import the Assistant model
 import VectorStoreFile from '../models/vectorStoreFileSchema.js'; // Import the VectorStoreFile model
 import VectorStore from '../models/vectorStores.js'; // Import the VectorStore model
 import File from '../models/openaifiles.js'; // Import the File model
+import AssistantImage from '../models/assistantImages.js'; // Import the AssistantImage model
 import OpenAI from "openai";
 import createImageService from '../services/createImageService.js';
 
@@ -275,6 +276,17 @@ router.get('/vectorstorefilesdb', async (req, res) => {
     }
 });
 
+// New endpoint to get the list of files in openaifiles
+router.get('/openaifiles', async (req, res) => {
+    try {
+        const files = await File.find({}, { filename: 1, file_id: 1, _id: 0 });
+        res.json({ success: true, files });
+    } catch (error) {
+        console.error('Error retrieving files:', error);
+        res.status(500).json({ success: false, error: 'Failed to retrieve files' });
+    }
+});
+
 // Service to create an image using OpenAI
 router.post('/create-image', async (req, res) => {
     const { prompt, size } = req.body;
@@ -285,6 +297,44 @@ router.post('/create-image', async (req, res) => {
     } catch (error) {
         console.error('Error creating image:', error.message);
         res.status(500).json({ error: 'Failed to create image' });
+    }
+});
+
+// Service to create an image using OpenAI and save it to the database
+router.post('/createAssistantAvatar', async (req, res) => {
+    const { prompt, assistantId } = req.body;
+
+    try {
+        const result = await createImageService(prompt);
+        const imageUrl = result.ReturnimageUrl;
+
+        // Save the assistant ID and image URL to the database
+        const newAssistantImage = new AssistantImage({
+            assistant_id: assistantId,
+            image_url: imageUrl
+        });
+
+        await newAssistantImage.save();
+        res.json({ success: true, imageUrl });
+    } catch (error) {
+        console.error('Error creating image:', error.message);
+        res.status(500).json({ error: 'Failed to create image' });
+    }
+});
+
+// Endpoint to retrieve the image URL for a specific assistant
+router.get('/assistant-image/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const assistantImage = await AssistantImage.findOne({ assistant_id: id });
+        if (!assistantImage) {
+            return res.status(404).json({ success: false, error: 'Image not found' });
+        }
+        res.json({ success: true, imageUrl: assistantImage.image_url });
+    } catch (error) {
+        console.error('Error retrieving image:', error);
+        res.status(500).json({ success: false, error: 'Failed to retrieve image' });
     }
 });
 
