@@ -109,6 +109,13 @@
         <h2>Knowledge River Guides</h2>
         <ul id="assistants-list"></ul>
         <button class="btn btn-primary mt-3" onclick="showAddAssistantForm()">Add New River Guide</button>
+        <ul>
+            <li class="nav-item">
+                <a class="nav-link active" href="dev.html">
+                    <i class="bi bi-house"></i> Home to MystMkra.io
+                </a>
+            </li>
+        </ul>
     </div>
     <div class="content">
         <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -210,6 +217,7 @@
                     <span class="material-icons">add_circle_outline</span>
                 </div>
             </div>
+            <button id="change-image-button" class="btn btn-secondary mt-2">Change Image</button>
         </div>
         <div class="progress-bar" id="progress-bar">
             <div class="progress-bar-fill" id="progress-bar-fill"></div>
@@ -247,6 +255,7 @@
 
                     // Add event listener to the create-image-button
                     document.getElementById('create-image-button').addEventListener('click', createImage);
+                    document.getElementById('change-image-button').addEventListener('click', createImage);
 
                     // Fetch and display the assistant's image
                     await fetchAssistantImage(id);
@@ -751,13 +760,36 @@
                     const imagePlaceholder = document.getElementById('image-placeholder');
                     imagePlaceholder.innerHTML = `<img src="${data.imageUrl}" alt="Generated Image" style="max-width: 100%; max-height: 100%;">`;
                     approveButtons.style.display = 'flex'; // Ensure the approve buttons are displayed
+
+                    // Update the image URL in the database
+                    await updateImageUrlInDatabase(data.imageUrl);
                 } else {
                     console.error('Failed to create image:', data.error);
                     progressBarFill.style.width = '0%';
+                    alert('Error creating image: ' + data.error);
                 }
             } catch (error) {
                 console.error('Error creating image:', error);
                 progressBarFill.style.width = '0%';
+                alert('Error creating image: ' + error.message);
+            }
+        }
+
+        async function updateImageUrlInDatabase(imageUrl) {
+            try {
+                const response = await fetch(`/assistantsdb/updateAssistantImage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ assistantId: currentAssistantId, imageUrl }),
+                });
+                const data = await response.json();
+                if (!data.success) {
+                    console.error('Failed to update image URL in the database:', data.error);
+                }
+            } catch (error) {
+                console.error('Error updating image URL in the database:', error);
             }
         }
 

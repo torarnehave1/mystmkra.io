@@ -19,12 +19,16 @@ const createImageService = async (prompt, size = "1024x1024") => {
         size = "1024x1024"; // Default size if the provided size is invalid
     }
 
-    try {
-        const response = await openai.images.create({
-            prompt,
-            n: 1,
-            size
-        });
+    
+
+
+        try {
+            const response = await openai.images.generate({
+                model: "dall-e-3",
+                prompt: prompt,
+                n: 1,
+                size: "1024x1024"
+            });
 
         if (!response || !response.data || !response.data[0] || !response.data[0].url) {
             throw new Error('Invalid response from OpenAI API');

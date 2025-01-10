@@ -307,19 +307,15 @@ router.post('/createAssistantAvatar', async (req, res) => {
     try {
         console.debug('Received request to create assistant avatar:', { prompt, assistantId });
 
-        // Check if the image already exists in the database
-        const existingImage = await AssistantImage.findOne({ assistant_id: assistantId });
-        if (existingImage) {
-            console.debug('Image already exists for assistant:', assistantId);
-            return res.json({ success: true, imageUrl: existingImage.image_url });
-        }
-
         // Create a new image using OpenAI
         const result = await createImageService(prompt);
         const imageUrl = result.ReturnimageUrl;
         console.debug('Created new image:', { imageUrl });
 
-        // Save the assistant ID and image URL to the database
+        // Delete the existing image document if it exists
+        await AssistantImage.findOneAndDelete({ assistant_id: assistantId });
+
+        // Save the new assistant ID and image URL to the database
         const newAssistantImage = new AssistantImage({
             assistant_id: assistantId,
             image_url: imageUrl
@@ -331,6 +327,24 @@ router.post('/createAssistantAvatar', async (req, res) => {
     } catch (error) {
         console.error('Error creating image:', error.message);
         res.status(500).json({ error: 'Failed to create image' });
+    }
+});
+
+// Endpoint to update the image URL for a specific assistant
+router.post('/updateAssistantImage', async (req, res) => {
+    const { assistantId, imageUrl } = req.body;
+
+    try {
+        const updatedImage = await AssistantImage.findOneAndUpdate(
+            { assistant_id: assistantId },
+            { image_url: imageUrl },
+            { new: true, upsert: true } // Create a new document if it doesn't exist
+        );
+
+        res.json({ success: true, message: 'Assistant image updated successfully', image: updatedImage });
+    } catch (error) {
+        console.error('Error updating assistant image:', error);
+        res.status(500).json({ success: false, error: 'Failed to update assistant image' });
     }
 });
 
