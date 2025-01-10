@@ -305,8 +305,19 @@ router.post('/createAssistantAvatar', async (req, res) => {
     const { prompt, assistantId } = req.body;
 
     try {
+        console.debug('Received request to create assistant avatar:', { prompt, assistantId });
+
+        // Check if the image already exists in the database
+        const existingImage = await AssistantImage.findOne({ assistant_id: assistantId });
+        if (existingImage) {
+            console.debug('Image already exists for assistant:', assistantId);
+            return res.json({ success: true, imageUrl: existingImage.image_url });
+        }
+
+        // Create a new image using OpenAI
         const result = await createImageService(prompt);
         const imageUrl = result.ReturnimageUrl;
+        console.debug('Created new image:', { imageUrl });
 
         // Save the assistant ID and image URL to the database
         const newAssistantImage = new AssistantImage({
@@ -315,6 +326,7 @@ router.post('/createAssistantAvatar', async (req, res) => {
         });
 
         await newAssistantImage.save();
+        console.debug('Saved new assistant image to database:', { assistantId, imageUrl });
         res.json({ success: true, imageUrl });
     } catch (error) {
         console.error('Error creating image:', error.message);

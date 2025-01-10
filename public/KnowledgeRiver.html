@@ -716,6 +716,7 @@
         }
 
         async function createImage() {
+            console.debug('Create image button clicked'); // Debug statement
             const instructionsTextarea = document.getElementById('instructions-textarea');
             const prompt = `Create an avatar (only an avatar no text) for the assistant that is inspired by the following instructions: ${instructionsTextarea.value}`;
             const progressBarFill = document.getElementById('progress-bar-fill');
@@ -732,6 +733,7 @@
                     progressBarFill.style.width = `${progress}%`;
                 }, 500);
 
+                console.debug('Sending request to createAssistantAvatar'); // Debug statement
                 const response = await fetch('/assistantsdb/createAssistantAvatar', {
                     method: 'POST',
                     headers: {
@@ -745,7 +747,7 @@
 
                 const data = await response.json();
                 if (data.success) {
-                    alert('Image created successfully');
+                    console.debug('Image created successfully:', data.imageUrl); // Debug statement
                     const imagePlaceholder = document.getElementById('image-placeholder');
                     imagePlaceholder.innerHTML = `<img src="${data.imageUrl}" alt="Generated Image" style="max-width: 100%; max-height: 100%;">`;
                     approveButtons.style.display = 'flex'; // Ensure the approve buttons are displayed
