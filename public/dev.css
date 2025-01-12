@@ -324,6 +324,25 @@ html, body {
 
 }
 
+#assistantDiv {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#assistantDiv.hidden {
+    display: none !important;
+}
+
+#assistantImage {
+    width: 100px;
+    height: auto;
+    margin-right: 10px;
+}
+
+#assistantTextarea {
+    flex: 1;
+}
 
 /* Responsive Layout */
 @media (max-width: 768px) {

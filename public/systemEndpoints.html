@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Endpoints</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>System Endpoints</h1>
+        <div class="nav nav-tabs" id="endpointTabs" role="tablist">
+            <a class="nav-item nav-link active" id="list-tab" data-toggle="tab" href="#list" role="tab" aria-controls="list" aria-selected="true">List Endpoints</a>
+            <a class="nav-item nav-link" id="add-tab" data-toggle="tab" href="#add" role="tab" aria-controls="add" aria-selected="false">Add Endpoint</a>
+            <a class="nav-item nav-link" id="update-tab" data-toggle="tab" href="#update" role="tab" aria-controls="update" aria-selected="false">Update Endpoint</a>
+            <a class="nav-item nav-link" id="delete-tab" data-toggle="tab" href="#delete" role="tab" aria-controls="delete" aria-selected="false">Delete Endpoint</a>
+        </div>
+        <div class="tab-content" id="endpointTabsContent">
+            <div class="tab-pane fade show active" id="list" role="tabpanel" aria-labelledby="list-tab">
+                <h3>List Endpoints</h3>
+                <button class="btn btn-primary" id="fetchEndpointsButton">Fetch Endpoints</button>
+                <ul class="list-group mt-3" id="endpointsList"></ul>
+            </div>
+            <div class="tab-pane fade" id="add" role="tabpanel" aria-labelledby="add-tab">
+                <h3>Add Endpoint</h3>
+                <form id="addEndpointForm">
+                    <div class="form-group">
+                        <label for="addUrl">URL</label>
+                        <input type="text" class="form-control" id="addUrl" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="addTrigger">Trigger</label>
+                        <input type="text" class="form-control" id="addTrigger" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="addTypeof">Type</label>
+                        <select class="form-control" id="addTypeof" required>
+                            <option value="List">List</option>
+                            <option value="Test">Test</option>
+                            <option value="Bot">Bot</option>
+                            <option value="OpenAI">OpenAI</option>
+                            <option value="Codeword">Codeword</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="addDescription">Description</label>
+                        <textarea class="form-control" id="addDescription" rows="10"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Endpoint</button>
+                </form>
+            </div>
+            <div class="tab-pane fade" id="update" role="tabpanel" aria-labelledby="update-tab">
+                <h3>Update Endpoint</h3>
+                <form id="updateEndpointForm">
+                    <div class="form-group">
+                        <label for="updateId">Endpoint ID</label>
+                        <input type="text" class="form-control" id="updateId" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="updateUrl">New URL</label>
+                        <input type="text" class="form-control" id="updateUrl">
+                    </div>
+                    <div class="form-group">
+                        <label for="updateTrigger">New Trigger</label>
+                        <input type="text" class="form-control" id="updateTrigger">
+                    </div>
+                    <div class="form-group">
+                        <label for="updateTypeof">New Type</label>
+                        <select class="form-control" id="updateTypeof">
+                            <option value="List">List</option>
+                            <option value="Test">Test</option>
+                            <option value="Bot">Bot</option>
+                            <option value="OpenAI">OpenAI</option>
+                            <option value="Codeword">Codeword</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="updateDescription">New Description</label>
+                        <textarea class="form-control" id="updateDescription" rows="10"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Endpoint</button>
+                </form>
+            </div>
+            <div class="tab-pane fade" id="delete" role="tabpanel" aria-labelledby="delete-tab">
+                <h3>Delete Endpoint</h3>
+                <form id="deleteEndpointForm">
+                    <div class="form-group">
+                        <label for="deleteId">Endpoint ID</label>
+                        <input type="text" class="form-control" id="deleteId" required>
+                    </div>
+                    <button type="submit" class="btn btn-danger">Delete Endpoint</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('fetchEndpointsButton').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/system/endpoints');
+                const data = await response.json();
+                const endpointsList = document.getElementById('endpointsList');
+                endpointsList.innerHTML = '';
+                data.endpoints.forEach(endpoint => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item';
+                    listItem.textContent = `ID: ${endpoint._id}, URL: ${endpoint.url}, Trigger: ${endpoint.trigger}, Type: ${endpoint.Typeof}`;
+                    endpointsList.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error('Error fetching endpoints:', error);
+            }
+        });
+
+        document.getElementById('addEndpointForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const url = document.getElementById('addUrl').value;
+            const trigger = document.getElementById('addTrigger').value;
+            const Typeof = document.getElementById('addTypeof').value;
+            const description = document.getElementById('addDescription').value;
+
+            try {
+                const response = await fetch('/system/add-endpoint', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url, trigger, Typeof, description })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Endpoint added successfully');
+                    document.getElementById('addEndpointForm').reset();
+                } else {
+                    alert('Failed to add endpoint');
+                }
+            } catch (error) {
+                console.error('Error adding endpoint:', error);
+            }
+        });
+
+        document.getElementById('updateEndpointForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const id = document.getElementById('updateId').value;
+            const url = document.getElementById('updateUrl').value;
+            const trigger = document.getElementById('updateTrigger').value;
+            const Typeof = document.getElementById('updateTypeof').value;
+            const description = document.getElementById('updateDescription').value;
+
+            try {
+                const response = await fetch(`/system/endpoints/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url, trigger, Typeof, description })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Endpoint updated successfully');
+                    document.getElementById('updateEndpointForm').reset();
+                } else {
+                    alert('Failed to update endpoint');
+                }
+            } catch (error) {
+                console.error('Error updating endpoint:', error);
+            }
+        });
+
+        document.getElementById('deleteEndpointForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const id = document.getElementById('deleteId').value;
+
+            try {
+                const response = await fetch(`/system/endpoints/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Endpoint deleted successfully');
+                    document.getElementById('deleteEndpointForm').reset();
+                } else {
+                    alert('Failed to delete endpoint');
+                }
+            } catch (error) {
+                console.error('Error deleting endpoint:', error);
+            }
+        });
+    </script>
+</body>
+</html>

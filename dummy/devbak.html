@@ -937,6 +937,22 @@ Your snippet content goes here..."></textarea>
             }
         });
 
+        const textarea = document.getElementById('markdownTextarea');
+        const mentionPopup = document.getElementById('mentionPopup');
+
+        let assistantsCache = null; // Cache assistants to avoid repeated fetches
+
+        textarea.addEventListener('input', debouncedHandleInput);
+        textarea.addEventListener('blur', () => setTimeout(() => (mentionPopup.style.display = 'none'), 200));
+
+        // Use event delegation on the popup container
+        mentionPopup.addEventListener('click', (event) => {
+            if (event.target.classList.contains('dropdown-item')) {
+                const name = event.target.textContent;
+                const cursorPosition = textarea.selectionStart;
+                selectItem(name, cursorPosition);
+            }
+        });
 
         async function fetchAssistants() {
             if (assistantsCache) return assistantsCache; // Return cached data if available
@@ -955,145 +971,120 @@ Your snippet content goes here..."></textarea>
             }
         }
 
+        async function handleInput(event) {
+            const cursorPosition = textarea.selectionStart;
+            const textBeforeCursor = textarea.value.substring(0, cursorPosition);
+            const mentionMatch = textBeforeCursor.match(/@(\w*)$/);
 
 
+            
+            console.log('Cursor Position:', cursorPosition);
+            console.log('Text Before Cursor:', textBeforeCursor);
+            console.log('Mention Match:', mentionMatch);
 
-        const textarea = document.getElementById('markdownTextarea');
-const mentionPopup = document.getElementById('mentionPopup');
-
-let assistantsCache = null; // Cache assistants to avoid repeated fetches
-
-textarea.addEventListener('input', debouncedHandleInput);
-textarea.addEventListener('blur', () =>
-    setTimeout(() => (mentionPopup.style.display = 'none'), 200)
-);
-
-// Use event delegation on the popup container
-mentionPopup.addEventListener('click', (event) => {
-    if (event.target.classList.contains('mention-popup-item')) {
-        const name = event.target.textContent; // Get the name of the clicked assistant
-        const cursorPosition = textarea.selectionStart; // Current cursor position
-        console.log('Selected name:', name);
-
-        // Call the selectItem function
-        selectItem(name, cursorPosition);
-    }
-});
-
-async function handleInput(event) {
-    const cursorPosition = textarea.selectionStart;
-    const textBeforeCursor = textarea.value.substring(0, cursorPosition);
-
-    console.log('Cursor Position:', cursorPosition);
-    console.log('Text Before Cursor:', textBeforeCursor);
-
-    try {
-        // Fetch the endpoint dynamically based on the input text
-        const url = `/system/endpoint-url/${textBeforeCursor}`;
-        console.log('Fetching URL:', url);
-
-        const response = await fetch(url);
-        if (!response.ok) {
-            if (response.status === 404) {
-                console.error(
-                    'Endpoint URL not found for input:',
-                    textBeforeCursor
-                );
+            if (textBeforeCursor && textBeforeCursor !== '') {
+                const query = textBeforeCursor
+                if (!query) {
+                    console.log('Query is empty');
+                    mentionPopup.style.display = 'none';
+                    return;
+                }
+                console.log('Query:', query);
+                try {
+                    const url = `/system/endpoint-url/${textBeforeCursor}`;
+                    console.log('Fetching URL:', url);
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        if (response.status === 404) {
+                            console.error('Endpoint URL not found for trigger:', textBeforeCursor);
+                            mentionPopup.style.display = 'none';
+                            return;
+                        }
+                        throw new Error('Failed to fetch the URL of the endpoint');
+                    }
+                    const { url: endpointUrl } = await response.json();
+                    console.log('Endpoint URL:', endpointUrl);
+                    const assistantsResponse = await fetch(endpointUrl);
+                    if (!assistantsResponse.ok) {
+                        throw new Error('Failed to fetch assistants from the second endpoint');
+                    }
+                    const assistants = await assistantsResponse.json();
+                    console.log('Assistants:', assistants);
+                    showPopup(assistants, cursorPosition);
+                } catch (error) {
+                    console.error('Error fetching assistants:', error);
+                    mentionPopup.style.display = 'none';
+                }
+            } else {
                 mentionPopup.style.display = 'none';
-                return;
             }
-            throw new Error('Failed to fetch the URL of the endpoint');
         }
 
-        const data = await response.json(); // Parse JSON data
-        console.log('Fetched Data:', data); // Log the full response for debugging
+        function showPopup(items, cursorPosition) {
+            mentionPopup.innerHTML = ''; // Clear previous items
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'mention-popup-item'; // Ensure the correct class name is used
+                div.textContent = item.name; // Only display the name of the assistant
+                div.dataset.id = item.id;
+                div.addEventListener('click', () => selectItem(item.name, cursorPosition)); // Add click event listener
+                mentionPopup.appendChild(div);
+            });
 
-        // Extract trigger and endpoint URL from the response
-        const { trigger, url: endpointUrl } = data;
+            // Calculate position dynamically
+            const { top, left } = getCaretCoordinates(textarea, cursorPosition);
+            const adjustedLeft = Math.min(left, window.innerWidth - mentionPopup.offsetWidth - 10); // Prevent overflow
+            const adjustedTop = Math.min(top, window.innerHeight - mentionPopup.offsetHeight - 10);
 
-        if (!trigger || !textBeforeCursor.endsWith(trigger)) {
-            console.log('No match for trigger:', trigger);
+            mentionPopup.style.left = `${adjustedLeft}px`;
+            mentionPopup.style.top = `${adjustedTop}px`;
+            mentionPopup.style.display = 'block';
+        }
+
+        function selectItem(name, cursorPosition) {
+            const textBeforeCursor = textarea.value.substring(0, cursorPosition);
+            const textAfterCursor = textarea.value.substring(cursorPosition);
+            const mentionMatch = textBeforeCursor.match(/@(\w*)$/);
+            const test = textBeforeCursor
+
+            console.log('Text Before Cursor 2:', textBeforeCursor);
+            
+            if (!mentionMatch) return;
+
+            const newTextBeforeCursor =  test + name ;
+            textarea.value = newTextBeforeCursor + textAfterCursor;
+            textarea.selectionStart = textarea.selectionEnd = newTextBeforeCursor.length;
+            textarea.focus();
             mentionPopup.style.display = 'none';
-            return;
+            document.getElementById('assistantDiv').classList.remove('hidden'); // Make assistantDiv visible
+            document.getElementById('assistantTextarea').value = `Write your prompt for @${name}  here...`;
+
         }
 
-        console.log('Matched Trigger:', trigger);
+        function getCaretCoordinates(element, position) {
+            const div = document.createElement('div');
+            const style = getComputedStyle(element);
+            for (const prop of style) {
+                div.style[prop] = style[prop];
+            }
+            div.style.position = 'absolute';
+            div.style.visibility = 'hidden';
+            div.style.whiteSpace = 'pre-wrap';
+            div.style.wordWrap = 'break-word';
+            div.textContent = element.value.substring(0, position);
+            document.body.appendChild(div);
+            const span = document.createElement('span');
+            span.textContent = element.value.substring(position) || '.';
+            div.appendChild(span);
+            const { offsetTop: top, offsetLeft: left } = span;
+            document.body.removeChild(div);
 
-        // Fetch assistants using the endpoint URL
-        const assistantsResponse = await fetch(endpointUrl);
-        if (!assistantsResponse.ok) {
-            throw new Error('Failed to fetch assistants from the second endpoint');
+            const textareaRect = element.getBoundingClientRect();
+            return {
+                top: textareaRect.top + top + window.scrollY, // Adjust for scroll
+                left: textareaRect.left + left + window.scrollX, // Adjust for scroll
+            };
         }
-
-        const assistants = await assistantsResponse.json();
-        console.log('Assistants:', assistants);
-
-        // Show popup with the matched assistants
-        showPopup(assistants, cursorPosition);
-    } catch (error) {
-        console.error('Error in handleInput:', error);
-        mentionPopup.style.display = 'none';
-    }
-}
-
-function showPopup(items, cursorPosition) {
-    mentionPopup.innerHTML = ''; // Clear previous items
-    items.forEach((item) => {
-        const div = document.createElement('div');
-        div.className = 'mention-popup-item';
-        div.textContent = item.name;
-        div.dataset.id = item.id;
-        mentionPopup.appendChild(div);
-    });
-
-    // Calculate position dynamically
-    const { top, left } = getCaretCoordinates(textarea, cursorPosition);
-    mentionPopup.style.left = `${left}px`;
-    mentionPopup.style.top = `${top}px`;
-    mentionPopup.style.display = 'block';
-}
-
-function selectItem(name, cursorPosition) {
-    const textBeforeCursor = textarea.value.substring(0, cursorPosition);
-    const textAfterCursor = textarea.value.substring(cursorPosition);
-
-    console.log('Text Before Cursor:', textBeforeCursor);
-
-    const newTextBeforeCursor = textBeforeCursor + name;
-    textarea.value = newTextBeforeCursor + textAfterCursor;
-    textarea.selectionStart = textarea.selectionEnd = newTextBeforeCursor.length;
-    textarea.focus();
-    mentionPopup.style.display = 'none';
-    document.getElementById('assistantDiv').classList.remove('hidden'); // Make assistantDiv visible
-    document.getElementById(
-        'assistantTextarea'
-    ).value = `Write your prompt for @${name} here...`;
-}
-
-function getCaretCoordinates(element, position) {
-    const div = document.createElement('div');
-    const style = getComputedStyle(element);
-    for (const prop of style) {
-        div.style[prop] = style[prop];
-    }
-    div.style.position = 'absolute';
-    div.style.visibility = 'hidden';
-    div.style.whiteSpace = 'pre-wrap';
-    div.style.wordWrap = 'break-word';
-    div.textContent = element.value.substring(0, position);
-    document.body.appendChild(div);
-    const span = document.createElement('span');
-    span.textContent = element.value.substring(position) || '.';
-    div.appendChild(span);
-    const { offsetTop: top, offsetLeft: left } = span;
-    document.body.removeChild(div);
-
-    const textareaRect = element.getBoundingClientRect();
-    return {
-        top: textareaRect.top + top + window.scrollY, // Adjust for scroll
-        left: textareaRect.left + left + window.scrollX, // Adjust for scroll
-    };
-}
 
     </script>
 </body>

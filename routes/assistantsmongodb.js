@@ -41,6 +41,17 @@ router.post('/add-assistant', async (req, res) => {
     }
 });
 
+
+router.get('/names-ids', async (req, res) => {
+    try {
+        const assistants = await Assistant.find({}, 'name id');
+        res.json(assistants);
+    } catch (error) {
+        console.error('Error fetching assistant names and IDs:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 // Endpoint to retrieve all assistants from the database
 router.get('/assistants', async (req, res) => {
     try {

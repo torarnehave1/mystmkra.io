@@ -519,7 +519,7 @@ router.get('/protected', isAuthenticated, async (req, res) => {
 
 //Write a end poin called test
 router.get('/test', ensureValidToken, async (req, res) => {
-  res.send('test');
+  res.json('Test av Endpoints');
 });
 
 
