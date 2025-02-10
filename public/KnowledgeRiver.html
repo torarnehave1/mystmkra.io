@@ -166,6 +166,7 @@
         </div>
     </div>
     <div id="loggedinas"></div> <!-- Add this line to ensure the element exists -->
+    <audio id="smarten-audio" src="/recordings/smarten.mp3"></audio> <!-- Add this line -->
     <script>
         let originalInstructions = '';
         let currentAssistantId = '';
@@ -173,7 +174,7 @@
 
         async function fetchAssistants() {
             try {
-                const response = await fetch('/assistantsdb/assistantsdb'); // Fetch assistants from the database
+                const response = await fetch('/adb/assistantsdb'); // Fetch assistants from the database
                 const data = await response.json();
                 if (data.success) {
                     const assistantsList = document.getElementById('assistants-list');
@@ -202,7 +203,7 @@
             document.getElementById('files-container').innerHTML = '';
 
             try {
-                const response = await fetch(`/assistantsdb/assistants/${id}`);
+                const response = await fetch(`/adb/assistants/${id}`);
                 const data = await response.json();
                 if (data.success) {
                     const assistant = data.assistant;
@@ -274,17 +275,22 @@
 
         async function fetchAssistantImage(assistantId) {
             try {
-                const response = await fetch(`/assistantsdb/assistant-image/${assistantId}`);
+                const response = await fetch(`/adb/assistant-image/${assistantId}`);
                 const data = await response.json();
                 if (data.success) {
                     const imagePlaceholder = document.getElementById('image-placeholder');
-                    imagePlaceholder.innerHTML = `<img src="${data.imageUrl}" alt="Generated Image" style="max-width: 100%; max-height: 100%;">`;
+                    imagePlaceholder.innerHTML = `<img src="${data.imageUrl}" alt="Generated Image" style="max-width: 100%; max-height: 100%;" onclick="playSmartenAudio()">`; // Add onclick event
                 } else {
                     console.error('Failed to retrieve assistant image:', data.error);
                 }
             } catch (error) {
                 console.error('Error fetching assistant image:', error);
             }
+        }
+
+        function playSmartenAudio() {
+            const audio = document.getElementById('smarten-audio');
+            audio.play();
         }
 
         function checkForChanges() {
@@ -304,7 +310,7 @@
             const assistantId = currentAssistantId;
 
             try {
-                const response = await fetch(`/assistantsdb/assistants/${assistantId}`, {
+                const response = await fetch(`/adb/assistants/${assistantId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -330,7 +336,7 @@
         async function fetchVectorStores(id) {
             console.debug('Fetching vector stores for assistant ID:', id); // Debug statement
             try {
-                const response = await fetch(`/assistantsdb/vectorstoresdb?id=${id}`); // Fetch vector stores from the database
+                const response = await fetch(`/adb/vectorstoresdb?id=${id}`); // Fetch vector stores from the database
                 console.debug('Response received:', response); // Debug statement
                 const data = await response.json();
                 console.debug('Data received:', data); // Debug statement
@@ -358,7 +364,7 @@
 
         async function fetchVectorStoreFiles(vectorStoreId) {
             try {
-                const response = await fetch(`/assistantsdb/vectorstorefilesdb?id=${vectorStoreId}`); // Updated endpoint
+                const response = await fetch(`/adb/vectorstorefilesdb?id=${vectorStoreId}`); // Updated endpoint
                 const data = await response.json();
                 if (data.success) {
                     const filesContainer = document.getElementById('files-container');
@@ -465,6 +471,10 @@
                                 <input class="form-check-input" type="checkbox" value="function" id="tool-function">
                                 <label class="form-check-label" for="tool-function">Function</label>
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="assistant-parameters">Parameters</label>
+                            <input type="text" class="form-control" id="assistant-parameters" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Add Assistant</button>
                     </form>
@@ -648,7 +658,7 @@
                     // Call save-assistant-vector-stores to update the vector store
                     await fetch(`/assistants/save-assistant-vector-stores?id=${vectorStoreId}`);
                     // Call savetodb-vector-store-files to save vector store files to the database
-                    await fetch(`/assistantsdb/savetodb-vector-store-files?id=${vectorStoreId}`);
+                    await fetch(`/adb/savetodb-vector-store-files?id=${vectorStoreId}`);
                     // Call list-and-save-files to refresh the list of files
                     await fetch(`/openai/list-and-save-files`);
                 } else {
@@ -662,7 +672,7 @@
         async function fetchKnowledgeDroplets() {
             console.debug('Fetching knowledge droplets...'); // Debug statement
             try {
-                const response = await fetch('/assistantsdb/openaifiles'); // Updated endpoint
+                const response = await fetch('/adb/openaifiles'); // Updated endpoint
                 console.debug('Response received:', response); // Debug statement
                 const data = await response.json();
                 console.debug('Data received:', data); // Debug statement
@@ -743,7 +753,7 @@
                 }, 500);
 
                 console.debug('Sending request to createAssistantAvatar'); // Debug statement
-                const response = await fetch('/assistantsdb/createAssistantAvatar', {
+                const response = await fetch('/adb/createAssistantAvatar', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -777,7 +787,7 @@
 
         async function updateImageUrlInDatabase(imageUrl) {
             try {
-                const response = await fetch(`/assistantsdb/updateAssistantImage`, {
+                const response = await fetch(`/adb/updateAssistantImage`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

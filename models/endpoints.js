@@ -11,9 +11,16 @@ const endpointSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
+
+    parameters: {
+        type: [String],
+        required: false,
+    },
+
+
     Typeof: {
         type: String,
-        enum: ['List', 'Test', 'Bot', 'OpenAI', 'Codeword', 'Public API', 'Private API', 'Other'],
+        enum: ['Assistants', 'List', 'Bot', 'OpenAI', 'Codeword', 'Public API', 'Private API', 'Test','Other'],
         required: true,
     },
     description: {

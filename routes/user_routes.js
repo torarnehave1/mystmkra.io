@@ -67,6 +67,23 @@ const JWT_SECRET = process.env.JWT_SECRET; // Replace with your secret key
 
 
 //create a test endpoint
+
+//Create an endpoint to list all users
+
+router.get('/users-list', async (req, res) => {
+    
+    try {
+        const users = await User.find();
+        res.json(users);
+        
+    } catch (error) {
+        //console.error('Failed to fetch users:', error);
+        res.status(500).send({ error: 'Error fetching users' });
+    }
+});
+
+
+
 router.get('/test', (req, res) => {
     res.send('Test endpoint is working!');
 });
@@ -672,6 +689,8 @@ router.get('/me', async (req, res) => {
       res.status(500).send({ error: 'Error fetching user' });
     }
   });
+
+
 
 
 export default router;

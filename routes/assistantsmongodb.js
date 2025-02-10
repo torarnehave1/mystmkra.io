@@ -11,6 +11,32 @@ import createImageService from '../services/createImageService.js';
 const router = Router();
 const openai = new OpenAI();
 
+
+/**
+ * @fileoverview Routes for managing assistants, vector stores, and images in MongoDB.
+ * 
+ * This file contains the following endpoints:
+ * 
+ * - POST /add-assistant: Add a new assistant to the database.
+ * - GET /names-ids: Retrieve names and IDs of all assistants.
+ * - GET /assistants: Retrieve all assistants from the database.
+ * - GET /assistantsdb: Retrieve all assistants from MongoDB.
+ * - GET /assistants/:id: Retrieve a specific assistant by ID.
+ * - PUT /assistants/:id: Update a specific assistant by ID.
+ * - DELETE /assistants/:id: Delete a specific assistant by ID.
+ * - GET /savetodb-vector-store-files: Store vector store files in the collection.
+ * - GET /vectorstoresdb: Get vector stores connected to a specific assistant from MongoDB.
+ * - POST /create-vectorstore: Create a new vector store using OpenAI and save it to the database.
+ * - GET /vectorstoresdbbk: Get vector stores connected to a specific assistant from MongoDB (backup).
+ * - GET /vectorstorefilesdb: Get vector store files from MongoDB.
+ * - GET /openaifiles: Get the list of files in openaifiles.
+ * - POST /create-image: Create an image using OpenAI.
+ * - POST /createAssistantAvatar: Create an image using OpenAI and save it to the database.
+ * - POST /updateAssistantImage: Update the image URL for a specific assistant.
+ * - GET /assistant-image/:id: Retrieve the image URL for a specific assistant.
+ */
+
+
 // Endpoint to add assistants to the database
 router.post('/add-assistant', async (req, res) => {
     const { id, object, created_at, name, description, model, instructions, tools, tool_resources, metadata, temperature, top_p, response_format } = req.body;
@@ -74,6 +100,9 @@ router.get('/assistantsdb', async (req, res) => {
     }
 });
 
+
+
+
 // Endpoint to retrieve a specific assistant by ID
 router.get('/assistants/:id', async (req, res) => {
     const { id } = req.params;
@@ -96,11 +125,22 @@ router.put('/assistants/:id', async (req, res) => {
     const updateData = req.body;
 
     try {
+        // Update the assistant in the database
         const updatedAssistant = await Assistant.findOneAndUpdate({ id }, updateData, { new: true });
         if (!updatedAssistant) {
             return res.status(404).json({ success: false, error: 'Assistant not found' });
         }
-        res.json({ success: true, message: 'Assistant updated successfully', assistant: updatedAssistant });
+
+        // Update the assistant in OpenAI
+        const openaiUpdateData = {
+            instructions: updateData.instructions,
+            name: updateData.name,
+            tools: updateData.tools,
+            model: updateData.model
+        };
+        const myUpdatedAssistant = await openai.beta.assistants.update(id, openaiUpdateData);
+
+        res.json({ success: true, message: 'Assistant updated successfully', assistant: updatedAssistant, openaiAssistant: myUpdatedAssistant });
     } catch (error) {
         console.error('Error updating assistant:', error);
         res.status(500).json({ success: false, error: 'Failed to update assistant' });
@@ -320,8 +360,13 @@ router.post('/createAssistantAvatar', async (req, res) => {
 
         // Create a new image using OpenAI
         const result = await createImageService(prompt);
-        const imageUrl = result.ReturnimageUrl;
-        console.debug('Created new image:', { imageUrl });
+        const fullImageUrl = result.ReturnimageUrl;
+        console.debug('Created new image:', { fullImageUrl });
+
+        // Extract the relative URL from the full URL and add the /images/ prefix
+        const relativeImageUrl = '/images' + fullImageUrl.replace(/^.*\/\/[^\/]+/, '');
+        
+        console.debug('Extracted relative image URL:', { relativeImageUrl });
 
         // Delete the existing image document if it exists
         await AssistantImage.findOneAndDelete({ assistant_id: assistantId });
@@ -329,12 +374,12 @@ router.post('/createAssistantAvatar', async (req, res) => {
         // Save the new assistant ID and image URL to the database
         const newAssistantImage = new AssistantImage({
             assistant_id: assistantId,
-            image_url: imageUrl
+            image_url: relativeImageUrl
         });
 
         await newAssistantImage.save();
-        console.debug('Saved new assistant image to database:', { assistantId, imageUrl });
-        res.json({ success: true, imageUrl });
+        console.debug('Saved new assistant image to database:', { assistantId, relativeImageUrl });
+        res.json({ success: true, imageUrl: relativeImageUrl });
     } catch (error) {
         console.error('Error creating image:', error.message);
         res.status(500).json({ error: 'Failed to create image' });
@@ -372,6 +417,50 @@ router.get('/assistant-image/:id', async (req, res) => {
     } catch (error) {
         console.error('Error retrieving image:', error);
         res.status(500).json({ success: false, error: 'Failed to retrieve image' });
+    }
+});
+
+
+// Endpoint to get the list of assistants from OpenAI and add the ones not present in the database to MongoDB
+router.get('/sync-assistants', async (req, res) => {
+    try {
+        // Fetch the list of assistants from OpenAI
+        const response = await openai.beta.assistants.list();
+        const openaiAssistants = response.data; // Ensure the correct structure
+
+        // Fetch the list of assistant IDs from the database
+        const dbAssistants = await Assistant.find({}, 'id');
+        const dbAssistantIds = dbAssistants.map(assistant => assistant.id);
+
+        // Filter the OpenAI assistants to find the ones not present in the database
+        const newAssistants = openaiAssistants.filter(assistant => !dbAssistantIds.includes(assistant.id));
+
+        // Add the new assistants to the database
+        for (const assistant of newAssistants) {
+            const newAssistant = new Assistant({
+                _id: new mongoose.Types.ObjectId(),
+                id: assistant.id,
+                object: assistant.object,
+                created_at: assistant.created_at,
+                name: assistant.name,
+                description: assistant.description,
+                model: assistant.model,
+                instructions: assistant.instructions,
+                tools: assistant.tools,
+                tool_resources: assistant.tool_resources,
+                metadata: assistant.metadata,
+                temperature: assistant.temperature,
+                top_p: assistant.top_p,
+                response_format: assistant.response_format,
+            });
+
+            await newAssistant.save();
+        }
+
+        res.json({ success: true, message: 'Assistants synchronized successfully', newAssistants });
+    } catch (error) {
+        console.error('Error synchronizing assistants:', error.message);
+        res.status(500).json({ success: false, error: 'Failed to synchronize assistants', details: error.message });
     }
 });
 

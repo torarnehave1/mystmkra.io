@@ -84,9 +84,28 @@
         .hidden{
             display: none;
         }
+        .assistant-image {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            display: block;
+        }
+        .insert-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: #007bff;
+            z-index: 1000; /* Ensure it is on top of other elements */
+        }
+        .material-symbols-outlined{
+            cursor: pointer;
+        }
+
     </style>
     <script src="js/debounceService.js"></script>
-    <script src="js/searchService.js"></script>
+    <script type="module" src="js/saveService.js"></script>
+    <script type="module" src="js/fileService.js"></script>
 </head>
 <body>
     <div class="background-image"></div>
@@ -95,6 +114,11 @@
         
     </div>
     
+    <!-- Information element for file save success -->
+    <div id="info-alert" class="alert alert-success" role="alert" style="display: none;">
+        File saved successfully!
+    </div>
+
     <div class="main-container">
         <!-- Container for top menus -->
         <div class="top-menu">
@@ -110,7 +134,7 @@
                             <a class="nav-link active" href="/dashboard.html">Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/knowledgeriver.html">KnowledgeRiver></a>
+                            <a class="nav-link" href="/knowledgeriver.html">KnowledgeRiver</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/systemendpoints.html">Configuration</a>
@@ -123,7 +147,10 @@
         <nav id="sidebar">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Save</a>
+                    <a class="nav-link" href="#" id="newFileButton">New File</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="saveButton">Save</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Files</a>
@@ -133,6 +160,8 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Help</a>
+                </li>
+                
                 <!--
                                 <li class="nav-item">
                                     <textarea class="nav-box" id="customContextInput" rows="5"
@@ -171,14 +200,26 @@
                     
 
                     <div class="markdown-editor">
-                        
-                        <div id="assistantDiv" class="hidden">
-                            <img id="assistantImage" src="../images/image_1736512873154.png" alt="Assistant" class="assistant-image">
-                            <textarea id="assistantTextarea" class="form-control" placeholder="Write your prompt for assistant@mystmkra.io here..." rows="3"></textarea>
+                        <a id="returnFileURL" href="#" target="_blank" rel="noopener">Your file URL will appear here...</a>
+                    
+                        <div class="document-title">
+                            <h2 id="documentTitle">Document Title</h2>
                         </div>
+                        
+                       
                         <textarea id="markdownTextarea" class="form-control textarea-full" placeholder="Write your markdown here..." rows="15"></textarea>
+                        <div class="assistant-actions">
+                            <span class="material-symbols-outlined" id="insertIcon">insert_text</span>
+                            <span class="material-symbols-outlined" id="yetAnotherIcon">save</span>
+                            <span class="material-symbols-outlined">question_mark</span>
+                        </div>
+                        <div id="assistantDiv" class="hidden assistant-grid">
+                            <img id="assistantImage" src="" alt="Assistant" class="assistant-image">
+                            <textarea id="assistantTextarea" class="form-control assistant-textarea" placeholder="Write your prompt for [assistant].io here..." rows="3"></textarea>
+                           
+                        </div>
                     </div>
-                    <div class="preview">
+               </div>     <div class="preview">
                         <h3>Preview</h3>
                         <div id="previewContent">Your preview will appear here...</div>
                     </div>
@@ -196,7 +237,7 @@
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <button class="btn btn-secondary mb-2" id="toggleSearchResultsButton">
+                                <button type="button" class="btn btn-secondary mb-2" id="toggleSearchResultsButton">
                                     <span class="material-symbols-outlined">menu</span>
                                 </button>
                     
@@ -212,105 +253,8 @@
                                 <div class="row">
                                 <div class="btn-group" role="group" aria-label="Basic example">
                                     
-                                    <button type="button" id="openContentButton" class="btn btn-secondary">Open</button>
                                     <button type="button" class="btn btn-secondary">Delete</button>
-                                    <button type="button" class="btn btn-secondary" id="sendMailButton">Send Mail</button>
-                                    <button type="button" class="btn btn-secondary" id="sendTelegramButton">Send to Telegram</button>
-                                    <button type="button" class="btn btn-secondary" id="sendWhatsAppButton">Send to WhatsApp</button>
-
-                                    <script>
-                                        document.getElementById('sendWhatsAppButton').addEventListener('click', () => {
-                                            const content = document.getElementById('selectedContent').innerText;
-                                            const phoneNumber = prompt('Enter the WhatsApp phone number (with country code):');
-                                            if (!phoneNumber) {
-                                                alert('Phone number is required');
-                                                return;
-                                            }
-
-                                            const url = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(content)}`;
-                                            window.open(url, '_blank');
-                                        });
-                                    </script>
-                                    <script>
-                                        document.getElementById('sendTelegramButton').addEventListener('click', async () => {
-                                            const content = document.getElementById('selectedContent').innerText;
-                                            const chatId = prompt('Enter the Telegram chat ID:');
-                                            if (!chatId) {
-                                                alert('Chat ID is required');
-                                                return;
-                                            }
-
-                                            try {
-                                                const response = await fetch('/send-telegram', {
-                                                    method: 'POST',
-                                                    headers: {
-                                                        'Content-Type': 'application/json'
-                                                    },
-                                                    body: JSON.stringify({ chatId, content })
-                                                });
-
-                                                if (response.ok) {
-                                                    alert('Message sent to Telegram successfully');
-                                                } else {
-                                                    alert('Failed to send message to Telegram');
-                                                }
-                                            } catch (error) {
-                                                console.error('Error sending message to Telegram:', error);
-                                                alert('Error sending message to Telegram');
-                                            }
-                                        });
-                                    </script>
-                                    <script>
-                                        document.getElementById('sendMailButton').addEventListener('click', async () => {
-                                            const content = document.getElementById('selectedContent').innerText;
-                                            const email = prompt('Enter the recipient email:');
-                                            if (!email) {
-                                                alert('Email is required');
-                                                return;
-                                            }
-
-                                            try {
-                                                const response = await fetch('/send-mail', {
-                                                    method: 'POST',
-                                                    headers: {
-                                                        'Content-Type': 'application/json'
-                                                    },
-                                                    body: JSON.stringify({ email, content })
-                                                });
-
-                                                if (response.ok) {
-                                                    alert('Email sent successfully');
-                                                } else {
-                                                    alert('Failed to send email');
-                                                }
-                                            } catch (error) {
-                                                console.error('Error sending email:', error);
-                                                alert('Error sending email');
-                                            }
-                                        });
-                                    </script>
-                                    <button type="button" class="btn btn-secondary" id="shareTwitter">Share on Twitter</button>
-                                    <button type="button" class="btn btn-secondary" id="shareFacebook">Share on Facebook</button>
-                                    <button type="button" class="btn btn-secondary" id="shareLinkedIn">Share on LinkedIn</button>
-
-                                    <script>
-                                        document.getElementById('shareTwitter').addEventListener('click', () => {
-                                            const url = encodeURIComponent(window.location.href);
-                                            const text = encodeURIComponent(document.title);
-                                            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
-                                        });
-
-                                        document.getElementById('shareFacebook').addEventListener('click', () => {
-                                            const url = encodeURIComponent(window.location.href);
-                                            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
-                                        });
-
-                                        document.getElementById('shareLinkedIn').addEventListener('click', () => {
-                                            const url = encodeURIComponent(window.location.href);
-                                            const title = encodeURIComponent(document.title);
-                                            window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}`, '_blank');
-                                        });
-                                    </script>
+                                  
 
                                 </div>
                             </div>
@@ -366,17 +310,124 @@ Your snippet content goes here..."></textarea>
     <script type="module" src="app_marked.js"></script>
     <script type="module" src="js/app_sidebar.js"></script>
     <script src="js/copyCode.js"></script>
-    <script src="js/debounceService.js"></script>
     <script src="js/searchService.js"></script>
 
-
     <script type="module">
-       
         import { marked } from 'https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js';
-       
+        import { saveMarkdownContent } from './js/saveService.js';
+        import { openContent, getFileUrl } from './js/fileService.js';
+
         let currentProjectId = null;
+        let currentDocumentId = getCookie('currentDocumentId'); // Retrieve currentDocumentId from cookie
+        let NewEndpoint = getCookie('CurrentEndPoint') || ''; // Retrieve CurrentEndPoint from cookie
+        let isPromptEntered = false; // Global constant to ensure NewEndpoint does not change
 
         const debouncedHandleInput = debounce(handleInput, 300);
+
+        
+        
+       
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof localStorage !== 'undefined' && localStorage) {
+                fetchUserId();
+                updateLoggedInStatus();
+                loadSnippets(); // Load snippets when the page loads
+                const currentAssistantId = getCookie('currentAssistantId');
+                if (currentAssistantId) {
+                    fetchAssistantDetails(currentAssistantId);
+                }
+
+                // Retrieve the file URL from the cookie and set it
+                const fileUrl = getCookie('fileUrl');
+                if (fileUrl) {
+                    const returnfileURL = document.getElementById('returnFileURL');
+                    returnfileURL.href = fileUrl;
+                    returnfileURL.text = fileUrl;
+                    returnfileURL.setAttribute('data-url', fileUrl);
+                } else {
+                    console.warn('fileUrl cookie is not set.');
+                }
+
+                // Load the current document content if currentDocumentId is set
+                if (currentDocumentId) {
+                    loadDocumentContent(currentDocumentId);
+                }
+            } else {
+                console.error('Local storage is not available in this context.');
+            }
+
+            document.querySelectorAll('.open-content-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    openContent(id, 'markdownTextarea', 'ReturnfileURL');
+                });
+            });
+        });
+
+        async function loadDocumentContent(id) {
+            try {
+                const response = await fetch(`/dropbox/file/${id}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch document content');
+                }
+                const data = await response.json();
+                const htmlContent = marked(data.content);
+                document.getElementById('selectedContent').innerHTML = htmlContent;
+                document.getElementById('markdownTextarea').value = data.content;
+                updatePreviewContent(); // Ensure preview is updated when content is loaded
+                
+                const userId = localStorage.getItem('userId'); // Retrieve the user ID from local storage
+                const fileUrl = await getFileUrl(id, userId); // Get the file URL using fileService
+                
+                console.log('File URL:', fileUrl);
+                
+                if (fileUrl) {
+                    document.getElementById('returnFileURL').href = fileUrl; // Set the file URL
+                    document.getElementById('returnFileURL').text = fileUrl; // Set the file URL
+                    document.cookie = `fileUrl=${fileUrl}; path=/; max-age=31536000`; // Set the file URL cookie
+                }
+
+                // Set the currentDocumentId cookie
+                document.cookie = `currentDocumentId=${id}; path=/; max-age=31536000`; // Expires in 1 year
+                console.log('Current Document ID:', id);
+                currentDocumentId = id; // Ensure currentDocumentId is set correctly
+
+                if (typeof data.title !== 'undefined') {
+                
+                document.getElementById('documentTitle').textContent = data.title;
+
+         } else {
+            
+            document.getElementById('documentTitle').textContent = id;
+
+        }
+            
+            } catch (error) {
+                console.error('Error loading document content:', error);
+               
+            }
+        }
+
+        const openContentButton = document.getElementById('openContentButton');
+        if (openContentButton) {
+            openContentButton.addEventListener('click', async () => {
+                const activeElement = document.activeElement;
+                if (activeElement && activeElement.parentElement === document.getElementById('searchResults')) {
+                    const id = activeElement.getAttribute('data-id');
+                    if (id) {
+                        await loadDocumentContent(id);
+                        document.querySelector('#myTab a[href="#content"]').click();
+                        updatePreviewContent();
+                    }
+                }
+            });
+        }
 
         document.getElementById('searchButton').addEventListener('click', async () => {
             const query = document.querySelector('.search-box').value.trim();
@@ -418,87 +469,6 @@ Your snippet content goes here..."></textarea>
                 previewColumn.classList.add('col-12');
             }
         });
-
-        document.getElementById('openContentButton').addEventListener('click', async () => {
-            const activeElement = document.activeElement;
-            if (activeElement && activeElement.parentElement === document.getElementById('searchResults')) {
-                const id = activeElement.getAttribute('data-id');
-                if (id) {
-                    await loadDocumentContent(id);
-                    document.querySelector('#myTab a[href="#content"]').click();
-                    updatePreviewContent();
-                }
-            }
-        });
-
-        function displaySearchResults(results) {
-            const searchResults = document.getElementById('searchResults');
-            searchResults.innerHTML = '';
-
-            if (results.length === 0) {
-                searchResults.innerHTML = '<p>No results found.</p>';
-                return;
-            }
-
-            results.forEach((result, index) => {
-                const resultItem = document.createElement('a');
-                resultItem.classList.add('list-group-item', 'list-group-item-action');
-                resultItem.setAttribute('data-id', result.id);
-                resultItem.setAttribute('tabindex', index + 1);
-                resultItem.textContent = result.abs;
-                resultItem.addEventListener('click', () => loadDocumentContent(result.id));
-                searchResults.appendChild(resultItem);
-            });
-
-            // Add keyboard navigation
-            searchResults.addEventListener('keydown', async (event) => {
-                const activeElement = document.activeElement;
-                if (activeElement.parentElement === searchResults) {
-                    if (event.key === 'ArrowDown') {
-                        event.preventDefault();
-                        const nextElement = activeElement.nextElementSibling;
-                        if (nextElement) {
-                            nextElement.focus();
-                            await loadDocumentContent(nextElement.getAttribute('data-id'));
-                        }
-                    } else if (event.key === 'ArrowUp') {
-                        event.preventDefault();
-                        const previousElement = activeElement.previousElementSibling;
-                        if (previousElement) {
-                            previousElement.focus();
-                            await loadDocumentContent(previousElement.getAttribute('data-id'));
-                        }
-                    }
-                }
-            });
-        }
-
-        async function loadDocumentContent(id) {
-            try {
-                const response = await fetch(`/dropbox/file/${id}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch document content');
-                }
-                const data = await response.json();
-                const htmlContent = marked(data.content);
-                document.getElementById('selectedContent').innerHTML = htmlContent;
-                document.getElementById('markdownTextarea').value = data.content;
-                updatePreviewContent(); // Ensure preview is updated when content is loaded
-            } catch (error) {
-                console.error('Error loading document content:', error);
-                alert('Error loading document content');
-            }
-        }
-
-        function updatePreviewContent() {
-            const markdownTextarea = document.getElementById('markdownTextarea');
-            const previewContent = document.getElementById('previewContent');
-            const markdownContent = markdownTextarea.value;
-            const htmlContent = marked(markdownContent);
-            previewContent.innerHTML = htmlContent;
-        }
-
-        document.getElementById('markdownTextarea').addEventListener('input', updatePreviewContent);
 
         async function fetchUserId() {
             if (typeof localStorage === 'undefined' || !localStorage) {
@@ -583,8 +553,19 @@ Your snippet content goes here..."></textarea>
                 fetchUserId();
                 updateLoggedInStatus();
                 loadSnippets(); // Load snippets when the page loads
+                const currentAssistantId = getCookie('currentAssistantId');
+                if (currentAssistantId) {
+                    fetchAssistantDetails(currentAssistantId);
+                }
             } else {
                 console.error('Local storage is not available in this context.');
+            }
+        });
+
+        document.querySelector('a[href="#content"]').addEventListener('click', () => {
+            const currentAssistantId = getCookie('currentAssistantId');
+            if (currentAssistantId) {
+                fetchAssistantDetails(currentAssistantId);
             }
         });
 
@@ -654,7 +635,7 @@ Your snippet content goes here..."></textarea>
 
             } catch (error) {
                 console.error('Error loading snippets:', error);
-                alert('An error occurred while loading snippets.');
+                
             }
         }
 
@@ -835,7 +816,7 @@ Your snippet content goes here..."></textarea>
                 });
             } catch (error) {
                 console.error('Error loading projects:', error);
-                alert('An error occurred while loading projects');
+               
             }
         }
 
@@ -942,7 +923,7 @@ Your snippet content goes here..."></textarea>
             if (assistantsCache) return assistantsCache; // Return cached data if available
 
             try {
-                const response = await fetch('/assistantsdb/names-ids');
+                const response = await fetch('/adb/names-ids');
                 if (!response.ok) {
                     throw new Error('Failed to fetch assistants');
                 }
@@ -958,7 +939,7 @@ Your snippet content goes here..."></textarea>
 
 
 
-        const textarea = document.getElementById('markdownTextarea');
+const textarea = document.getElementById('assistantTextarea');
 const mentionPopup = document.getElementById('mentionPopup');
 
 let assistantsCache = null; // Cache assistants to avoid repeated fetches
@@ -973,102 +954,175 @@ mentionPopup.addEventListener('click', (event) => {
     if (event.target.classList.contains('mention-popup-item')) {
         const name = event.target.textContent; // Get the name of the clicked assistant
         const cursorPosition = textarea.selectionStart; // Current cursor position
+        const Typeof = event.target.dataset.Typeof; // Get the Typeof from the dataset
+        const id = event.target.dataset.id; // Get the ID from the dataset
+
         console.log('Selected name:', name);
+        console.log('Typeof:', Typeof);
 
         // Call the selectItem function
-        selectItem(name, cursorPosition);
+        selectItem(name, cursorPosition, Typeof,id);
     }
 });
 
+// handleinput function
+
 async function handleInput(event) {
+    console.log('handleInput called with event:', event);
+
     const cursorPosition = textarea.selectionStart;
     const textBeforeCursor = textarea.value.substring(0, cursorPosition);
+    const lastSpaceIndex = textBeforeCursor.lastIndexOf(' ');
+    const textAfterLastSpace = textBeforeCursor.substring(lastSpaceIndex + 1);
 
     console.log('Cursor Position:', cursorPosition);
     console.log('Text Before Cursor:', textBeforeCursor);
+    console.log('Last Space Index:', lastSpaceIndex);
+    console.log('Text After Last Space:', textAfterLastSpace);
+
+  // This code snippet extracts the last four characters from the string `textAfterLastSpace` and assigns it to the variable `textFromTextarea`.-->
+
+    const textFromTextarea = textAfterLastSpace
+
+    console.log('Text from Textarea:', textFromTextarea);
+
+    const storedEndpoint = getCookie('CurrentEndPoint')?.trim();
+
+    console.log('Stored Endpoint:', storedEndpoint);
+
+     
+
+    // I only want the input function to continue if the character is a @ then i want it to chet the 4 characters before the @ to see if it is a codeword
+    if (textFromTextarea === 'ass@') {
+        console.log('Codeword detected');
+        const assistants = await fetchAssistants();
+        showPopup(assistants, cursorPosition, 'Assistants');
+        return;
+    } else {
+        mentionPopup.style.display = 'none';
+    }
+
+    
 
     try {
-        // Fetch the endpoint dynamically based on the input text
-        const url = `/system/endpoint-url/${textBeforeCursor}`;
-        console.log('Fetching URL:', url);
-
+        const url = `/system/endpoint-url/${textFromTextarea}`;
+        console.log('Fetching:', url);
         const response = await fetch(url);
+
         if (!response.ok) {
             if (response.status === 404) {
-                console.error(
-                    'Endpoint URL not found for input:',
-                    textBeforeCursor
-                );
+                console.error('Endpoint URL not found for input:', textFromTextarea);
                 mentionPopup.style.display = 'none';
                 return;
             }
             throw new Error('Failed to fetch the URL of the endpoint');
         }
 
-        const data = await response.json(); // Parse JSON data
-        console.log('Fetched Data:', data); // Log the full response for debugging
+        const data = await response.json();
+        console.log('Response data:', data);
 
-        // Extract trigger and endpoint URL from the response
-        const { trigger, url: endpointUrl } = data;
+        const { trigger, Typeof, parameters, url: endpointUrl } = data;
+        
 
-        if (!trigger || !textBeforeCursor.endsWith(trigger)) {
-            console.log('No match for trigger:', trigger);
-            mentionPopup.style.display = 'none';
-            return;
-        }
+        if (!storedEndpoint || storedEndpoint === 'undefined' || storedEndpoint === 'null') {
+    console.log('No valid endpoint stored, proceeding with input handling.');
+    NewEndpoint = endpointUrl;
+            document.cookie = `CurrentEndPoint=${NewEndpoint}; path=/; max-age=31536000`;
+            console.log('Stored NewEndpoint in cookie:', NewEndpoint);
+            
+           // textarea.value = '';
+           // textarea.placeholder = 'Write something about the principles in SlowYou';
+    } else {
+    console.log('Stored Endpoint detected:', storedEndpoint);
+    return;
+    } 
 
-        console.log('Matched Trigger:', trigger);
 
-        // Fetch assistants using the endpoint URL
-        const assistantsResponse = await fetch(endpointUrl);
-        if (!assistantsResponse.ok) {
-            throw new Error('Failed to fetch assistants from the second endpoint');
-        }
+       
 
-        const assistants = await assistantsResponse.json();
-        console.log('Assistants:', assistants);
-
-        // Show popup with the matched assistants
-        showPopup(assistants, cursorPosition);
     } catch (error) {
-        console.error('Error in handleInput:', error);
+        console.error('Error fetching endpoint URL:', error);
         mentionPopup.style.display = 'none';
     }
+
+  
+
+
+
 }
 
-function showPopup(items, cursorPosition) {
+
+
+function showPopup(items, cursorPosition, Typeof) {
+    console.log('showPopup called with items:', items, 'cursorPosition:', cursorPosition, 'Typeof:', Typeof);
+
+    if (!Array.isArray(items)) {
+        console.error('Expected items to be an array, but got:', items);
+        return;
+    }
+
     mentionPopup.innerHTML = ''; // Clear previous items
     items.forEach((item) => {
         const div = document.createElement('div');
         div.className = 'mention-popup-item';
         div.textContent = item.name;
-        div.dataset.id = item.id;
+        div.dataset.id = item.id || ''; // Ensure id is not undefined
+        div.dataset.Typeof = Typeof; // Add Typeof to dataset
         mentionPopup.appendChild(div);
     });
 
     // Calculate position dynamically
     const { top, left } = getCaretCoordinates(textarea, cursorPosition);
+    console.log('Popup position calculated as top:', top, 'left:', left);
     mentionPopup.style.left = `${left}px`;
     mentionPopup.style.top = `${top}px`;
     mentionPopup.style.display = 'block';
+    console.log('Popup displayed with items:', mentionPopup.innerHTML);
 }
 
-function selectItem(name, cursorPosition) {
+function selectItem(name, cursorPosition, typeOf, id) {
     const textBeforeCursor = textarea.value.substring(0, cursorPosition);
     const textAfterCursor = textarea.value.substring(cursorPosition);
 
     console.log('Text Before Cursor:', textBeforeCursor);
 
     const newTextBeforeCursor = textBeforeCursor + name;
-    textarea.value = newTextBeforeCursor + textAfterCursor;
+   // textarea.placeholder = newTextBeforeCursor + textAfterCursor;
     textarea.selectionStart = textarea.selectionEnd = newTextBeforeCursor.length;
     textarea.focus();
     mentionPopup.style.display = 'none';
-    document.getElementById('assistantDiv').classList.remove('hidden'); // Make assistantDiv visible
-    document.getElementById(
-        'assistantTextarea'
-    ).value = `Write your prompt for @${name} here...`;
+
+    if (typeOf === 'Assistants') {
+        document.getElementById('assistantDiv').classList.remove('hidden'); // Make assistantDiv visible
+        document.getElementById('assistantTextarea').placeholder = `Write your prompt for @${name} here...`;
+        console.log('Selected Assistant ID:', document.querySelector(`.mention-popup-item[data-id="${id}"]`).dataset.id); // Log the selected assistant ID
+    
+        // Call the endpoint to get the assistant image
+        fetch(`/adb/assistant-image/${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch assistant image');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Assistant Image:', data.imageUrl);
+                document.getElementById('assistantImage').src = data.imageUrl;
+            })
+            .catch(error => {
+                console.error('Error fetching assistant image:', error);
+            });
+
+        // Set the assistant ID to a cookie
+        setCurrentAssistantId(id);
+    }
+    
+
 }
+
+
+
+
 
 function getCaretCoordinates(element, position) {
     const div = document.createElement('div');
@@ -1095,6 +1149,309 @@ function getCaretCoordinates(element, position) {
     };
 }
 
+        function updatePreviewContent() {
+            const markdownTextarea = document.getElementById('markdownTextarea');
+            const previewContent = document.getElementById('previewContent');
+            const markdownContent = markdownTextarea.value;
+            const htmlContent = marked(markdownContent);
+            previewContent.innerHTML = htmlContent;
+        }
+
+        function showSaveSuccess() {
+            const alertElement = document.getElementById('info-alert');
+            alertElement.style.display = 'block';
+            setTimeout(() => {
+                alertElement.style.display = 'none';
+            }, 3000); // Hide after 3 seconds
+        }
+
+        document.getElementById('saveButton').addEventListener('click', () => {
+            const markdownTextarea = document.getElementById('markdownTextarea');
+            if (markdownTextarea.value.trim() === '') {
+            alert('Cannot save an empty document.');
+            return;
+            }
+
+            // Ensure the correct value of currentDocumentId is sent to the function
+            if (!currentDocumentId) {
+            currentDocumentId = getCookie('currentDocumentId') || "";
+            }
+
+            saveMarkdownContent('markdownTextarea', 'saveButton', 'returnFileURL', currentDocumentId, 'documentTitle')
+            .then(() => {
+                showSaveSuccess();
+            });
+            const fileUrl = document.getElementById('returnFileURL').href;
+            if (fileUrl) {
+            document.cookie = `fileUrl=${fileUrl}; path=/; max-age=31536000`; // Expires in 1 year
+            }
+        });
+
+        function displaySearchResults(results) {
+            const searchResults = document.getElementById('searchResults');
+            searchResults.innerHTML = '';
+
+            if (results.length === 0) {
+                searchResults.innerHTML = '<p>No results found.</p>';
+                return;
+            }
+
+            results.forEach((result, index) => {
+                const resultItem = document.createElement('a');
+                resultItem.classList.add('list-group-item', 'list-group-item-action');
+                resultItem.setAttribute('data-id', result.id);
+                resultItem.setAttribute('tabindex', index + 1);
+                resultItem.textContent = result.abs;
+                resultItem.addEventListener('click', () => loadDocumentContent(result.id));
+                searchResults.appendChild(resultItem);
+            });
+
+            // Add keyboard navigation
+            searchResults.addEventListener('keydown', async (event) => {
+                const activeElement = document.activeElement;
+                if (activeElement.parentElement === searchResults) {
+                    if (event.key === 'ArrowDown') {
+                        event.preventDefault();
+                        const nextElement = activeElement.nextElementSibling;
+                        if (nextElement) {
+                            nextElement.focus();
+                            await loadDocumentContent(nextElement.getAttribute('data-id'));
+                        }
+                    } else if (event.key === 'ArrowUp') {
+                        event.preventDefault();
+                        const previousElement = activeElement.previousElementSibling;
+                        if (previousElement) {
+                            previousElement.focus();
+                            await loadDocumentContent(previousElement.getAttribute('data-id'));
+                        }
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const titleElement = document.getElementById('documentTitle');
+
+            titleElement.addEventListener('click', () => {
+                const currentTitle = titleElement.textContent;
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = currentTitle;
+                input.id = 'title-input';
+
+                titleElement.replaceWith(input);
+                input.focus();
+
+                input.addEventListener('blur', () => {
+                    const newTitle = input.value.trim();
+                    if (newTitle) {
+                        titleElement.textContent = newTitle;
+                        input.replaceWith(titleElement);
+                        // Optionally, save the new title to the server or local storage here
+                    } else {
+                        alert('Title cannot be empty.');
+                        input.focus();
+                    }
+                });
+
+                input.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        input.blur();
+                    }
+                });
+            });
+        });
+
+        async function fetchWithTimeout(resource, options = {}) {
+            const { timeout = 20000 } = options; // Increase default timeout to 20 seconds
+
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeout);
+            const response = await fetch(resource, {
+                ...options,
+                signal: controller.signal
+            });
+            clearTimeout(id);
+            return response;
+        }
+
+
+        // assText
+
+       
+document.getElementById('assistantTextarea').addEventListener('keydown', async (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        const prompt = event.target.value.trim();
+        if (!prompt) {
+            alert('Please enter a prompt');
+            return;
+        }
+
+        try {
+            let assistantId = getCookie('currentAssistantId');
+            const storedEndpoint = getCookie('CurrentEndPoint');
+
+            if (storedEndpoint) {
+                assistantId = ""; // Reset assistantId to ensure it does not use this endpoint
+                console.log('Using stored endpoint:', storedEndpoint);
+                const response = await fetch(storedEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: prompt })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    event.target.value = data.compiledData;
+                    isPromptEntered = true;
+                    document.cookie = `CurrentEndPoint=; path=/; max-age=0`;
+                    console.log('Cleared CurrentEndPoint cookie');
+                } else {
+                    console.error('Failed to send prompt:', response.status);
+                }
+            } else if (assistantId) {
+                console.log('Using assistant ID:', assistantId);
+                const response = await fetch(`/assistants/askwithid?assistantId=${assistantId}&question=${encodeURIComponent(prompt)}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    event.target.value = data.response;
+                    isPromptEntered = true;
+                } else {
+                    console.error('Failed to send prompt:', response.status);
+                }
+            } else {
+                alert('No endpoint or assistant selected. Please enter a valid command.');
+            }
+        } catch (error) {
+            console.error('Error sending prompt:', error);
+        }
+    }
+});
+        document.getElementById('newFileButton').addEventListener('click', () => {
+            // Reset current document settings and URL
+            currentDocumentId = null;
+            document.cookie = 'currentDocumentId=; path=/; max-age=0'; // Clear the currentDocumentId cookie
+            document.cookie = 'fileUrl=; path=/; max-age=0'; // Clear the fileUrl cookie
+
+            // Clear the markdown textarea and preview content
+            document.getElementById('markdownTextarea').value = '';
+            document.getElementById('previewContent').innerHTML = 'Your preview will appear here...';
+            document.getElementById('returnFileURL').href = '#';
+            document.getElementById('returnFileURL').text = 'Your file URL will appear here...';
+            document.getElementById('documentTitle').textContent = 'Document Title';
+
+            console.log('New file created and settings reset');
+        });
+
+//insCode
+
+        document.getElementById('insertIcon').addEventListener('click', () => {
+            const assistantTextarea = document.getElementById('assistantTextarea');
+            const markdownTextarea = document.getElementById('markdownTextarea');
+            const cursorPosition = markdownTextarea.selectionStart;
+            const textBeforeCursor = markdownTextarea.value.substring(0, cursorPosition);
+            const textAfterCursor = markdownTextarea.value.substring(cursorPosition);
+            const assistantContent = assistantTextarea.value;
+
+            markdownTextarea.value = textBeforeCursor + assistantContent + textAfterCursor;
+            markdownTextarea.selectionStart = markdownTextarea.selectionEnd = cursorPosition + assistantContent.length;
+            markdownTextarea.focus();
+            updatePreviewContent();
+
+
+        });
+
     </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof localStorage !== 'undefined' && localStorage) {
+            fetchUserId();
+            updateLoggedInStatus();
+            loadSnippets(); // Load snippets when the page loads
+            const currentAssistantId = getCookie('currentAssistantId');
+            if (currentAssistantId) {
+                fetchAssistantDetails(currentAssistantId);
+            }
+        } else {
+            console.error('Local storage is not available in this context.');
+        }
+    });
+
+    document.querySelector('a[href="#content"]').addEventListener('click', () => {
+        const currentAssistantId = getCookie('currentAssistantId');
+        if (currentAssistantId) {
+            fetchAssistantDetails(currentAssistantId);
+        }
+    });
+
+    async function fetchAssistantDetails(assistantId) {
+        try {
+            const response = await fetch(`/adb/assistants/${assistantId}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch assistant details');
+            }
+            const data = await response.json();
+            if (data.success) {
+                document.getElementById('assistantDiv').classList.remove('hidden');
+                document.getElementById('assistantTextarea').placeholder = `Write your prompt for @${data.assistant.name} here...`;
+                
+                // Fetch the assistant image
+                const imageResponse = await fetch(`/adb/assistant-image/${assistantId}`);
+                if (!imageResponse.ok) { 
+                    throw new Error('Failed to fetch assistant image');
+                }
+                const imageData = await imageResponse.json();
+                document.getElementById('assistantImage').src = imageData.imageUrl;
+            }
+        } catch (error) {
+            console.error('Error fetching assistant details:', error);
+        }
+    }
+
+    // Store currentAssistantId in a cookie when it changes
+    function setCurrentAssistantId(id) {
+        document.cookie = `currentAssistantId=${id}; path=/; max-age=31536000`; // Expires in 1 year
+    }
+
+    // Get the value of a cookie by name
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    // Example usage: setCurrentAssistantId('newAssistantId');
+
+    // Add event listener for keydown event in assistantTextarea
+    document.getElementById('assistantTextarea').addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            console.log('Enter key pressed in assistantTextarea');
+        }
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Ensure that the tabs are selectable
+        const tabLinks = document.querySelectorAll('a[data-toggle="tab"]');
+        tabLinks.forEach(tabLink => {
+            tabLink.addEventListener('click', (event) => {
+                event.preventDefault();
+                const targetTab = tabLink.getAttribute('href');
+                const tabPanes = document.querySelectorAll('.tab-pane');
+                tabPanes.forEach(tabPane => {
+                    tabPane.classList.remove('show', 'active');
+                });
+                document.querySelector(targetTab).classList.add('show', 'active');
+                tabLinks.forEach(link => {
+                    link.classList.remove('active');
+                });
+                tabLink.classList.add('active');
+            });
+        });
+    });
+</script>
 </body>
 </html>

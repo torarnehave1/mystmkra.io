@@ -1,0 +1,40 @@
+{
+    "CodeWords": [
+      {
+        "CodeWord": "qtext@",
+        "Description": "Henter ut informasjon om et tema fra et bruker spørsmål",
+        "Endpoint": "/getQText"
+      },
+      {
+        "CodeWord": "bbb@",
+        "Description": "Lager en oppsummering av en tekst",
+        "Endpoint": "/summarizeText"
+      },
+      {
+        "CodeWord": "aaa@",
+        "Description": "Lager en morsom sang",
+        "Endpoint": "/createFunnySong"
+      },
+      {
+        "CodeWord": "ccc@",
+        "Description": "Lager et bilde av en papegøye",
+        "Endpoint": "/generateParrotImage"
+      },
+      {
+        "CodeWord": "hjelp@",
+        "Description": "Beskriver hva denne assistenten kan gjøre",
+        "Endpoint": "/help"
+      },
+      {
+        "CodeWord": "list@",
+        "Description": "En nummeret liste over gyldige kodeord",
+        "Endpoint": "/listCodeWords"
+      },
+      {
+        "CodeWord": "add@",
+        "Description": "Legger til et nytt kodeord og beskrivelse",
+        "Endpoint": "/addCodeWord"
+      }
+    ]
+  }
+  

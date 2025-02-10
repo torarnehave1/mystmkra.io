@@ -80,6 +80,11 @@ const MdFilesSchema = new mongoose.Schema({
   ref: 'Assistant',
   required: false,
   default: null
+  },
+
+  tags: {
+    type: [String],
+    default: []
   }
 
 });

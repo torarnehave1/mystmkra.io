@@ -41,6 +41,12 @@ function extractProcessIdFromStartParam(startParam) {
   return match ? match[1] : null;
 }
 
+// Helper function to extract process ID from callback data
+function extractProcessIdFromCallbackData(data) {
+  const match = data.match(/(?:view_process_|start_process_|add_step_|finish_process_)(.+)$/);
+  return match ? match[1] : null;
+}
+
 // [SECTION 2: Bot Commands]
 
 // Step 1: Start Command and Language Selection
@@ -166,14 +172,14 @@ bot.on('callback_query', async (callbackQuery) => {
 
   // Handle viewing a finished process
   if (data.startsWith('view_process_')) {
-    const processId = extractProcessId(data);
+    const processId = extractProcessIdFromCallbackData(data);
     await handleViewProcess(bot, chatId, processId); // Use modular function
     return;
   }
 
   // Handle starting a process
   if (data.startsWith('start_process_')) {
-    const processId = extractProcessId(data);
+    const processId = extractProcessIdFromCallbackData(data);
     await handleNextStep(bot, chatId, processId); // Use modular function
     return;
   }
@@ -190,13 +196,13 @@ bot.on('callback_query', async (callbackQuery) => {
   }
 
   if (data.startsWith('add_step_')) {
-    const processId = extractProcessId(data);
+    const processId = extractProcessIdFromCallbackData(data);
     await handleAddStep(bot, chatId, processId);
     return;
   }
 
   if (data.startsWith('finish_process_')) {
-    const processId = data.replace('finish_process_', '');
+    const processId = extractProcessIdFromCallbackData(data);
     try {
       await handleFinishProcess(bot, chatId, processId);
     } catch (error) {
@@ -207,13 +213,13 @@ bot.on('callback_query', async (callbackQuery) => {
   }
 
   if (data.startsWith('view_')) {
-    const processId = extractProcessId(data);
+    const processId = extractProcessIdFromCallbackData(data);
     await handleViewProcess(bot, chatId, processId); // Use modular function
     return;
   }
 
   if (data.startsWith('start_process_')) {
-    const processId = extractProcessId(data);
+    const processId = extractProcessIdFromCallbackData(data);
     const userState = await UserState.findOne({ userId: chatId });
     const process = await Process.findById(processId);
     const currentStep = process.steps[userState.currentStepIndex];

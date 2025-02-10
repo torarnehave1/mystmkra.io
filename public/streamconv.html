@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant Chat Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .chat-container {
+            width: 100%;
+            max-width: 600px;
+            height: 80vh;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-header {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        .user-message {
+            background-color: #DCF8C6;
+            align-self: flex-end;
+        }
+        .assistant-message {
+            background-color: #F1F0F0;
+            align-self: flex-start;
+        }
+        .chat-input {
+            display: flex;
+            border-top: 1px solid #ddd;
+        }
+        .chat-input textarea {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 0 0 0 8px;
+            resize: none;
+            font-size: 16px;
+        }
+        .chat-input button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #4CAF50;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 0 0 8px 0;
+        }
+        .chat-input button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">AI Assistant Chat</div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <form class="chat-input" id="chatForm">
+            <textarea id="userInput" rows="2" placeholder="Type your message here..." required></textarea>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('chatForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const userInput = document.getElementById('userInput');
+            const chatMessages = document.getElementById('chatMessages');
+            const message = userInput.value.trim();
+
+            if (message === '') return;
+
+            // Display user's message
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'message user-message';
+            userMessageDiv.textContent = message;
+            chatMessages.appendChild(userMessageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            userInput.value = ''; // Clear input field
+
+            // Replace 'YourAssistantId' and 'YourUserId' with actual values
+            const assistantId = 'asst_D7bh6eH5ZdkpEbT1xiLyWJDm';
+            const userId = '6665c107e4a8ea992f1ad942';
+
+            const eventSource = new EventSource(`/assistants/askwithidstreamconv?question=${encodeURIComponent(message)}&assistantId=${assistantId}&userId=${userId}`);
+
+            let assistantMessageDiv = null;
+
+            eventSource.onmessage = function(event) {
+                if (!assistantMessageDiv) {
+                    // Create a new div for the assistant's message
+                    assistantMessageDiv = document.createElement('div');
+                    assistantMessageDiv.className = 'message assistant-message';
+                    chatMessages.appendChild(assistantMessageDiv);
+                }
+                // Append the new data to the assistant's message
+                assistantMessageDiv.textContent += event.data;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            };
+
+            eventSource.onerror = function() {
+                eventSource.close();
+                if (!assistantMessageDiv) {
+                    // If there was an error and no message was started, inform the user
+                    assistantMessageDiv = document.createElement('div');
+                    assistantMessageDiv.className = 'message assistant-message';
+                    assistantMessageDiv.textContent = 'An error occurred while receiving the response.';
+                    chatMessages.appendChild(assistantMessageDiv);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            };
+        });
+    </script>
+</body>
+</html>

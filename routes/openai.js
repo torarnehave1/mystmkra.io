@@ -97,55 +97,65 @@ let currentThreadId = null;  // In-memory store for the current thread ID
 
 const performSearch = async (query) => {
     try {
-        // Generate embedding for the query
-        const queryEmbedding = await generateEmbedding(query);
+        let documents;
+        if (query.startsWith('#')) {
+            // Search by tags
+            console.error(`Searching by tag: ${query}`);
+            const tag = query.substring(1).trim();
+            console.log('Tag:', tag);
+            documents = await Mdfiles.find({ tags: tag }).select('title URL');
+            
+        } else {
+            // Generate embedding for the query
+            const queryEmbedding = await generateEmbedding(query);
 
-        // Ensure the embedding is valid
-        if (!Array.isArray(queryEmbedding) || !queryEmbedding.every(item => typeof item === 'number')) {
-            throw new Error('Invalid query embedding format.');
-        }
+            // Ensure the embedding is valid
+            if (!Array.isArray(queryEmbedding) || !queryEmbedding.every(item => typeof item === 'number')) {
+                throw new Error('Invalid query embedding format.');
+            }
 
-        // Find documents with similar embeddings
-        const documents = await Mdfiles.aggregate([
-            {
-                $addFields: {
-                    similarity: {
-                        $let: {
-                            vars: {
-                                queryVector: queryEmbedding,
-                                docVector: '$embeddings',
-                            },
-                            in: {
-                                $reduce: {
-                                    input: { $range: [0, { $size: '$$queryVector' }] },
-                                    initialValue: 0,
-                                    in: {
-                                        $add: [
-                                            '$$value',
-                                            {
-                                                $multiply: [
-                                                    { $arrayElemAt: ['$$queryVector', '$$this'] },
-                                                    { $arrayElemAt: ['$$docVector', '$$this'] },
-                                                ],
-                                            },
-                                        ],
+            // Find documents with similar embeddings
+            documents = await Mdfiles.aggregate([
+                {
+                    $addFields: {
+                        similarity: {
+                            $let: {
+                                vars: {
+                                    queryVector: queryEmbedding,
+                                    docVector: '$embeddings',
+                                },
+                                in: {
+                                    $reduce: {
+                                        input: { $range: [0, { $size: '$$queryVector' }] },
+                                        initialValue: 0,
+                                        in: {
+                                            $add: [
+                                                '$$value',
+                                                {
+                                                    $multiply: [
+                                                        { $arrayElemAt: ['$$queryVector', '$$this'] },
+                                                        { $arrayElemAt: ['$$docVector', '$$this'] },
+                                                    ],
+                                                },
+                                            ],
+                                        },
                                     },
                                 },
                             },
                         },
                     },
                 },
-            },
-            { $sort: { similarity: -1 } },
-            { $limit: 10 }, // Limit to top 10 most similar documents
-            {
-                $project: {
-                    _id: 0, // Exclude the _id field
-                    title: 1, // Include the title field
-                    URL: 1, // Include the URL field
+                { $sort: { similarity: -1 } },
+                { $limit: 2 }, // Limit to top 10 most similar documents
+                {
+                    $project: {
+                        _id: 0, // Exclude the _id field
+                        title: 1, // Include the title field
+                        URL: 1, // Include the URL field
+                    },
                 },
-            },
-        ]);
+            ]);
+        }
 
         return documents.map(doc => ({
             title: doc.title || 'Untitled',
@@ -257,7 +267,7 @@ function splitContentIntoParts(content, maxLength) {
 }
 
 async function saveMarkdownContent(req, res) {
-    const { content, documentId } = req.body;
+    const { content, documentId, tags } = req.body; // Include tags in the request body
 
     if (!content.trim()) {
         return res.status(400).json({ error: 'Textarea is empty. Please enter some content.' });
@@ -283,7 +293,8 @@ async function saveMarkdownContent(req, res) {
                 User_id: userId, // Ensure User_id is set
                 part: index + 1,
                 totalParts: totalParts,
-                documentId: newDocumentId
+                documentId: newDocumentId,
+                tags: tags // Save tags to the database
             });
             return newDocument.save();
         }));
@@ -1515,9 +1526,9 @@ router.post('/create-image', async (req, res) => {
 });
 
 router.post('/mentor-analysis', async (req, res) => {
-    const { transcription } = req.body;
+    const { message } = req.body;
 
-    if (!transcription || typeof transcription !== 'string') {
+    if (!message || typeof message !== 'string') {
         return res.status(400).json({ error: 'Transcription is required and must be a non-empty string.' });
     }
 
@@ -1561,7 +1572,7 @@ Analyser hele transkripsjonen og identifiser de 10 mest betydningsfulle gullkorn
                 },
                 {
                     role: "user",
-                    content: `Analyser følgende transkripsjon: ${transcription}`
+                    content: `Analyser følgende transkripsjon: ${message}`
                 }
             ],
         });
@@ -1572,7 +1583,7 @@ Analyser hele transkripsjonen og identifiser de 10 mest betydningsfulle gullkorn
 
         return res.json({
             success: true,
-            analysis: `${analysisContent}\n\n${closingStatement}`
+            svar: `${analysisContent}\n\n${closingStatement}`
         });
     } catch (error) {
         console.error("Error analyzing conversation:", error.message || error.response?.data);
@@ -1712,99 +1723,100 @@ router.post('/ask-assistant', async (req, res) => {
 
 
 router.post('/say-hello', isAuthenticated, ensureValidToken, async (req, res) => {
-    const { content, userId, documentId } = req.body;  // Get the user's ID and document ID from the request body
-
+    const { content, userId, documentId, tags } = req.body; // Include tags in the request body
+  
     if (!content) {
-        return res.status(400).json({ error: 'Content is required' });
+      return res.status(400).json({ error: 'Content is required' });
     }
-
     if (!userId) {
-        return res.status(400).json({ error: 'User ID not found. Please log in again.' });
+      return res.status(400).json({ error: 'User ID not found. Please log in again.' });
     }
-
+  
+    console.log(`Received save request. Document ID: ${documentId ? documentId : 'None provided (new document)'}`);
+  
     try {
-        const enc = encoding_for_model("text-embedding-ada-002");
-        const tokens = enc.encode(content);
-        const tokenCount = tokens.length;
-
-        console.log(`Content length: ${content.length}`);
-        console.log(`Number of tokens: ${tokenCount}`);
-
-        // Generate embeddings
-        const embeddings = await generateEmbedding(content);
-
-        let fileDoc;
-
-        if (documentId) {  // Use documentId instead of id
-            console.log('Finding existing document by ID:', documentId);
-            // If a document ID is provided, find the document and update it
-            fileDoc = await Mdfiles.findById(documentId);
-            if (!fileDoc) {
-                console.log('Document not found');
-                return res.status(404).json({
-                    message: 'Document not found'
-                });
-            }
-            fileDoc.content = content;
-            fileDoc.embeddings = embeddings;
+      // Log content length and token count
+      const enc = encoding_for_model("text-embedding-ada-002");
+      const tokens = enc.encode(content);
+      console.log(`Content length: ${content.length}`);
+      console.log(`Number of tokens: ${tokens.length}`);
+  
+      // Generate embeddings for the content
+      const embeddings = await generateEmbedding(content);
+  
+      let fileDoc;
+  
+      if (documentId) {
+        console.log('Updating existing document with ID:', documentId);
+        // Find the existing document to update it
+        fileDoc = await Mdfiles.findById(documentId);
+        if (!fileDoc) {
+          console.log('Document not found. Creating a new document instead.');
         } else {
-            console.log('Creating new document');
-            // If no document ID is provided, create a new document
-            fileDoc = new Mdfiles({
-                _id: new mongoose.Types.ObjectId(),
-                content: content,
-                embeddings: embeddings,
-                User_id: userId,
-                title: 'Hello Document',
-            });
+          // Update the document with the new content, embeddings, and tags
+          fileDoc.content = content;
+          fileDoc.embeddings = embeddings;
+          fileDoc.tags = tags; // Update tags
         }
-
-        await fileDoc.save();
-
-        // Generate the full URL
-        const fullURL = `https://mystmkra.io/dropbox/blog/${userId}/${fileDoc._id}.md`;
-
-        // Update the document with the full URL
-        fileDoc.URL = fullURL;
-        await fileDoc.save();
-
-        console.log('Full URL saved to document:', fullURL);
-
-        // Define the file path in the user's folder
-        const foldername = userId; // Use the user's ID as the folder name
-        const filename = `${fileDoc._id}.md`;
-        const filePath = `/mystmkra/${foldername}/${filename}`;
-
-        console.log('FilePath is:', filePath);  // This should output the file path
-
-        // Initialize Dropbox with the refreshed access token
-        const dbx = new Dropbox({
-            accessToken: accessToken, // Use the refreshed access token from middleware
-            fetch: fetch,
+      }
+  
+      // If no documentId was provided or if the document was not found, create a new document.
+      if (!fileDoc) {
+        console.log('Creating new document');
+        fileDoc = new Mdfiles({
+          _id: new mongoose.Types.ObjectId(),
+          content: content,
+          embeddings: embeddings,
+          User_id: userId,
+          title: 'Hello Document',
+          tags: tags // Save tags to the new document
         });
-
-        console.log('Uploading file to Dropbox');
-        // Upload the file to Dropbox
-        await dbx.filesUpload({
-            path: filePath,
-            contents: content,
-            mode: 'overwrite'
-        });
-
-        console.log('File uploaded successfully to Dropbox');
-
-        res.status(200).json({
-            message: 'File saved successfully',
-            id: fileDoc._id,
-            filePath: filePath,  // Ensure this variable is correctly passed
-            url: fullURL,        // Return the full URL in the response
-            embeddings: embeddings // Return the embeddings in the response
-        });
+      }
+  
+      // Save (or update) the document in the database
+      await fileDoc.save();
+      console.log('Document saved with ID:', fileDoc._id);
+  
+      // Generate and update the full URL in the document
+      const fullURL = `https://mystmkra.io/dropbox/blog/${userId}/${fileDoc._id}.md`;
+      fileDoc.URL = fullURL;
+      await fileDoc.save();
+      console.log('Document URL updated:', fullURL);
+  
+      // Define the Dropbox file path using the same document ID so that updates reuse the same file
+      const foldername = userId; // Use userId as the folder name
+      const filename = `${fileDoc._id}.md`;
+      const filePath = `/mystmkra/${foldername}/${filename}`;
+      console.log('Dropbox file path:', filePath);
+  
+      // Initialize Dropbox with the refreshed access token.
+      const dbx = new Dropbox({
+        accessToken: accessToken, // Use the globally refreshed access token
+        fetch: fetch,
+      });
+  
+      console.log('Uploading file to Dropbox with overwrite mode...');
+      // Upload (or update) the file in Dropbox using overwrite mode.
+      await dbx.filesUpload({
+        path: filePath,
+        contents: content,
+        mode: { ".tag": "overwrite" },
+      });
+      console.log('File uploaded successfully to Dropbox');
+  
+      res.status(200).json({
+        message: 'File saved successfully',
+        id: fileDoc._id,
+        filePath: filePath,
+        url: fullURL,
+        embeddings: embeddings,
+      });
     } catch (error) {
-        console.error('Error calculating tokens or saving document:', error);
-        res.status(500).json({ error: 'Failed to calculate tokens or save document' });
+      console.error('Error saving document:', error);
+      res.status(500).json({ error: 'Failed to calculate tokens or save document' });
     }
-});
+  });
+  
 
 // New endpoint to list files using the OpenAI API
 router.get('/list-files', async (req, res) => {
@@ -2033,6 +2045,85 @@ router.post('/generate-project-description', async (req, res) => {
     } catch (error) {
         console.error('Error generating project description:', error);
         res.status(500).json({ error: 'Failed to generate project description' });
+    }
+});
+
+async function searchAndCompileWithAI(query) {
+    if (!query || typeof query !== 'string') {
+        throw new Error('Invalid query. Please provide a non-empty string.');
+    }
+
+    try {
+        // Step 1: Perform the search
+        const documents = await performSearch(query);
+
+        if (!documents.length) {
+            return { documents: [], compiledData: 'No results found for the given query.' };
+        }
+
+        // Step 2: Prepare the context for the OpenAI prompt
+        const context = documents.map((doc, index) => {
+            return `Document ${index + 1}:\nTitle: ${doc.title || 'Untitled'}\nURL: ${doc.URL || 'No URL provided'}\n`;
+        }).join('\n');
+
+        const prompt = `
+You are a highly intelligent assistant. Based on the following search results and the query, generate a well-written, comprehensive blog post for the alivenessLAB website:
+Query: ${query}
+Search Results Context:
+${context}
+
+Please synthesize the blogpost that directly addresses the query while integrating relevant information from the provided context. Use markdown for formatting, and ensure the blogpost is professional, persuasive, and tailored to the client's needs.
+        `;
+
+        // Step 3: Generate the response using OpenAI
+        const completion = await openai.chat.completions.create({
+            model: "gpt-4o",
+            messages: [
+                { role: "system", content: "You are a professional business assistant working for AlivenessLAB AS that can create professional blogpost based on user queries and search results." },
+                { role: "user", content: prompt },
+            ],
+            temperature: 0.6, // Adjust temperature as needed
+            max_tokens: 2000, // Adjust token limit as needed
+        });
+
+        let compiledData = completion.choices[0].message.content;
+
+        // Add Bibliography section
+        const bibliography = documents.map((doc, index) => {
+            return `Document ${index + 1}:\nTitle: ${doc.title || 'Untitled'}\nURL: ${doc.URL || 'No URL provided'}\n`;
+        }).join('\n');
+
+        compiledData += `\n\n# Bibliography\n${bibliography}`;
+
+        return { documents, compiledData };
+    } catch (err) {
+        console.error('Error in searchAndCompileWithAI:', err);
+        throw err;
+    }
+}
+
+router.post('/search-and-compile', async (req, res) => {
+    const { message } = req.body;
+
+    if (!message) {
+        return res.status(400).json({ error: 'Message is required.' });
+    }
+
+    try {
+        const result = await searchAndCompileWithAI(message);
+
+        res.json({
+            success: true,
+            message: 'Search and compilation completed successfully.',
+            documents: result.documents,
+            svar: result.compiledData,
+        });
+    } catch (error) {
+        console.error('Error in /search-and-compile endpoint:', error.message);
+        res.status(500).json({
+            error: 'Failed to search or compile data.',
+            details: error.message,
+        });
     }
 });
 

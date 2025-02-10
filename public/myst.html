@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Markdown Editor</title>
+  <link rel="stylesheet" type="text/css" href="/css/styles.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+<body>
+  <!-- Header -->
+  <header id="header">
+    <div id="logo">
+      <img src="/images/logoalivenesslab.png" alt="Logo" id="logoImage" />
+      MystMkra.io - <span id="loggedinas"></span>
+    </div>
+    <div id="header-links">
+      <a id="LogoutButton" onclick="logout()" href="#">Logout</a>
+    </div>
+  </header>
+  <div id="info-alert" class="info-box hidden">
+    <p></p>
+  </div>
+  
+  
+  <!-- Container with Sidebar and Main Content -->
+  <div id="container">
+    <!-- Sidebar -->
+    <nav id="sidebar">
+      <ul>
+        <li><a id="newFileButton" href="#">New File</a></li>
+        <li><a id="saveButton" href="#">Save</a></li>
+        <li><a id="SystemSettings" href="#">Settings</a></li>
+        <li><a id="SystemHelpButton" href="#">Help</a></li>
+        <li><a id="searchMenuItem" href="#">Search</a></li>
+      </ul>
+      <div id="information" class="info-box-sidebar">
+        <p>This is an information box.</p>
+      </div>
+    </nav>
+    
+    <!-- Main Content Area -->
+    <main id="main-content">
+      <!-- Editor Content -->
+      <div id="editorContent">
+        <div class="markdown-editor">
+          <div class="document-title">
+            <h2 id="documentTitle">Document Title</h2>
+            <a id="returnFileURL" href="#" target="_blank" rel="noopener">Your file URL will appear here...</a>
+           
+             
+            
+          </div>
+          <textarea id="tags" placeholder="Enter tags here..."></textarea>
+          
+          <textarea id="markdownTextarea" placeholder="Write your markdown here..." rows="15"></textarea>
+          <div id="assistant-actions">
+            <span class="material-symbols-outlined hoverpointer" id="insertTextButton">
+              insert_text
+            </span>
+            <span class="material-symbols-outlined hoverpointer" id="SavePromtButton">
+              save
+            </span>
+            <span class="material-symbols-outlined hoverpointer" id="GetHelpButton">
+              help
+            </span>
+          </div>
+          <div id="assistantDiv">
+            <img id="assistantImage" src="https://cdn.midjourney.com/1e0f5d58-602d-4c06-9e5f-6cd6b07928db/0_0.png" alt="Assistant" />
+            <textarea id="assistantTextarea" placeholder="Write your prompt here..."></textarea>
+          </div>
+        </div>
+        <div id="preview">
+          <h3>Preview</h3>
+          <div id="previewContent">
+            Your preview will appear here...
+          </div>
+        </div>
+        
+      </div>
+      
+      <!-- Hidden Search Content Panel -->
+      <div id="searchContent" class="hidden">
+        <button id="backButton">Back to Editor</button>
+        <div>
+          <textarea rows="3" placeholder="Enter your search query..."></textarea>
+          <button id="searchButton" type="submit">Search</button>
+        </div>
+       
+        
+      <div class="search-columns">
+        <div class="search-column" id="searchResults">
+          <!-- Search results will be dynamically inserted here -->
+        </div>
+        <div class="search-column" id="searchPreview">
+          <h3>Preview</h3>
+          <div id="selectedContent">
+            <!-- Preview content will be dynamically inserted here -->
+          </div>
+        </div>
+      </div>
+      </div>
+    </main>
+  </div>
+  
+  <!-- Mention Popup (if needed) -->
+  <div id="mentionPopup"></div>
+  
+  <!-- External Menu Handling Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script type="module" src="/js/app_marked.js"></script>
+  <script src="/js/navigation.js"></script>
+  <script src="/js/userService.js"></script>
+  <script type="module" src="/js/searchEventHandler.js"></script>
+  <script type="module" src="/js/documentContentHandler.js"></script>
+  <script type="module" src="/js/saveToMarkdownHandler.js"></script>
+  <script type="module" src="/js/fileUrlHandler.js"></script>
+  <script type="module">
+    import { initializeSaveToMarkdownHandler } from '/js/saveToMarkdownHandler.js';
+   
+    initializeSaveToMarkdownHandler();
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeUser();
+      loadDocumentTitle();
+    });
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const titleElement = document.getElementById('documentTitle');
+
+        titleElement.addEventListener('click', () => {
+            const currentTitle = titleElement.textContent;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentTitle;
+            input.id = 'title-input';
+
+            titleElement.replaceWith(input);
+            input.focus();
+
+            input.addEventListener('blur', () => {
+                const newTitle = input.value.trim();
+                if (newTitle) {
+                    titleElement.textContent = newTitle;
+                    input.replaceWith(titleElement);
+                    // Optionally, save the new title to the server or local storage here
+                } else {
+                    alert('Title cannot be empty.');
+                    input.focus();
+                }
+            });
+
+            input.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    input.blur();
+                }
+            });
+        });
+    });
+   
+  </script>
+</body>
+</html>

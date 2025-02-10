@@ -93,12 +93,14 @@ marked.use({ renderer });
 // Initialize the Markdown editor
 document.addEventListener('DOMContentLoaded', function() {
     const textarea = document.getElementById('markdownTextarea');
-    const preview = document.getElementById('previewContent');
 
     function updatePreview() {
-        const markdownText = textarea.value;
-        const htmlContent = marked(markdownText);
-        preview.innerHTML = htmlContent;
+        const previewContentElement = document.getElementById('previewContent');
+        if (previewContentElement) {
+            previewContentElement.innerHTML = marked(textarea.value);
+        } else {
+            console.error('Error updating preview: Element with ID "previewContent" not found.');
+        }
 
         // Attach event listeners to all copy buttons after rendering
         document.querySelectorAll('.copy-button').forEach(button => {

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="dev.css">
+    <script src="js/debounceService.js"></script>
+    <script type="module" src="js/saveService.js"></script>
+    <script type="module" src="js/fileService.js"></script>
+</head>
+<body>
+    <div class="background-image"></div>
+    <div class="navbar-brand">MystMkra.io - 
+        <span id="loggedinas"></span>
+    </div>
+    
+    <div id="info-alert" class="alert alert-success" role="alert" style="display: none;">
+        File saved successfully!
+    </div>
+
+    <div class="top-menu">
+        <div id="navbar-placeholder"></div>
+    </div>
+
+    <div id="sidebar-placeholder"></div>
+
+    <div class="content-area">
+        <div id="main-content-placeholder">
+            <div class="main-container">
+                <div class="content-area">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active" id="content-tab" data-toggle="tab" href="#content" role="tab" aria-controls="content" aria-selected="true">Content</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="search-tab" data-toggle="tab" href="#search" role="tab" aria-controls="search" aria-selected="false">Search</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="snippets-tab" data-toggle="tab" href="#snippets" role="tab" aria-controls="snippets" aria-selected="false">Snippets</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="codewords-tab" data-toggle="tab" href="#codewords" role="tab" aria-controls="codewords" aria-selected="false">Codewords</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="flowguides-tab" data-toggle="tab" href="#flowguides" role="tab" aria-controls="flowguides" aria-selected="false">Flow Guides</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="projects-tab" data-toggle="tab" href="#projects" role="tab" aria-controls="projects" aria-selected="false">Projects</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="content" role="tabpanel" aria-labelledby="content-tab">
+                            <div class="markdown-editor">
+                                <a id="returnFileURL" href="#" target="_blank" rel="noopener">Your file URL will appear here...</a>
+                                <div class="document-title">
+                                    <h2 id="documentTitle">Document Title</h2>
+                                </div>
+                                <textarea id="markdownTextarea" class="form-control textarea-full" placeholder="Write your markdown here..." rows="15"></textarea>
+                                <div class="assistant-actions">
+                                    <span class="material-symbols-outlined" id="insertIcon">insert_text</span>
+                                    <span class="material-symbols-outlined" id="yetAnotherIcon">save</span>
+                                    <span class="material-symbols-outlined">question_mark</span>
+                                </div>
+                                <div id="assistantDiv" class="hidden assistant-grid">
+                                    <img id="assistantImage" src="" alt="Assistant" class="assistant-image">
+                                    <textarea id="assistantTextarea" class="form-control assistant-textarea" placeholder="Write your prompt for [assistant].io here..." rows="3"></textarea>
+                                </div>
+                            </div>
+                            <div class="preview">
+                                <h3>Preview</h3>
+                                <div id="previewContent">Your preview will appear here...</div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="search" role="tabpanel" aria-labelledby="search-tab">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="search-bar">
+                                            <textarea class="search-box" rows="3" placeholder="Search inside your mailbox and database for all relevant documents using natural language..."></textarea>
+                                            <button class="btn btn-outline-success my-2 my-sm-0" id="searchButton" type="submit">Search</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <button type="button" class="btn btn-secondary mb-2" id="toggleSearchResultsButton">
+                                            <span class="material-symbols-outlined">menu</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6" id="searchResultsColumn">
+                                        <div id="searchResultsWrapper" style="height: 100%; overflow-y: auto;">
+                                            <div id="searchResults" class="list-group" tabindex="0" style="height: 100%; overflow-y: auto;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" id="previewColumn">
+                                        <div class="row">
+                                            <div class="btn-group" role="group" aria-label="Basic example">
+                                                <button type="button" class="btn btn-secondary">Delete</button>
+                                            </div>
+                                        </div>
+                                        <div id="selectedContent" class="preview" style="height: 100%; overflow-y: auto;" placeholder="Selected document content will appear here..."></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="snippets" role="tabpanel" aria-labelledby="snippets-tab">
+                            <div class="container-fluid snippet-container">
+                                <div class="form-group">
+                                    <label for="snippetTextarea">Snippet Content:</label>
+                                    <textarea class="form-control" id="snippetTextarea" rows="5" placeholder="Write your snippet here..."></textarea>
+                                </div>
+                                <button class="btn btn-primary" id="saveSnippetButton">Save Snippet</button>
+                                <ul class="list-group" id="snippetList"></ul>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="codewords" role="tabpanel" aria-labelledby="codewords-tab">
+                            <!-- Content for Codewords tab -->
+                        </div>
+                        <div class="tab-pane fade" id="flowguides" role="tabpanel" aria-labelledby="flowguides-tab">
+                            <!-- Content for Flow Guides tab -->
+                        </div>
+                        <div class="tab-pane fade" id="projects" role="tabpanel" aria-labelledby="projects-tab">
+                            <div class="container-fluid project-container">
+                                <div class="form-group">
+                                    <label for="projectName">Project Name:</label>
+                                    <input type="text" class="form-control" id="projectName" placeholder="Enter project name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="projectDescription" class="project-description-label">Project Description:</label>
+                                    <textarea class="form-control" id="projectDescription" rows="5" placeholder="Enter project description"></textarea>
+                                    <span class="material-icons" id="generate-description-icon">auto_awesome</span>
+                                </div>
+                                <button class="btn btn-primary" id="saveProjectButton">Save Project</button>
+                                <ul class="list-group" id="projectList"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mention-popup" id="mentionPopup"></div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script type="module" src="app_marked.js"></script>
+    <script type="module" src="js/app_sidebar.js"></script>
+    <script src="js/copyCode.js"></script>
+    <script src="js/searchService.js"></script>
+</body>
+</html>

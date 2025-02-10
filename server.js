@@ -23,6 +23,7 @@ import assmongdb from './routes/assistantsmongodb.js';
 import servicesRouter from './routes/services.js'; // Import the new services router
 import projectRouter from './routes/project.js'; // Import the project router
 import systemEndpointsRouter from './routes/systemEndpoints.js'; // Import the system endpoints router
+import testSearchAndCompileRouter from './routes/test.js'; // Import the test search and compile router
 
 // Load environment variables
 dotenv.config();
@@ -96,10 +97,11 @@ app.use('/green', telegramRouter2);
 app.use('/kruth', telegramRouter3);
 app.use('/mystmkra', telegramRouter4);
 app.use('/assistants', assistants);
-app.use('/assistantsdb', assmongdb);
+app.use('/adb', assmongdb);
 app.use('/services', servicesRouter); // Add the new services router
 app.use('/projects', projectRouter); // Add the project router
 app.use('/system', systemEndpointsRouter); // Add the system endpoints router
+app.use('/test', testSearchAndCompileRouter); // Add the test search and compile router
 
 // Support page
 app.get('/support', (req, res) => {

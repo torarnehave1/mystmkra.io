@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose';
 import bcrypt from 'bcryptjs';
+import { name } from 'ejs';
 
 const userSchema = new Schema({
   fullName: { type: String, required: true },
@@ -15,6 +16,7 @@ const userSchema = new Schema({
       message: props => `${props.value} is not a valid email address!`
     },
   },
+  name: { type: String, required: false },
   password: { type: String, required: true },
   emailVerificationToken: { type: String, required: true },
   emailVerificationTokenExpires: {

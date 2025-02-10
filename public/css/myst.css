@@ -1,0 +1,60 @@
+.preview img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    grid-column: span 2;
+}
+.preview.full-width {
+    grid-column: span 2;
+}
+.snippet-container {
+    text-align: left;
+    margin-left: 0;
+}
+.project-container {
+    text-align: left;
+    margin-left: 0;
+    position: relative;
+    padding: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+#generate-description-icon {
+    cursor: pointer;
+    position: absolute;
+    top: 150px;
+    right: 50px;
+    color: rgb(225, 209, 27);
+}
+.search-box {
+    border-radius: 10px;
+}
+.mention-dropdown, .mention-popup {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    z-index: 1000;
+    display: none;
+    max-height: 200px;
+    overflow-y: auto;
+}
+.mention-dropdown-item, .mention-popup-item {
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.mention-dropdown-item:hover, .mention-popup-item:hover {
+    background-color: #f0f0f0;
+}
+.hidden {
+    display: none;
+}
+
+.griditemimg img {
+    max-width: 600px; /* Maximum width for the image */
+    width: 100%;      /* Allow the image to scale down responsively */
+    height: auto;     /* Maintain aspect ratio */
+    display: block;   /* Prevent inline spacing issues */
+  }
+  
