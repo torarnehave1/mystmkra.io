@@ -47,6 +47,11 @@ function extractProcessIdFromCallbackData(data) {
   return match ? match[1] : null;
 }
 
+// Helper function to validate process ID
+function isValidObjectId(id) {
+  return /^[0-9a-fA-F]{24}$/.test(id);
+}
+
 // [SECTION 2: Bot Commands]
 
 // Step 1: Start Command and Language Selection
@@ -58,6 +63,11 @@ bot.onText(/\/start(?: (.+))?/, async (msg, match) => {
   if (startParam) {
     const processId = extractProcessIdFromStartParam(startParam);
     if (processId) {
+      if (!isValidObjectId(processId)) {
+        console.error(`[ERROR] Invalid process ID format: "${processId}"`);
+        await bot.sendMessage(chatId, 'Invalid process ID format. Please check the link and try again.');
+        return;
+      }
       try {
         const process = await Process.findById(processId);
         if (!process || !process.steps || process.steps.length === 0) {
@@ -184,6 +194,11 @@ bot.on('callback_query', async (callbackQuery) => {
     const processId = extractProcessIdFromCallbackData(data);
     console.log(`[DEBUG] View process callback triggered for process ${processId} by user ${chatId}`);
 
+    if (!isValidObjectId(processId)) {
+      console.error(`[ERROR] Invalid process ID format: "${processId}"`);
+      await bot.sendMessage(chatId, 'Invalid process ID format. Please check the link and try again.');
+      return;
+    }
 
     try {
       const process = await Process.findById(processId);
