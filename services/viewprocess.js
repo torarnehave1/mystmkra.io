@@ -65,7 +65,7 @@ export const handleNextStep = async (bot, chatId, processId) => {
     userState.isProcessingStep = true;
     await userState.save();
 
-    const process = await Process.findOne({ _id: processId, createdBy: chatId });
+    const process = await Process.findOne({ _id: processId });
 
     if (!process || !process.steps) {
       console.error(`[ERROR] Process or steps not found for processId: "${processId}"`);
