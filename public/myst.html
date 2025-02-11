@@ -22,7 +22,6 @@
     <p></p>
   </div>
   
-  
   <!-- Container with Sidebar and Main Content -->
   <div id="container">
     <!-- Sidebar -->
@@ -47,12 +46,8 @@
           <div class="document-title">
             <h2 id="documentTitle">Document Title</h2>
             <a id="returnFileURL" href="#" target="_blank" rel="noopener">Your file URL will appear here...</a>
-           
-             
-            
           </div>
           <textarea id="tags" placeholder="Enter tags here..."></textarea>
-          
           <textarea id="markdownTextarea" placeholder="Write your markdown here..." rows="15"></textarea>
           <div id="assistant-actions">
             <span class="material-symbols-outlined hoverpointer" id="insertTextButton">
@@ -76,7 +71,6 @@
             Your preview will appear here...
           </div>
         </div>
-        
       </div>
       
       <!-- Hidden Search Content Panel -->
@@ -87,7 +81,6 @@
           <button id="searchButton" type="submit">Search</button>
         </div>
        
-        
       <div class="search-columns">
         <div class="search-column" id="searchResults">
           <!-- Search results will be dynamically inserted here -->
@@ -116,14 +109,29 @@
   <script type="module" src="/js/saveToMarkdownHandler.js"></script>
   <script type="module" src="/js/fileUrlHandler.js"></script>
   <script type="module">
-    import { initializeSaveToMarkdownHandler } from '/js/saveToMarkdownHandler.js';
-   
+    import { initializeSaveToMarkdownHandler, setCookie, getCookie } from '/js/saveToMarkdownHandler.js';
+    import { loadDocumentContent } from '/js/documentContentHandler.js';
+    
     initializeSaveToMarkdownHandler();
     document.addEventListener('DOMContentLoaded', () => {
       initializeUser();
       loadDocumentTitle();
+      const currentDocumentId = getCookie('currentDocumentId');
+      if (currentDocumentId) {
+        loadDocumentContent(currentDocumentId);
+      }
     });
 
+    function loadDocumentTitle() {
+        const titleElement = document.getElementById('documentTitle');
+        const currentDocumentId = getCookie('currentDocumentId');
+        if (currentDocumentId) {
+            const documentTitle = localStorage.getItem('documentTitle');
+            if (documentTitle) {
+                titleElement.textContent = documentTitle;
+            }
+        }
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
         const titleElement = document.getElementById('documentTitle');
@@ -143,7 +151,6 @@
                 if (newTitle) {
                     titleElement.textContent = newTitle;
                     input.replaceWith(titleElement);
-                    // Optionally, save the new title to the server or local storage here
                 } else {
                     alert('Title cannot be empty.');
                     input.focus();
@@ -157,7 +164,24 @@
             });
         });
     });
-   
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const tagsElement = document.getElementById('tags');
+        const savedTags = getCookie('tags');
+        if (savedTags) {
+            tagsElement.value = JSON.parse(decodeURIComponent(savedTags)).join(' ');
+        }
+
+        const currentDocumentId = getCookie('currentDocumentId');
+        if (!currentDocumentId) {
+            alert('No document selected. Please create or open a document.');
+        }
+
+        document.getElementById('saveButton').addEventListener('click', () => {
+            const tags = tagsElement.value.split(' ').filter(tag => tag.startsWith('#'));
+            setCookie('tags', JSON.stringify(tags), 7);
+        });
+    });
   </script>
 </body>
 </html>

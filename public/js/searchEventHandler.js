@@ -6,8 +6,6 @@ function addSearchButtonEventListener() {
     if (searchButton) {
         searchButton.addEventListener('click', async () => {
             console.log('Search button clicked');
-            // Try to get the search query from an element with class "search-box".
-            // If not found, use the textarea inside the search panel.
             let queryElement = document.querySelector('.search-box');
             if (!queryElement) {
                 queryElement = document.querySelector('#searchContent textarea');
@@ -49,8 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
         searchResults.addEventListener('click', (event) => {
             const target = event.target;
             if (target.classList.contains('list-group-item')) {
-                const documentId = target.getAttribute('data-document-id');
+                const documentId = target.getAttribute('data-id');
                 setCurrentDocumentId(documentId); // Set currentDocumentId when a document is selected
+                console.log('Selected document ID:', documentId); // Log the currentDocumentId to the console
                 // ...existing code to handle document selection...
             }
         });

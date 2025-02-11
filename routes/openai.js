@@ -1724,98 +1724,74 @@ router.post('/ask-assistant', async (req, res) => {
 
 router.post('/say-hello', isAuthenticated, ensureValidToken, async (req, res) => {
     const { content, userId, documentId, tags } = req.body; // Include tags in the request body
-  
-    if (!content) {
-      return res.status(400).json({ error: 'Content is required' });
-    }
-    if (!userId) {
-      return res.status(400).json({ error: 'User ID not found. Please log in again.' });
-    }
-  
-    console.log(`Received save request. Document ID: ${documentId ? documentId : 'None provided (new document)'}`);
-  
-    try {
-      // Log content length and token count
-      const enc = encoding_for_model("text-embedding-ada-002");
-      const tokens = enc.encode(content);
-      console.log(`Content length: ${content.length}`);
-      console.log(`Number of tokens: ${tokens.length}`);
-  
-      // Generate embeddings for the content
-      const embeddings = await generateEmbedding(content);
-  
-      let fileDoc;
-  
-      if (documentId) {
+
+    // Generate embeddings for the content
+    const embeddings =  await generateEmbedding(content);
+
+    let fileDoc;
+
+    if (documentId) {
         console.log('Updating existing document with ID:', documentId);
         // Find the existing document to update it
         fileDoc = await Mdfiles.findById(documentId);
         if (!fileDoc) {
-          console.log('Document not found. Creating a new document instead.');
+            console.log('Document not found. Creating a new document instead.');
         } else {
-          // Update the document with the new content, embeddings, and tags
-          fileDoc.content = content;
-          fileDoc.embeddings = embeddings;
-          fileDoc.tags = tags; // Update tags
+            // Update the document with the new content, embeddings, and tags
+            fileDoc.content = content;
+            fileDoc.embeddings = embeddings;
+            fileDoc.tags = tags; // Update tags
         }
-      }
-  
-      // If no documentId was provided or if the document was not found, create a new document.
-      if (!fileDoc) {
+    }
+
+    // If no documentId was provided or if the document was not found, create a new document.
+    if (!fileDoc) {
         console.log('Creating new document');
         fileDoc = new Mdfiles({
-          _id: new mongoose.Types.ObjectId(),
-          content: content,
-          embeddings: embeddings,
-          User_id: userId,
-          title: 'Hello Document',
-          tags: tags // Save tags to the new document
+            _id: new mongoose.Types.ObjectId(),
+            content: content,
+            embeddings: embeddings,
+            User_id: userId,
+            title: 'Hello Document',
+            tags: tags // Save tags to the new document
         });
-      }
-  
-      // Save (or update) the document in the database
-      await fileDoc.save();
-      console.log('Document saved with ID:', fileDoc._id);
-  
-      // Generate and update the full URL in the document
-      const fullURL = `https://mystmkra.io/dropbox/blog/${userId}/${fileDoc._id}.md`;
-      fileDoc.URL = fullURL;
-      await fileDoc.save();
-      console.log('Document URL updated:', fullURL);
-  
-      // Define the Dropbox file path using the same document ID so that updates reuse the same file
-      const foldername = userId; // Use userId as the folder name
-      const filename = `${fileDoc._id}.md`;
-      const filePath = `/mystmkra/${foldername}/${filename}`;
-      console.log('Dropbox file path:', filePath);
-  
-      // Initialize Dropbox with the refreshed access token.
-      const dbx = new Dropbox({
+    }
+
+    // Save (or update) the document in the database
+    await fileDoc.save();
+
+    // Log the tags that are saved to the document
+    console.log('Tags saved to the document:', fileDoc.tags);
+
+    // Generate and update the full URL in the document
+    const fullURL = `https://mystmkra.io/dropbox/blog/${userId}/${fileDoc._id}.md`;
+    fileDoc.URL = fullURL;
+    await fileDoc.save();
+    // Define the Dropbox file path using the same document ID so that updates reuse the same file
+    const foldername = userId; // Use userId as the folder name
+    const filename = `${fileDoc._id}.md`;
+    const filePath = `/mystmkra/${foldername}/${filename}`;
+
+    // Initialize Dropbox with the refreshed access token.
+    const dbx = new Dropbox({
         accessToken: accessToken, // Use the globally refreshed access token
         fetch: fetch,
-      });
-  
-      console.log('Uploading file to Dropbox with overwrite mode...');
-      // Upload (or update) the file in Dropbox using overwrite mode.
-      await dbx.filesUpload({
+    });
+
+    // Upload (or update) the file in Dropbox using overwrite mode.
+    await dbx.filesUpload({
         path: filePath,
         contents: content,
         mode: { ".tag": "overwrite" },
-      });
-      console.log('File uploaded successfully to Dropbox');
-  
-      res.status(200).json({
+    });
+    res.status(200).json({
         message: 'File saved successfully',
         id: fileDoc._id,
         filePath: filePath,
         url: fullURL,
         embeddings: embeddings,
-      });
-    } catch (error) {
-      console.error('Error saving document:', error);
-      res.status(500).json({ error: 'Failed to calculate tokens or save document' });
-    }
-  });
+    });
+});
   
 
 // New endpoint to list files using the OpenAI API

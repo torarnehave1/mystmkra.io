@@ -59,6 +59,10 @@ bot.onText(/\/start(?: (.+))?/, async (msg, match) => {
     const processId = extractProcessIdFromStartParam(startParam);
     if (processId) {
       try {
+        const process = await Process.findById(processId);
+        if (!process || !process.steps || process.steps.length === 0) {
+          throw new Error(`Process or steps not found for processId: "${processId}"`);
+        }
         await handleViewProcess(bot, chatId, processId);
       } catch (error) {
         console.error(`[ERROR] Failed to handle deep link for process ${processId}: ${error.message}`);
@@ -173,7 +177,16 @@ bot.on('callback_query', async (callbackQuery) => {
   // Handle viewing a finished process
   if (data.startsWith('view_process_')) {
     const processId = extractProcessIdFromCallbackData(data);
-    await handleViewProcess(bot, chatId, processId); // Use modular function
+    try {
+      const process = await Process.findById(processId);
+      if (!process || !process.steps || process.steps.length === 0) {
+        throw new Error(`Process or steps not found for processId: "${processId}"`);
+      }
+      await handleViewProcess(bot, chatId, processId);
+    } catch (error) {
+      console.error(`[ERROR] Failed to handle view process for process ${processId}: ${error.message}`);
+      await bot.sendMessage(chatId, 'An error occurred while trying to view the process. Please try again later.');
+    }
     return;
   }
 
@@ -268,7 +281,7 @@ bot.onText(/\/view/, async (msg) => {
 
     // Generate and send deep link
     const botUsername = config.botUsername; // Assuming botUsername is in the config
-    const deepLink = `https://t.me/${botUsername}?view=view_${process._id}`;
+    const deepLink = `https://t.me/${botUsername}?start=view_process_${uniqueProcesses[0]._id}`;
     await bot.sendMessage(chatId, `You can also use this link to view your processes: ${deepLink}`);
   } catch (error) {
     console.error(`[ERROR] Failed to retrieve finished processes: ${error.message}`);

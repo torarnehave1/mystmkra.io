@@ -9,14 +9,23 @@ function setCookie(name, value, days) {
   document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=/';
 }
 
+export { getCookie, setCookie };
+
 export function initializeSaveToMarkdownHandler() {
     document.getElementById('saveButton').addEventListener('click', async () => {
         const content = document.getElementById('markdownTextarea').value;
+        const tagsElement = document.getElementById('tags');
+        const tags = tagsElement ? tagsElement.value.split(' ').filter(tag => tag.startsWith('#')) : [];
         const userId = localStorage.getItem('userId');
-        const currentDocumentId = getCookie('currentDocumentId'); // Get currentDocumentId from cookie
+        let currentDocumentId = getCookie('currentDocumentId'); // Get currentDocumentId from cookie
 
         if (!userId) {
             alert('User ID not found. Please log in again.');
+            return;
+        }
+
+        if (!currentDocumentId) {
+            alert('No document selected. Please create or open a document.');
             return;
         }
 
@@ -26,26 +35,35 @@ export function initializeSaveToMarkdownHandler() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ content, userId, documentId: currentDocumentId }) // Include documentId in the request body
+                body: JSON.stringify({ content, tags, userId, documentId: currentDocumentId }) // Include tags and documentId in the request body
             });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`Failed to save document: ${errorData.error}`);
+            }
             const data = await response.json();
-           // alert(`Message: ${data.message}, Token Count: ${data.tokenCount}`);
-            
             // Set the returnFileURL correctly
             const returnFileURL = document.getElementById('returnFileURL');
             returnFileURL.href = data.fileUrl;
             returnFileURL.value = data.fileUrl;
             returnFileURL.setAttribute('data-url', data.fileUrl);
             
-            // Set the currentDocumentId in the cookie
-            setCookie('currentDocumentId', data.id, 7);
+            // Ensure the currentDocumentId is not overwritten or set to null/empty
+            if (data.id) {
+                currentDocumentId = data.id;
+                setCookie('currentDocumentId', currentDocumentId, 7);
+            }
+
+            // Store document content, title, and tags in local storage
+            localStorage.setItem('documentContent', content);
+            localStorage.setItem('documentTitle', document.getElementById('documentTitle').textContent);
+            setCookie('tags', JSON.stringify(tags), 7);
 
             // Show save success message
             showSaveSuccess();
-            
         } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to call the endpoint.');
+            console.error('Error:', error.message);
+            alert(`Failed to save document: ${error.message}`);
         }
     });
 }

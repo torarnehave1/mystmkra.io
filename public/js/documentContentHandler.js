@@ -1,6 +1,13 @@
 import { marked } from 'https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js';
 
 export async function loadDocumentContent(id) {
+    if (!id) {
+        id = getCookie('currentDocumentId');
+        if (!id) {
+            console.error('Document ID is undefined.');
+            return;
+        }
+    }
     try {
         const response = await fetch(`/dropbox/file/${id}`);
         if (!response.ok) {
