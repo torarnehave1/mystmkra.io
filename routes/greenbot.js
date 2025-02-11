@@ -176,13 +176,22 @@ bot.on('callback_query', async (callbackQuery) => {
 
   // Handle viewing a finished process
   if (data.startsWith('view_process_')) {
+
+    // Extract process ID from the callback data and console log it
+   
+    
+
     const processId = extractProcessIdFromCallbackData(data);
+    console.log(`[DEBUG] View process callback triggered for process ${processId} by user ${chatId}`);
+
+
     try {
       const process = await Process.findById(processId);
       if (!process || !process.steps || process.steps.length === 0) {
         throw new Error(`Process or steps not found for processId: "${processId}"`);
       }
       await handleViewProcess(bot, chatId, processId);
+
     } catch (error) {
       console.error(`[ERROR] Failed to handle view process for process ${processId}: ${error.message}`);
       await bot.sendMessage(chatId, 'An error occurred while trying to view the process. Please try again later.');
