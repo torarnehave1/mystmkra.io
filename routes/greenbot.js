@@ -158,7 +158,7 @@ bot.on('message', async (msg) => {
 bot.on('callback_query', async (callbackQuery) => {
   const { data, message } = callbackQuery;
   const chatId = message.chat.id;
-  console.log(`[DEBUG] Callback query received from user ${chatId} with data: ${data}`); // Log the callback query data
+  console.log(`[DEBUG XXXX] Callback query received from user ${chatId} with data: ${data}`); // Log the callback query data
 
   // Handle language selection
   if (data.startsWith('lang_')) {
