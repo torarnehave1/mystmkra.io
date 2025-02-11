@@ -271,8 +271,9 @@ bot.onText(/\/view/, async (msg) => {
 
     // Deduplicate processes if necessary
     const uniqueProcesses = [...new Map(finishedProcesses.map((p) => [p._id.toString(), p])).values()];
+    const botUsername = config.botUsername; // Assuming botUsername is in the config
     const processButtons = uniqueProcesses.map((process) => [
-      { text: process.title, callback_data: `view_process_${process._id}` },
+      { text: process.title, url: `https://t.me/${botUsername}?start=view_process_${process._id}` },
     ]);
 
     await bot.sendMessage(chatId, 'Select a finished process to view:', {
@@ -280,9 +281,9 @@ bot.onText(/\/view/, async (msg) => {
     });
 
     // Generate and send deep link
-    const botUsername = config.botUsername; // Assuming botUsername is in the config
-    const deepLink = `https://t.me/${botUsername}?start=view_process_${uniqueProcesses[0]._id}`;
-    await bot.sendMessage(chatId, `You can also use this link to view your processes: ${deepLink}`);
+    //const botUsername = config.botUsername; // Assuming botUsername is in the config
+   // const deepLink = `https://t.me/${botUsername}?start=view_process_${uniqueProcesses[0]._id}`;
+   // await bot.sendMessage(chatId, `You can also use this link to view your processes: ${deepLink}`);
   } catch (error) {
     console.error(`[ERROR] Failed to retrieve finished processes: ${error.message}`);
     await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
