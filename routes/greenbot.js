@@ -62,6 +62,7 @@ bot.onText(/\/start(?: (.+))?/, async (msg, match) => {
 
   if (startParam) {
     const processId = extractProcessIdFromStartParam(startParam);
+    console.log(`[DEBUG] Extracted processId: ${processId}`);
     if (processId) {
       if (!isValidObjectId(processId)) {
         console.error(`[ERROR] Invalid process ID format: "${processId}"`);
@@ -69,10 +70,17 @@ bot.onText(/\/start(?: (.+))?/, async (msg, match) => {
         return;
       }
       try {
+        console.log(`[DEBUG] Attempting to find process with ID: ${processId}`);
         const process = await Process.findById(processId);
-        if (!process || !process.steps || process.steps.length === 0) {
-          throw new Error(`Process or steps not found for processId: "${processId}"`);
+        if (!process) {
+          console.error(`[ERROR] Process not found for processId: "${processId}"`);
+          throw new Error(`Process not found for processId: "${processId}"`);
         }
+        if (!process.steps || process.steps.length === 0) {
+          console.error(`[ERROR] No steps found for processId: "${processId}"`);
+          throw new Error(`No steps found for processId: "${processId}"`);
+        }
+        console.log(`[DEBUG] Process found: ${JSON.stringify(process)}`);
         await handleViewProcess(bot, chatId, processId);
       } catch (error) {
         console.error(`[ERROR] Failed to handle deep link for process ${processId}: ${error.message}`);
@@ -201,10 +209,17 @@ bot.on('callback_query', async (callbackQuery) => {
     }
 
     try {
+      console.log(`[DEBUG] Attempting to find process with ID: ${processId}`);
       const process = await Process.findById(processId);
-      if (!process || !process.steps || process.steps.length === 0) {
-        throw new Error(`Process or steps not found for processId: "${processId}"`);
+      if (!process) {
+        console.error(`[ERROR] Process not found for processId: "${processId}"`);
+        throw new Error(`Process not found for processId: "${processId}"`);
       }
+      if (!process.steps || process.steps.length === 0) {
+        console.error(`[ERROR] No steps found for processId: "${processId}"`);
+        throw new Error(`No steps found for processId: "${processId}"`);
+      }
+      console.log(`[DEBUG] Process found: ${JSON.stringify(process)}`);
       await handleViewProcess(bot, chatId, processId);
 
     } catch (error) {
