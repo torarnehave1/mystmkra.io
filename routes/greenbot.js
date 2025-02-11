@@ -232,6 +232,9 @@ bot.on('callback_query', async (callbackQuery) => {
   // Handle starting a process
   if (data.startsWith('start_process_')) {
     const processId = extractProcessIdFromCallbackData(data);
+
+
+    console.log(`[DEBUG YYYYY] Start process callback triggered for process ${processId} by user ${chatId}`);
     await handleNextStep(bot, chatId, processId); // Use modular function
     return;
   }
