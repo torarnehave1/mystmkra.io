@@ -262,7 +262,8 @@ bot.onText(/\/view/, async (msg) => {
   console.log(`[DEBUG] /view triggered by user ${chatId}`);
 
   try {
-    const finishedProcesses = await Process.find({ isFinished: true, createdBy: chatId });
+   // const finishedProcesses = await Process.find({ isFinished: true, createdBy: chatId });
+    const finishedProcesses = await Process.find({ isFinished: true});
 
     if (!finishedProcesses.length) {
       await bot.sendMessage(chatId, 'You have no finished processes.');
