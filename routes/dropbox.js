@@ -24,6 +24,7 @@ import User from '../models/User.js';
 import config from '../config/config.js';
 import {isAuthenticated} from '../auth/auth.js';
 import OpenAI from 'openai';
+import fetch from 'node-fetch';
 
 console.log(`The application is running in ${config.NODE_ENV} mode.`);
 console.log(`REDIR = ${config.REDIRECT_URI}`)
