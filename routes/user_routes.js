@@ -3,7 +3,7 @@ import express from 'express';
 import User from '../models/User.js'; // Import the User model
 import mongoose from 'mongoose';
 import crypto from 'crypto';
-import emailTemplates from '../public/languages/nb.json' assert { type: 'json' };
+import emailTemplates from '../public/languages/nb.json' with { type: 'json' };
 import nodemailer from 'nodemailer';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';

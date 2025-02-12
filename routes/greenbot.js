@@ -1,7 +1,7 @@
 import express from 'express';
 import TelegramBot from 'node-telegram-bot-api';
 import config from '../config/config.js';
-import translationsData from '../translations/process_translations.json' assert { type: 'json' };
+import translationsData from '../translations/process_translations.json' with { type: 'json' };
 import { getTranslation, extractProcessId, extractStepTypeAndProcessId } from '../services/helpers.js';
 import { handleViewProcess, handleNextStep } from '../services/viewprocess.js'; // Use modular functions
 import Process from '../models/process.js';
