@@ -13,6 +13,7 @@ import { generateDeepLink } from '../services/deeplink.js'; // Import generateDe
 import analyzeConversation from '../services/conversationanalysis.js'; // Import analyzeConversation function
 import generateOpenAIResponseforGreenBot from '../services/greenBotOpenAiQuestions.js'; // Correct import
 import logMessage from '../services/logMessage.js'; // Import logMessage function
+import { handleEditProcess, handleEditPrompt, handleEditType, handleNextEditStep, handlePreviousEditStep } from '../services/editProcessService.js';
 
 // [SECTION 1: Initialization]
 const router = express.Router();
@@ -43,8 +44,14 @@ function extractProcessIdFromStartParam(startParam) {
 
 // Helper function to extract process ID from callback data
 function extractProcessIdFromCallbackData(data) {
-  const match = data.match(/(?:view_process_|start_process_|add_step_|finish_process_)(.+)$/);
+  const match = data.match(/(?:view_process_|start_process_|add_step_|finish_process_|edit_process_|edit_prompt_|edit_type_|next_step_|previous_step_)([0-9a-fA-F]{24})/);
   return match ? match[1] : null;
+}
+
+// Helper function to extract process ID and step index from callback data
+function extractProcessIdAndStepIndexFromCallbackData(data) {
+  const match = data.match(/(?:edit_prompt_|edit_type_)([0-9a-fA-F]{24})_(\d+)/);
+  return match ? { processId: match[1], stepIndex: parseInt(match[2]) } : null;
 }
 
 // Helper function to validate process ID
@@ -120,6 +127,32 @@ bot.onText(/\/start(?: (.+))?/, async (msg, match) => {
     });
   } catch (error) {
     console.error(`[ERROR] Failed to execute /start command: ${error.message}`);
+    await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
+  }
+});
+
+// New command to edit an existing process
+bot.onText(/\/edit/, async (msg) => {
+  const chatId = msg.chat.id;
+  console.log(`[DEBUG] /edit triggered by user ${chatId}`);
+
+  try {
+    const processes = await Process.find({ createdBy: chatId });
+
+    if (!processes.length) {
+      await bot.sendMessage(chatId, 'You have no processes to edit.');
+      return;
+    }
+
+    const processButtons = processes.map((process) => [
+      { text: process.title, callback_data: `edit_process_${process._id}` },
+    ]);
+
+    await bot.sendMessage(chatId, 'Select a process to edit:', {
+      reply_markup: { inline_keyboard: processButtons },
+    });
+  } catch (error) {
+    console.error(`[ERROR] Failed to retrieve processes: ${error.message}`);
     await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
   }
 });
@@ -279,6 +312,41 @@ bot.on('callback_query', async (callbackQuery) => {
     const process = await Process.findById(processId);
     const currentStep = process.steps[userState.currentStepIndex];
     presentStep(bot, chatId, processId, currentStep, userState);
+  }
+
+  if (data.startsWith('edit_process_')) {
+    const processId = extractProcessIdFromCallbackData(data);
+    console.log(`[DEBUG] edit_process callback triggered for process ${processId} by user ${chatId}`);
+    await handleEditProcess(bot, chatId, processId);
+    return;
+  }
+
+  if (data.startsWith('edit_prompt_')) {
+    const { processId, stepIndex } = extractProcessIdAndStepIndexFromCallbackData(data);
+    console.log(`[DEBUG] edit_prompt callback triggered for process ${processId}, step ${stepIndex} by user ${chatId}`);
+    await handleEditPrompt(bot, chatId, processId, stepIndex);
+    return;
+  }
+
+  if (data.startsWith('edit_type_')) {
+    const { processId, stepIndex } = extractProcessIdAndStepIndexFromCallbackData(data);
+    console.log(`[DEBUG] edit_type callback triggered for process ${processId}, step ${stepIndex} by user ${chatId}`);
+    await handleEditType(bot, chatId, processId, stepIndex);
+    return;
+  }
+
+  if (data.startsWith('next_step_')) {
+    const processId = extractProcessIdFromCallbackData(data);
+    console.log(`[DEBUG] next_step callback triggered for process ${processId} by user ${chatId}`);
+    await handleNextEditStep(bot, chatId, processId);
+    return;
+  }
+
+  if (data.startsWith('previous_step_')) {
+    const processId = extractProcessIdFromCallbackData(data);
+    console.log(`[DEBUG] previous_step callback triggered for process ${processId} by user ${chatId}`);
+    await handlePreviousEditStep(bot, chatId, processId);
+    return;
   }
   // Additional callback handlers (original logic intact)
 });

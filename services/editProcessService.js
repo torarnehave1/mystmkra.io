@@ -1,0 +1,156 @@
+import Process from '../models/process.js';
+import UserState from '../models/UserState.js';
+
+let currentStep = null; // Global variable to store the current step
+
+// Function to handle editing a process step by step
+export const handleEditProcess = async (bot, chatId, processId) => {
+    try {
+        console.log(`[DEBUG] Starting handleEditProcess for processId: "${processId}" and chatId: "${chatId}"`);
+        const process = await Process.findById(processId);
+        if (!process) {
+            console.error(`[ERROR] Process not found for processId: "${processId}"`);
+            await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
+            return;
+        }
+
+        let userState = await UserState.findOne({ userId: chatId });
+        if (!userState) {
+            console.log(`[DEBUG] Creating a new user state for user ${chatId}`);
+            userState = new UserState({ userId: chatId });
+            await userState.save();
+        } else {
+            console.log(`[DEBUG] Found existing user state for user ${chatId}`);
+        }
+
+        userState.processId = processId;
+        userState.currentStepIndex = 0;
+        userState.isEditingStep = true;
+        await userState.save();
+        console.log(`[DEBUG] User state updated and saved for user ${chatId}`);
+
+        currentStep = process.steps[0];
+        await presentEditStep(bot, chatId, processId, currentStep, userState);
+        console.log(`[DEBUG] Presented edit step for processId: "${processId}" and chatId: "${chatId}"`);
+    } catch (error) {
+        console.error(`[ERROR] Failed to retrieve process details: ${error.message}`);
+        await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
+    }
+};
+
+const presentEditStep = async (bot, chatId, processId, currentStep, userState) => {
+  const stepIndex = userState.currentStepIndex;
+  console.log(`[DEBUG] Presenting step ${stepIndex + 1}: ${currentStep.prompt}`);
+
+  await bot.sendMessage(chatId, `Editing Step ${stepIndex + 1}: ${currentStep.prompt}`, {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: 'Edit Prompt', callback_data: `edit_prompt_${processId}_${stepIndex}` }],
+        [{ text: 'Edit Type', callback_data: `edit_type_${processId}_${stepIndex}` }],
+        [
+          { text: 'Previous Step', callback_data: `previous_step_${processId}` },
+          { text: 'Next Step', callback_data: `next_step_${processId}` }
+        ],
+      ],
+    },
+  });
+};
+
+export const handleEditPrompt = async (bot, chatId, processId, stepIndex) => {
+    try {
+        console.log(`[DEBUG] Starting handleEditPrompt for processId: "${processId}", stepIndex: "${stepIndex}" and chatId: "${chatId}"`);
+        await bot.sendMessage(chatId, 'Please enter the new prompt:');
+        bot.once('message', async (msg) => {
+            if (msg.chat.id !== chatId) return;
+            const newPrompt = msg.text;
+
+            const process = await Process.findById(processId);
+            if (!process) {
+                console.error(`[ERROR] Process not found for processId: "${processId}"`);
+                await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
+                return;
+            }
+
+            process.steps[stepIndex].prompt = newPrompt;
+            await process.save();
+            console.log(`[DEBUG] Process prompt updated for processId: "${processId}", stepIndex: "${stepIndex}"`);
+
+            await bot.sendMessage(chatId, `Prompt updated to: ${newPrompt}`);
+            await handleEditProcess(bot, chatId, processId);
+        });
+    } catch (error) {
+        console.error(`[ERROR] Failed to update prompt: ${error.message}`);
+        await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
+    }
+};
+
+export const handleEditType = async (bot, chatId, processId, stepIndex) => {
+  await bot.sendMessage(chatId, 'Please enter the new type:');
+  bot.once('message', async (msg) => {
+    if (msg.chat.id !== chatId) return;
+    const newType = msg.text;
+
+    const process = await Process.findById(processId);
+    process.steps[stepIndex].type = newType;
+    await process.save();
+
+    await bot.sendMessage(chatId, `Type updated to: ${newType}`);
+    await handleEditProcess(bot, chatId, processId);
+  });
+};
+
+export const handleNextEditStep = async (bot, chatId, processId) => {
+  try {
+    const userState = await UserState.findOne({ userId: chatId });
+    const process = await Process.findById(processId);
+
+    if (!process || !process.steps) {
+      console.error(`[ERROR] Process or steps not found for processId: "${processId}"`);
+      await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
+      return;
+    }
+
+    userState.currentStepIndex += 1;
+    if (userState.currentStepIndex >= process.steps.length) {
+      await bot.sendMessage(chatId, 'You have edited all steps in this process.');
+      userState.isEditingStep = false;
+      await userState.save();
+      return;
+    }
+
+    currentStep = process.steps[userState.currentStepIndex];
+    await userState.save(); // Save the updated step index
+    await presentEditStep(bot, chatId, processId, currentStep, userState);
+  } catch (error) {
+    console.error(`[ERROR] Failed to handle next edit step: ${error.message}`);
+    await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
+  }
+};
+
+export const handlePreviousEditStep = async (bot, chatId, processId) => {
+  try {
+    const userState = await UserState.findOne({ userId: chatId });
+    const process = await Process.findById(processId);
+
+    if (!process || !process.steps) {
+      console.error(`[ERROR] Process or steps not found for processId: "${processId}"`);
+      await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
+      return;
+    }
+
+    userState.currentStepIndex -= 1;
+    if (userState.currentStepIndex < 0) {
+      await bot.sendMessage(chatId, 'You are already at the first step.');
+      userState.currentStepIndex = 0;
+      await userState.save();
+      return;
+    }
+
+    currentStep = process.steps[userState.currentStepIndex];
+    await userState.save(); // Save the updated step index
+    await presentEditStep(bot, chatId, processId, currentStep, userState);
+  } catch (error) {
+    console.error(`[ERROR] Failed to handle previous edit step: ${error.message}`);
+    await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
+  }
+};
