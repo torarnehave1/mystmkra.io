@@ -137,7 +137,7 @@ bot.onText(/\/edit/, async (msg) => {
   console.log(`[DEBUG] /edit triggered by user ${chatId}`);
 
   try {
-    const processes = await Process.find({ createdBy: chatId });
+    const processes = await Process.find({ isFinished: true});
 
     if (!processes.length) {
       await bot.sendMessage(chatId, 'You have no processes to edit.');
