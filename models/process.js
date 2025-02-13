@@ -26,6 +26,7 @@ const stepSchema = new Schema({
 const processSchema = new Schema({
   title: { type: String, required: true }, // Title of the process
   description: { type: String }, // Optional description for the process
+  imageUrl: { type: String }, // URL for the process image
   steps: [stepSchema], // Array of steps in the process
   createdBy: { type: String }, // User or system that created the process
   createdAt: { type: Date, default: Date.now }, // Timestamp for process creation

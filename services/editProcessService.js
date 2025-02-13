@@ -45,15 +45,77 @@ const presentEditStep = async (bot, chatId, processId, currentStep, userState) =
   await bot.sendMessage(chatId, `Editing Step ${stepIndex + 1}: ${currentStep.prompt}`, {
     reply_markup: {
       inline_keyboard: [
+        [{ text: 'Edit Title', callback_data: `edit_title_${processId}` }],
+        [{ text: 'Edit Description', callback_data: `edit_description_${processId}` }],
         [{ text: 'Edit Prompt', callback_data: `edit_prompt_${processId}_${stepIndex}` }],
         [{ text: 'Edit Type', callback_data: `edit_type_${processId}_${stepIndex}` }],
         [
           { text: 'Previous Step', callback_data: `previous_step_${processId}` },
           { text: 'Next Step', callback_data: `next_step_${processId}` }
         ],
+        [
+          { text: 'Add Step Before', callback_data: `add_step_before_${processId}_${stepIndex}` },
+          { text: 'Add Step After', callback_data: `add_step_after_${processId}_${stepIndex}` }
+        ],
       ],
     },
   });
+};
+
+export const handleEditTitle = async (bot, chatId, processId) => {
+  try {
+    console.log(`[DEBUG] Starting handleEditTitle for processId: "${processId}" and chatId: "${chatId}"`);
+    await bot.sendMessage(chatId, 'Please enter the new title:');
+    bot.once('message', async (msg) => {
+      if (msg.chat.id !== chatId) return;
+      const newTitle = msg.text;
+
+      const process = await Process.findById(processId);
+      if (!process) {
+        console.error(`[ERROR] Process not found for processId: "${processId}"`);
+        await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
+        return;
+      }
+
+      process.title = newTitle;
+      await process.save();
+      console.log(`[DEBUG] Process title updated for processId: "${processId}"`);
+
+      await bot.sendMessage(chatId, `Title updated to: ${newTitle}`);
+      await handleEditProcess(bot, chatId, processId);
+    });
+  } catch (error) {
+    console.error(`[ERROR] Failed to update title: ${error.message}`);
+    await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
+  }
+};
+
+export const handleEditDescription = async (bot, chatId, processId) => {
+  try {
+    console.log(`[DEBUG] Starting handleEditDescription for processId: "${processId}" and chatId: "${chatId}"`);
+    await bot.sendMessage(chatId, 'Please enter the new description:');
+    bot.once('message', async (msg) => {
+      if (msg.chat.id !== chatId) return;
+      const newDescription = msg.text;
+
+      const process = await Process.findById(processId);
+      if (!process) {
+        console.error(`[ERROR] Process not found for processId: "${processId}"`);
+        await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
+        return;
+      }
+
+      process.description = newDescription;
+      await process.save();
+      console.log(`[DEBUG] Process description updated for processId: "${processId}"`);
+
+      await bot.sendMessage(chatId, `Description updated to: ${newDescription}`);
+      await handleEditProcess(bot, chatId, processId);
+    });
+  } catch (error) {
+    console.error(`[ERROR] Failed to update description: ${error.message}`);
+    await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
+  }
 };
 
 export const handleEditPrompt = async (bot, chatId, processId, stepIndex) => {
@@ -151,6 +213,115 @@ export const handlePreviousEditStep = async (bot, chatId, processId) => {
     await presentEditStep(bot, chatId, processId, currentStep, userState);
   } catch (error) {
     console.error(`[ERROR] Failed to handle previous edit step: ${error.message}`);
+    await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
+  }
+};
+
+export const handleEditProcessTitle = async (bot, chatId, processId) => {
+  try {
+    console.log(`[DEBUG] Starting handleEditProcessTitle for processId: "${processId}" and chatId: "${chatId}"`);
+    if (!processId) {
+      console.error(`[ERROR] Process ID is null for chatId: "${chatId}"`);
+      await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
+      return;
+    }
+    await bot.sendMessage(chatId, 'Please enter the new title:');
+    bot.once('message', async (msg) => {
+      if (msg.chat.id !== chatId) return;
+      const newTitle = msg.text;
+
+      const process = await Process.findById(processId);
+      if (!process) {
+        console.error(`[ERROR] Process not found for processId: "${processId}"`);
+        await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
+        return;
+      }
+
+      process.title = newTitle;
+      await process.save();
+      console.log(`[DEBUG] Process title updated for processId: "${processId}"`);
+
+      await bot.sendMessage(chatId, `Title updated to: ${newTitle}`);
+      await handleEditProcess(bot, chatId, processId);
+    });
+  } catch (error) {
+    console.error(`[ERROR] Failed to update title: ${error.message}`);
+    await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
+  }
+};
+
+export const handleAddStepBefore = async (bot, chatId, processId, stepIndex) => {
+  try {
+    console.log(`[DEBUG] Starting handleAddStepBefore for processId: "${processId}", stepIndex: "${stepIndex}" and chatId: "${chatId}"`);
+    await bot.sendMessage(chatId, 'Please enter the details for the new step:');
+    bot.once('message', async (msg) => {
+      if (msg.chat.id !== chatId) return;
+      const newStepDetails = msg.text;
+
+      const process = await Process.findById(processId);
+      if (!process) {
+        console.error(`[ERROR] Process not found for processId: "${processId}"`);
+        await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
+        return;
+      }
+
+      const newStep = {
+        stepId: `step_${Date.now()}`,
+        type: 'text_process',
+        prompt: newStepDetails,
+        options: [],
+        validation: { required: false, fileTypes: [] },
+        metadata: { numQuestions: 3 },
+      };
+
+      process.steps.splice(stepIndex, 0, newStep);
+      await process.save();
+      console.log(`[DEBUG] New step added before stepIndex: "${stepIndex}" for processId: "${processId}"`);
+      console.log(`[DEBUG] New step details: ${JSON.stringify(newStep)}`);
+
+      await bot.sendMessage(chatId, 'New step added successfully.');
+      await handleEditProcess(bot, chatId, processId);
+    });
+  } catch (error) {
+    console.error(`[ERROR] Failed to add step before: ${error.message}`);
+    await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
+  }
+};
+
+export const handleAddStepAfter = async (bot, chatId, processId, stepIndex) => {
+  try {
+    console.log(`[DEBUG] Starting handleAddStepAfter for processId: "${processId}", stepIndex: "${stepIndex}" and chatId: "${chatId}"`);
+    await bot.sendMessage(chatId, 'Please enter the details for the new step:');
+    bot.once('message', async (msg) => {
+      if (msg.chat.id !== chatId) return;
+      const newStepDetails = msg.text;
+
+      const process = await Process.findById(processId);
+      if (!process) {
+        console.error(`[ERROR] Process not found for processId: "${processId}"`);
+        await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
+        return;
+      }
+
+      const newStep = {
+        stepId: `step_${Date.now()}`,
+        type: 'text_process',
+        prompt: newStepDetails,
+        options: [],
+        validation: { required: false, fileTypes: [] },
+        metadata: { numQuestions: 3 },
+      };
+
+      process.steps.splice(stepIndex + 1, 0, newStep);
+      await process.save();
+      console.log(`[DEBUG] New step added after stepIndex: "${stepIndex}" for processId: "${processId}"`);
+      console.log(`[DEBUG] New step details: ${JSON.stringify(newStep)}`);
+
+      await bot.sendMessage(chatId, 'New step added successfully.');
+      await handleEditProcess(bot, chatId, processId);
+    });
+  } catch (error) {
+    console.error(`[ERROR] Failed to add step after: ${error.message}`);
     await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
   }
 };

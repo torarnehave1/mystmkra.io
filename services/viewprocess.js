@@ -39,14 +39,31 @@ export const handleViewProcess = async (bot, chatId, processId) => {
     await bot.sendMessage(chatId, `Share this deep link with users: ${deepLink}`);
 
     // Start the process
-    await bot.sendMessage(chatId, `Starting process: ${process.title}`, {
+    // await bot.sendMessage(chatId, `<b>${process.title}</b>\n\n${process.description}`, {
+    //   parse_mode: 'HTML',
+    //   reply_markup: {
+    //   inline_keyboard: [
+    //   [{ text: 'Start', callback_data: `start_process_${processId}` }],
+    //   [{ text: 'End', callback_data: `end_process_${processId}` }],
+    //   ],
+    //   },
+    // });
+
+    await bot.sendPhoto(chatId, process.imageUrl, {
+      caption: `<b>${process.title}</b>\n\n${process.description}`,
+      parse_mode: "HTML",
       reply_markup: {
-        inline_keyboard: [
-          [{ text: 'Start', callback_data: `start_process_${processId}` }],
-          [{ text: 'End', callback_data: `end_process_${processId}` }],
-        ],
+      inline_keyboard: [
+        [{ text: "Start", callback_data: `start_process_${processId}` }],
+        [{ text: "End", callback_data: `end_process_${processId}` }],
+      ],
       },
     });
+
+
+
+
+
   } catch (error) {
     console.error(`[ERROR] Failed to retrieve process details: ${error.message}`);
     await bot.sendMessage(chatId, 'An error occurred. Please try again later.');

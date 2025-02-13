@@ -1,7 +1,7 @@
 import express from 'express';
 import TelegramBot from 'node-telegram-bot-api';
 import config from '../config/config.js';
-import translationsData from '../translations/process_translations.json' with { type: 'json' };
+import translationsData from '../translations/process_translations.json' assert { type: 'json' };
 import { getTranslation, extractProcessId, extractStepTypeAndProcessId } from '../services/helpers.js';
 import { handleViewProcess, handleNextStep } from '../services/viewprocess.js'; // Use modular functions
 import Process from '../models/process.js';
@@ -13,7 +13,7 @@ import { generateDeepLink } from '../services/deeplink.js'; // Import generateDe
 import analyzeConversation from '../services/conversationanalysis.js'; // Import analyzeConversation function
 import generateOpenAIResponseforGreenBot from '../services/greenBotOpenAiQuestions.js'; // Correct import
 import logMessage from '../services/logMessage.js'; // Import logMessage function
-import { handleEditProcess, handleEditPrompt, handleEditType, handleNextEditStep, handlePreviousEditStep } from '../services/editProcessService.js';
+import { handleEditProcess, handleEditPrompt, handleEditType, handleNextEditStep, handlePreviousEditStep, handleEditTitle, handleEditDescription, handleAddStepBefore, handleAddStepAfter } from '../services/editProcessService.js';
 
 // [SECTION 1: Initialization]
 const router = express.Router();
@@ -44,7 +44,7 @@ function extractProcessIdFromStartParam(startParam) {
 
 // Helper function to extract process ID from callback data
 function extractProcessIdFromCallbackData(data) {
-  const match = data.match(/(?:view_process_|start_process_|add_step_|finish_process_|edit_process_|edit_prompt_|edit_type_|next_step_|previous_step_)([0-9a-fA-F]{24})/);
+  const match = data.match(/(?:view_process_|start_process_|add_step_|finish_process_|edit_process_|edit_prompt_|edit_type_|next_step_|previous_step_|edit_title_|edit_description_|add_step_before_|add_step_after_)([0-9a-fA-F]{24})/);
   return match ? match[1] : null;
 }
 
@@ -157,6 +157,27 @@ bot.onText(/\/edit/, async (msg) => {
   }
 });
 
+// New command to reset all states and inputs
+bot.onText(/\/reset/, async (msg) => {
+  const chatId = msg.chat.id;
+  console.log(`[DEBUG] /reset triggered by user ${chatId}`);
+
+  try {
+    // Find and delete the user state
+    const userState = await UserState.findOne({ userId: chatId });
+    if (userState) {
+      await userState.deleteOne();
+      console.log(`[DEBUG] User state reset for user ${chatId}`);
+    }
+
+    // Send confirmation message
+    await bot.sendMessage(chatId, 'All states and inputs have been reset.');
+  } catch (error) {
+    console.error(`[ERROR] Failed to reset states and inputs: ${error.message}`);
+    await bot.sendMessage(chatId, 'An error occurred while resetting states and inputs. Please try again later.');
+  }
+});
+
 // Bot logic: handle all incoming messages
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
@@ -253,8 +274,14 @@ bot.on('callback_query', async (callbackQuery) => {
         throw new Error(`No steps found for processId: "${processId}"`);
       }
       console.log(`[DEBUG] Process found: ${JSON.stringify(process)}`);
-      await handleViewProcess(bot, chatId, processId);
 
+      await bot.sendMessage(chatId, `${process.title}\n`, {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: 'Start Process', callback_data: `start_process_${processId}` }],
+          ],
+        },
+      });
     } catch (error) {
       console.error(`[ERROR] Failed to handle view process for process ${processId}: ${error.message}`);
       await bot.sendMessage(chatId, 'An error occurred while trying to view the process. Please try again later.');
@@ -348,6 +375,34 @@ bot.on('callback_query', async (callbackQuery) => {
     await handlePreviousEditStep(bot, chatId, processId);
     return;
   }
+
+  if (data.startsWith('edit_title_')) {
+    const processId = extractProcessIdFromCallbackData(data);
+    console.log(`[DEBUG] edit_title callback triggered for process ${processId} by user ${chatId}`);
+    await handleEditTitle(bot, chatId, processId);
+    return;
+  }
+
+  if (data.startsWith('edit_description_')) {
+    const processId = extractProcessIdFromCallbackData(data);
+    console.log(`[DEBUG] edit_description callback triggered for process ${processId} by user ${chatId}`);
+    await handleEditDescription(bot, chatId, processId);
+    return;
+  }
+
+  if (data.startsWith('add_step_before_')) {
+    const { processId, stepIndex } = extractProcessIdAndStepIndexFromCallbackData(data);
+    console.log(`[DEBUG] add_step_before callback triggered for process ${processId}, step ${stepIndex} by user ${chatId}`);
+    await handleAddStepBefore(bot, chatId, processId, stepIndex);
+    return;
+  }
+
+  if (data.startsWith('add_step_after_')) {
+    const { processId, stepIndex } = extractProcessIdAndStepIndexFromCallbackData(data);
+    console.log(`[DEBUG] add_step_after callback triggered for process ${processId}, step ${stepIndex} by user ${chatId}`);
+    await handleAddStepAfter(bot, chatId, processId, stepIndex);
+    return;
+  }
   // Additional callback handlers (original logic intact)
 });
 
@@ -384,7 +439,7 @@ bot.onText(/\/view/, async (msg) => {
     const uniqueProcesses = [...new Map(finishedProcesses.map((p) => [p._id.toString(), p])).values()];
     const botUsername = config.botUsername; // Assuming botUsername is in the config
     const processButtons = uniqueProcesses.map((process) => [
-      { text: process.title, url: `https://t.me/${botUsername}?start=view_process_${process._id}` },
+      { text: `${process.title}\n${process.description}`, url: `https://t.me/${botUsername}?start=view_process_${process._id}` },
     ]);
 
     await bot.sendMessage(chatId, 'Select a finished process to view:', {
