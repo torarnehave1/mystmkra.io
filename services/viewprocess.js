@@ -39,26 +39,28 @@ export const handleViewProcess = async (bot, chatId, processId) => {
     await bot.sendMessage(chatId, `Share this deep link with users: ${deepLink}`);
 
     // Start the process
-    // await bot.sendMessage(chatId, `<b>${process.title}</b>\n\n${process.description}`, {
-    //   parse_mode: 'HTML',
-    //   reply_markup: {
-    //   inline_keyboard: [
-    //   [{ text: 'Start', callback_data: `start_process_${processId}` }],
-    //   [{ text: 'End', callback_data: `end_process_${processId}` }],
-    //   ],
-    //   },
-    // });
-
-    await bot.sendPhoto(chatId, process.imageUrl, {
+    if (process.imageUrl) {
+      await bot.sendPhoto(chatId, process.imageUrl, {
       caption: `<b>${process.title}</b>\n\n${process.description}`,
       parse_mode: "HTML",
       reply_markup: {
-      inline_keyboard: [
+        inline_keyboard: [
         [{ text: "Start", callback_data: `start_process_${processId}` }],
         [{ text: "End", callback_data: `end_process_${processId}` }],
-      ],
+        ],
       },
-    });
+      });
+    } else {
+      await bot.sendMessage(chatId, `<b>${process.title}</b>\n\n${process.description}`, {
+      parse_mode: 'HTML',
+      reply_markup: {
+        inline_keyboard: [
+        [{ text: 'Start', callback_data: `start_process_${processId}` }],
+        [{ text: 'End', callback_data: `end_process_${processId}` }],
+        ],
+      },
+      });
+    }
 
 
 

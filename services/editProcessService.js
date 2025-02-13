@@ -47,6 +47,7 @@ const presentEditStep = async (bot, chatId, processId, currentStep, userState) =
       inline_keyboard: [
         [{ text: 'Edit Title', callback_data: `edit_title_${processId}` }],
         [{ text: 'Edit Description', callback_data: `edit_description_${processId}` }],
+        [{ text: 'Edit Image URL', callback_data: `edit_image_url_${processId}` }],
         [{ text: 'Edit Prompt', callback_data: `edit_prompt_${processId}_${stepIndex}` }],
         [{ text: 'Edit Type', callback_data: `edit_type_${processId}_${stepIndex}` }],
         [
@@ -65,7 +66,13 @@ const presentEditStep = async (bot, chatId, processId, currentStep, userState) =
 export const handleEditTitle = async (bot, chatId, processId) => {
   try {
     console.log(`[DEBUG] Starting handleEditTitle for processId: "${processId}" and chatId: "${chatId}"`);
-    await bot.sendMessage(chatId, 'Please enter the new title:');
+    const process = await Process.findById(processId);
+    if (!process) {
+        console.error(`[ERROR] Process not found for processId: "${processId}"`);
+        await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
+        return;
+    }
+    await bot.sendMessage(chatId, `${process.title}`);
     bot.once('message', async (msg) => {
       if (msg.chat.id !== chatId) return;
       const newTitle = msg.text;
@@ -93,17 +100,18 @@ export const handleEditTitle = async (bot, chatId, processId) => {
 export const handleEditDescription = async (bot, chatId, processId) => {
   try {
     console.log(`[DEBUG] Starting handleEditDescription for processId: "${processId}" and chatId: "${chatId}"`);
-    await bot.sendMessage(chatId, 'Please enter the new description:');
+    const process = await Process.findById(processId);
+    if (!process) {
+      console.error(`[ERROR] Process not found for processId: "${processId}"`);
+      await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
+      return;
+    }
+
+    await bot.sendMessage(chatId, `${process.description}`);
+
     bot.once('message', async (msg) => {
       if (msg.chat.id !== chatId) return;
       const newDescription = msg.text;
-
-      const process = await Process.findById(processId);
-      if (!process) {
-        console.error(`[ERROR] Process not found for processId: "${processId}"`);
-        await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
-        return;
-      }
 
       process.description = newDescription;
       await process.save();
@@ -121,7 +129,7 @@ export const handleEditDescription = async (bot, chatId, processId) => {
 export const handleEditPrompt = async (bot, chatId, processId, stepIndex) => {
     try {
         console.log(`[DEBUG] Starting handleEditPrompt for processId: "${processId}", stepIndex: "${stepIndex}" and chatId: "${chatId}"`);
-        await bot.sendMessage(chatId, 'Please enter the new prompt:');
+        await bot.sendMessage(chatId, `${currentStep.prompt}`);
         bot.once('message', async (msg) => {
             if (msg.chat.id !== chatId) return;
             const newPrompt = msg.text;
@@ -322,6 +330,34 @@ export const handleAddStepAfter = async (bot, chatId, processId, stepIndex) => {
     });
   } catch (error) {
     console.error(`[ERROR] Failed to add step after: ${error.message}`);
+    await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
+  }
+};
+
+export const handleEditImageUrl = async (bot, chatId, processId) => {
+  try {
+    console.log(`[DEBUG] Starting handleEditImageUrl for processId: "${processId}" and chatId: "${chatId}"`);
+    await bot.sendMessage(chatId, 'Please enter the new image URL:');
+    bot.once('message', async (msg) => {
+      if (msg.chat.id !== chatId) return;
+      const newImageUrl = msg.text;
+
+      const process = await Process.findById(processId);
+      if (!process) {
+        console.error(`[ERROR] Process not found for processId: "${processId}"`);
+        await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
+        return;
+      }
+
+      process.imageUrl = newImageUrl;
+      await process.save();
+      console.log(`[DEBUG] Process image URL updated for processId: "${processId}"`);
+
+      await bot.sendMessage(chatId, `Image URL updated to: ${newImageUrl}`);
+      await handleEditProcess(bot, chatId, processId);
+    });
+  } catch (error) {
+    console.error(`[ERROR] Failed to update image URL: ${error.message}`);
     await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
   }
 };

@@ -13,7 +13,7 @@ import { generateDeepLink } from '../services/deeplink.js'; // Import generateDe
 import analyzeConversation from '../services/conversationanalysis.js'; // Import analyzeConversation function
 import generateOpenAIResponseforGreenBot from '../services/greenBotOpenAiQuestions.js'; // Correct import
 import logMessage from '../services/logMessage.js'; // Import logMessage function
-import { handleEditProcess, handleEditPrompt, handleEditType, handleNextEditStep, handlePreviousEditStep, handleEditTitle, handleEditDescription, handleAddStepBefore, handleAddStepAfter } from '../services/editProcessService.js';
+import { handleEditProcess, handleEditPrompt, handleEditType, handleNextEditStep, handlePreviousEditStep, handleEditTitle, handleEditDescription, handleAddStepBefore, handleAddStepAfter, handleEditImageUrl } from '../services/editProcessService.js';
 
 // [SECTION 1: Initialization]
 const router = express.Router();
@@ -44,7 +44,7 @@ function extractProcessIdFromStartParam(startParam) {
 
 // Helper function to extract process ID from callback data
 function extractProcessIdFromCallbackData(data) {
-  const match = data.match(/(?:view_process_|start_process_|add_step_|finish_process_|edit_process_|edit_prompt_|edit_type_|next_step_|previous_step_|edit_title_|edit_description_|add_step_before_|add_step_after_)([0-9a-fA-F]{24})/);
+  const match = data.match(/(?:view_process_|start_process_|add_step_|finish_process_|edit_process_|edit_prompt_|edit_type_|next_step_|previous_step_|edit_title_|edit_description_|add_step_before_|add_step_after_|edit_image_url_)([0-9a-fA-F]{24})/);
   return match ? match[1] : null;
 }
 
@@ -401,6 +401,13 @@ bot.on('callback_query', async (callbackQuery) => {
     const { processId, stepIndex } = extractProcessIdAndStepIndexFromCallbackData(data);
     console.log(`[DEBUG] add_step_after callback triggered for process ${processId}, step ${stepIndex} by user ${chatId}`);
     await handleAddStepAfter(bot, chatId, processId, stepIndex);
+    return;
+  }
+
+  if (data.startsWith('edit_image_url_')) {
+    const processId = extractProcessIdFromCallbackData(data);
+    console.log(`[DEBUG] edit_image_url callback triggered for process ${processId} by user ${chatId}`);
+    await handleEditImageUrl(bot, chatId, processId);
     return;
   }
   // Additional callback handlers (original logic intact)
