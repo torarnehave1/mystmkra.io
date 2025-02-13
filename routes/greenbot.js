@@ -14,6 +14,7 @@ import analyzeConversation from '../services/conversationanalysis.js'; // Import
 import generateOpenAIResponseforGreenBot from '../services/greenBotOpenAiQuestions.js'; // Correct import
 import logMessage from '../services/logMessage.js'; // Import logMessage function
 import { handleEditProcess, handleEditPrompt, handleEditType, handleNextEditStep, handlePreviousEditStep, handleEditTitle, handleEditDescription, handleAddStepBefore, handleAddStepAfter, handleEditImageUrl } from '../services/editProcessService.js';
+import generateStepsForProcess from '../services/openaiService.js';
 
 // [SECTION 1: Initialization]
 const router = express.Router();
@@ -307,6 +308,40 @@ bot.on('callback_query', async (callbackQuery) => {
     userState.isProcessingStep = false;
     await userState.save();
     await handleCreateProcessManual(bot, chatId);
+    return;
+  }
+
+  if (data === 'create_process_ai') {
+    const userState = await UserState.findOne({ userId: chatId });
+    userState.processId = null;
+    userState.currentStepIndex = 0;
+    userState.answers = [];
+    userState.isProcessingStep = false;
+    await userState.save();
+
+    await bot.sendMessage(chatId, 'Please provide a title for the new process:');
+    bot.once('message', async (msg) => {
+      const title = msg.text;
+      await bot.sendMessage(chatId, 'Please provide a description for the new process:');
+      bot.once('message', async (msg) => {
+        const description = msg.text;
+        const newProcess = new Process({ title, description, createdBy: chatId });
+        await newProcess.save();
+        userState.processId = newProcess._id;
+        await userState.save();
+
+        try {
+          const updatedProcess = await generateStepsForProcess(newProcess._id, title, description);
+          if (!updatedProcess.steps.length) {
+            throw new Error('No steps generated for the process.');
+          }
+          await bot.sendMessage(chatId, `Process "${title}" created with description "${description}". Steps have been generated.`);
+        } catch (error) {
+          console.error(`[ERROR] Failed to generate steps: ${error.message}`);
+          await bot.sendMessage(chatId, 'An error occurred while generating steps. Please try again later.');
+        }
+      });
+    });
     return;
   }
 

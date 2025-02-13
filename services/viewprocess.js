@@ -41,7 +41,7 @@ export const handleViewProcess = async (bot, chatId, processId) => {
     // Start the process
     if (process.imageUrl) {
       await bot.sendPhoto(chatId, process.imageUrl, {
-      caption: `<b>${process.title}</b>\n\n${process.description}`,
+      caption: `<b>${process.title}</b>\n\n<i>${process.description}</i>\n\n <b>Made in Mystmkra.io</b> - by AlivenessLAβ`,
       parse_mode: "HTML",
       reply_markup: {
         inline_keyboard: [
