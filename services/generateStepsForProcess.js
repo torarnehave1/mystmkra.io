@@ -23,6 +23,7 @@ async function generateStepsForProcess(processId, title, description) {
   - Steps must be **clear, structured, and relevant** to the process.
   - Ensure a **natural progression** from start to finish.
   - Use a **variety of step types** (text input, multiple-choice, yes/no, file upload).
+  - Provide a detailed description for each step to help the user understand how to complete it.
   - The response **MUST** follow this exact JSON schema:
 
   {
@@ -31,6 +32,7 @@ async function generateStepsForProcess(processId, title, description) {
         "stepId": "String",
         "type": "String",
         "prompt": "String",
+        "description": "String",
         "options": [String], 
         "validation": {
           "required": Boolean,

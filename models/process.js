@@ -11,6 +11,7 @@ const stepSchema = new Schema({
     required: true,
   }, // Type of step
   prompt: { type: String, required: true }, // Question or instruction text for the user
+  description: { type: String }, // Description for the step
   options: [String], // Options for 'choice' steps
   validation: {
     required: { type: Boolean, default: false }, // Whether the step is mandatory

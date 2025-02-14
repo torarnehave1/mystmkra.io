@@ -1,5 +1,6 @@
 import express from 'express';
 import TelegramBot from 'node-telegram-bot-api';
+import mongoose from 'mongoose'; // Import mongoose
 import config from '../config/config.js';
 import translationsData from '../translations/process_translations.json' with { type: 'json' };
 import { getTranslation, extractProcessId, extractStepTypeAndProcessId } from '../services/helpers.js';
@@ -45,7 +46,7 @@ function extractProcessIdFromStartParam(startParam) {
 
 // Helper function to extract process ID from callback data
 function extractProcessIdFromCallbackData(data) {
-  const match = data.match(/(?:view_process_|start_process_|add_step_|finish_process_|edit_process_|edit_prompt_|edit_type_|next_step_|previous_step_|edit_title_|edit_description_|add_step_before_|add_step_after_|edit_image_url_)([0-9a-fA-F]{24})/);
+  const match = data.match(/(?:view_process_|start_process_|add_step_|finish_process_|edit_process_|edit_prompt_|edit_type_|next_step_|previous_step_|edit_title_|edit_description_|add_step_before_|add_step_after_|edit_image_url_|duplicate_process_)([0-9a-fA-F]{24})/);
   return match ? match[1] : null;
 }
 
@@ -147,9 +148,10 @@ bot.onText(/\/edit/, async (msg) => {
 
     const processButtons = processes.map((process) => [
       { text: process.title, callback_data: `edit_process_${process._id}` },
+      { text: 'Duplicate Process', callback_data: `duplicate_process_${process._id}` }, // Add duplicate button
     ]);
 
-    await bot.sendMessage(chatId, 'Select a process to edit:', {
+    await bot.sendMessage(chatId, 'Select a process to edit or duplicate:', {
       reply_markup: { inline_keyboard: processButtons },
     });
   } catch (error) {
@@ -443,6 +445,36 @@ bot.on('callback_query', async (callbackQuery) => {
     const processId = extractProcessIdFromCallbackData(data);
     console.log(`[DEBUG] edit_image_url callback triggered for process ${processId} by user ${chatId}`);
     await handleEditImageUrl(bot, chatId, processId);
+    return;
+  }
+
+  if (data.startsWith('duplicate_process_')) {
+    const processId = extractProcessIdFromCallbackData(data);
+    console.log(`[DEBUG] duplicate_process callback triggered for process ${processId} by user ${chatId}`);
+
+    try {
+      const process = await Process.findById(processId);
+      if (!process) {
+        console.error(`[ERROR] Process not found for processId: "${processId}"`);
+        await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
+        return;
+      }
+
+      const duplicatedProcess = new Process({
+        ...process.toObject(),
+        _id: new mongoose.Types.ObjectId(), // Correctly create a new ObjectId
+        title: `${process.title} [DUPLICATE]`,
+        createdAt: Date.now(),
+      });
+
+      await duplicatedProcess.save();
+      console.log(`[DEBUG] Process duplicated with new ID: ${duplicatedProcess._id}`);
+
+      await bot.sendMessage(chatId, `Process duplicated successfully. New process ID: ${duplicatedProcess._id}`);
+    } catch (error) {
+      console.error(`[ERROR] Failed to duplicate process: ${error.message}`);
+      await bot.sendMessage(chatId, 'An error occurred while duplicating the process. Please try again later.');
+    }
     return;
   }
   // Additional callback handlers (original logic intact)

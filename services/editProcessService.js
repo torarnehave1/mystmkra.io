@@ -42,7 +42,25 @@ const presentEditStep = async (bot, chatId, processId, currentStep, userState) =
   const stepIndex = userState.currentStepIndex;
   console.log(`[DEBUG] Presenting step ${stepIndex + 1}: ${currentStep.prompt}`);
 
-  await bot.sendMessage(chatId, `Editing Step ${stepIndex + 1}: ${currentStep.prompt}`, {
+  const process = await Process.findById(processId);
+  if (!process) {
+    console.error(`[ERROR] Process not found for processId: "${processId}"`);
+    await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
+    return;
+  }
+
+  let message = `Editing Step ${stepIndex + 1}: ${currentStep.prompt}\n\n`;
+  message += `Title: ${process.title}\n`;
+  message += `Description: ${process.description}\n`;
+
+  if (process.imageUrl) {
+    await bot.sendPhoto(chatId, process.imageUrl, { caption: message, parse_mode: "HTML" });
+  } else {
+    await bot.sendMessage(chatId, message, { parse_mode: "HTML" });
+  }
+
+  await bot.sendMessage(chatId, `Editing Step ${stepIndex + 1}: <b>${currentStep.prompt}</b>`, {
+    parse_mode: "HTML",
     reply_markup: {
       inline_keyboard: [
         [{ text: 'Edit Title', callback_data: `edit_title_${processId}` }],

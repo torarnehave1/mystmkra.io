@@ -51,7 +51,7 @@ export const handleViewProcess = async (bot, chatId, processId) => {
       },
       });
     } else {
-      await bot.sendMessage(chatId, `<b>${process.title}</b>\n\n${process.description}`, {
+      await bot.sendMessage(chatId, `<b>${process.title}</b>\n\n<b>Made in Mystmkra.io</b> - by AlivenessLAβ`, {
       parse_mode: 'HTML',
       reply_markup: {
         inline_keyboard: [

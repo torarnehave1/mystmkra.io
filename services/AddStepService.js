@@ -49,50 +49,58 @@ export const handleAddStep = async (bot, chatId, processId) => {
     console.log(`[DEBUG] Step type "${stepType}" is valid.`);
 
     // Prompt user for the details of the step
-    await bot.sendMessage(chatId, `You selected the step type: "${stepType}". Please provide the details for this step.`);
+    await bot.sendMessage(chatId, `You selected the step type: "${stepType}". Please provide the prompt for this step.`);
 
     bot.once('message', async (msg) => {
       const stepPrompt = msg.text;
       console.log(`[DEBUG] Received step prompt: "${stepPrompt}" for step type: "${stepType}" and processId: "${processId}"`);
 
-      const newStep = {
-        stepId: `step_${Date.now()}`,
-        type: stepType,
-        prompt: stepPrompt,
-        options: stepType === 'choice' ? [] : undefined, // Add options array for 'choice' type
-        validation: {
-          required: false,
-          fileTypes: stepType === 'file_process' ? [] : undefined, // Add fileTypes array for 'file_process' type
-        },
-        metadata: {
-          numQuestions: stepType === 'generate_questions_process' ? 3 : undefined, // Metadata for 'generate_questions_process' type
-        },
-      };
+      await bot.sendMessage(chatId, 'Please provide a description for this step.');
 
-      try {
-        const process = await Process.findById(processId);
-        if (!process) {
-          console.error(`[ERROR] Process not found for processId: "${processId}"`);
-          await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
-          return;
-        }
+      bot.once('message', async (msg) => {
+        const stepDescription = msg.text;
+        console.log(`[DEBUG] Received step description: "${stepDescription}" for step type: "${stepType}" and processId: "${processId}"`);
 
-        process.steps.push(newStep);
-        await process.save();
-        console.log(`[DEBUG] Step added to processId: "${processId}"`);
-
-        await bot.sendMessage(chatId, 'Step added successfully. What would you like to do next?', {
-          reply_markup: {
-            inline_keyboard: [
-              [{ text: 'Add Another Step', callback_data: `add_step_${processId}` }],
-              [{ text: 'Finish Process', callback_data: `finish_process_${processId}` }],
-            ],
+        const newStep = {
+          stepId: `step_${Date.now()}`,
+          type: stepType,
+          prompt: stepPrompt,
+          description: stepDescription,
+          options: stepType === 'choice' ? [] : undefined, // Add options array for 'choice' type
+          validation: {
+            required: false,
+            fileTypes: stepType === 'file_process' ? [] : undefined, // Add fileTypes array for 'file_process' type
           },
-        });
-      } catch (error) {
-        console.error(`[ERROR] Failed to add step to process: ${error.message}`);
-        await bot.sendMessage(chatId, 'An error occurred while adding the step. Please try again later.');
-      }
+          metadata: {
+            numQuestions: stepType === 'generate_questions_process' ? 3 : undefined, // Metadata for 'generate_questions_process' type
+          },
+        };
+
+        try {
+          const process = await Process.findById(processId);
+          if (!process) {
+            console.error(`[ERROR] Process not found for processId: "${processId}"`);
+            await bot.sendMessage(chatId, 'The process could not be found. Please try again.');
+            return;
+          }
+
+          process.steps.push(newStep);
+          await process.save();
+          console.log(`[DEBUG] Step added to processId: "${processId}"`);
+
+          await bot.sendMessage(chatId, 'Step added successfully. What would you like to do next?', {
+            reply_markup: {
+              inline_keyboard: [
+                [{ text: 'Add Another Step', callback_data: `add_step_${processId}` }],
+                [{ text: 'Finish Process', callback_data: `finish_process_${processId}` }],
+              ],
+            },
+          });
+        } catch (error) {
+          console.error(`[ERROR] Failed to add step to process: ${error.message}`);
+          await bot.sendMessage(chatId, 'An error occurred while adding the step. Please try again later.');
+        }
+      });
     });
   });
 };
