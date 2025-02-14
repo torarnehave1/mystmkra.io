@@ -14,7 +14,7 @@ import analyzeConversation from '../services/conversationanalysis.js'; // Import
 import generateOpenAIResponseforGreenBot from '../services/greenBotOpenAiQuestions.js'; // Correct import
 import logMessage from '../services/logMessage.js'; // Import logMessage function
 import { handleEditProcess, handleEditPrompt, handleEditType, handleNextEditStep, handlePreviousEditStep, handleEditTitle, handleEditDescription, handleAddStepBefore, handleAddStepAfter, handleEditImageUrl } from '../services/editProcessService.js';
-import generateStepsForProcess from '../services/openaiService.js';
+import generateStepsForProcess from '../services/generateStepsForProcess.js';
 
 // [SECTION 1: Initialization]
 const router = express.Router();
