@@ -6,6 +6,8 @@ const openai = new OpenAI({
   apiKey: config.openaiApiKey,
 });
 
+//Test the OpenAI API
+
 /**
  * Generates structured steps dynamically based on a process title and description.
  * @param {String} processId - The MongoDB document ID of the process.
