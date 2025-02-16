@@ -16,6 +16,14 @@ const ProcessAnswersSchema = new mongoose.Schema({
         type: Number,
         required: true,
       },
+      stepDescription: {
+        type: String,
+        required: true,
+      },
+      stepPrompt: {
+        type: String,
+        required: true,
+      },
       answer: {
         type: String,
         required: true,

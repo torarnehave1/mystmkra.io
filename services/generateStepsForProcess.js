@@ -53,7 +53,10 @@ async function generateStepsForProcess(processId, title, description) {
   - "file_process": Requires file upload (e.g., "Upload your business plan").
   - "generate_questions_process": AI-generated follow-up questions.
   - "final": Marks the last step in the process.
-
+  - "info_process": Provides information to the user without requiring input. // Added 'info_process'
+  - Feel free to mix and match these types to create a comprehensive process.
+  
+  
   **Now generate a structured list of steps for the process below:**
   Title: "${title}"
   Description: "${description}"

@@ -1,5 +1,91 @@
 import Process from '../models/process.js';
 
+/**
+ * Handle adding a step before the specified step index.
+ * @param {Object} bot - Telegram bot instance.
+ * @param {Number} chatId - Telegram chat ID of the user.
+ * @param {String} processId - ID of the process.
+ * @param {Number} stepIndex - Index of the step before which the new step will be added.
+ */
+export const handleAddStepBefore = async (bot, chatId, processId, stepIndex) => {
+  try {
+    const process = await Process.findById(processId);
+    if (!process) {
+      throw new Error(`Process not found with processId: ${processId}`);
+    }
+
+    const newStep = {
+      stepId: `step_${Date.now()}`,
+      type: 'text_process', // Default type, can be changed later
+      prompt: 'New Step Prompt',
+      description: 'New Step Description',
+      options: [],
+      validation: {
+        required: false,
+        regex: '',
+        fileTypes: [],
+      },
+      metadata: {
+        numQuestions: 1,
+      },
+    };
+
+    process.steps.splice(stepIndex, 0, newStep); // Insert the new step before the specified step index
+    await process.save();
+
+    await bot.sendMessage(chatId, `New step added before step ${stepIndex + 1}.`);
+  } catch (error) {
+    console.error(`[ERROR] Failed to add step before: ${error.message}`);
+    await bot.sendMessage(chatId, 'An error occurred while adding the step. Please try again later.');
+  }
+};
+
+/**
+ * Handle adding a step after the specified step index.
+ * @param {Object} bot - Telegram bot instance.
+ * @param {Number} chatId - Telegram chat ID of the user.
+ * @param {String} processId - ID of the process.
+ * @param {Number} stepIndex - Index of the step after which the new step will be added.
+ */
+export const handleAddStepAfter = async (bot, chatId, processId, stepIndex) => {
+  try {
+    const process = await Process.findById(processId);
+    if (!process) {
+      throw new Error(`Process not found with processId: ${processId}`);
+    }
+
+    const newStep = {
+      stepId: `step_${Date.now()}`,
+      type: 'text_process', // Default type, can be changed later
+      prompt: 'New Step Prompt',
+      description: 'New Step Description',
+      options: [],
+      validation: {
+        required: false,
+        regex: '',
+        fileTypes: [],
+      },
+      metadata: {
+        numQuestions: 1,
+      },
+    };
+
+    process.steps.splice(stepIndex + 1, 0, newStep); // Insert the new step after the specified step index
+    await process.save();
+
+    await bot.sendMessage(chatId, `New step added after step ${stepIndex + 1}.`);
+  } catch (error) {
+    console.error(`[ERROR] Failed to add step after: ${error.message}`);
+    await bot.sendMessage(chatId, 'An error occurred while adding the step. Please try again later.');
+  }
+};
+
+/**
+ * Handle adding a new step to the process.
+ * @param {Object} bot - Telegram bot instance.
+ * @param {Number} chatId - Telegram chat ID of the user.
+ * @param {String} processId - ID of the process.
+ */
 export const handleAddStep = async (bot, chatId, processId) => {
   console.log(`[DEBUG] Adding step to processId: "${processId}" for chatId: ${chatId}`);
 
@@ -13,6 +99,7 @@ export const handleAddStep = async (bot, chatId, processId) => {
         [{ text: 'Generate Questions', callback_data: `step_type_generate_questions_process_${processId}` }],
         [{ text: 'Final Step', callback_data: `step_type_final_${processId}` }],
         [{ text: 'Email', callback_data: `step_type_email_process_${processId}` }], // Added new step type
+        [{ text: 'Info', callback_data: `step_type_info_process_${processId}` }], // Added new step type
       ],
     },
   });
@@ -36,6 +123,7 @@ export const handleAddStep = async (bot, chatId, processId) => {
       'generate_questions_process',
       'final',
       'email_process', // Added new step type
+      'info_process', // Added new step type
     ];
 
     if (!allowedStepTypes.includes(stepType)) {

@@ -7,7 +7,7 @@ const stepSchema = new Schema({
   stepId: { type: String, required: true }, // Unique identifier for the step
   type: {
     type: String,
-    enum: ['text_process', 'yes_no_process', 'file_process', 'choice', 'generate_questions_process', 'final'],
+    enum: ['text_process', 'yes_no_process', 'file_process', 'choice', 'generate_questions_process', 'final', 'info_process'], // Added 'info_process'
     required: true,
   }, // Type of step
   prompt: { type: String, required: true }, // Question or instruction text for the user
@@ -32,6 +32,11 @@ const processSchema = new Schema({
   createdBy: { type: String }, // User or system that created the process
   createdAt: { type: Date, default: Date.now }, // Timestamp for process creation
   isFinished: { type: Boolean, default: false }, // Indicates if the process is finished
+  processCategory: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ProcessCategories',
+    required: false,
+  },
 });
 
 const processes = mongoose.model('process', processSchema);
