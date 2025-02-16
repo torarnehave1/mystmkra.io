@@ -5,7 +5,7 @@ import { extractProcessId } from '../services/helpers.js';
 import { saveAnswerAndNextStep } from '../services/answerservice.js'; // Import saveAnswerAndNextStep function
 import { generateDeepLink } from '../services/deeplink.js'; // Import generateDeepLink function
 import config from '../config/config.js'; // Import config
-import { getHelpFromOpenAI } from './openaiService.js'; // Import getHelpFromOpenAI function
+import { getHelpFromOpenAI } from '../services/openaiService.js'; // Import getHelpFromOpenAI function
 
 // Function to handle viewing a process
 export const handleViewProcess = async (bot, chatId, processId) => {
