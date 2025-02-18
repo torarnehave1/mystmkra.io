@@ -111,13 +111,6 @@ const presentEditStep = async (bot, chatId, processId, currentStep, userState) =
       ],
     },
   });
-
-  if (currentStep.type === 'info_process') {
-    await bot.sendMessage(chatId, `Information: ${currentStep.description}`);
-    userState.currentStepIndex += 1;
-    await userState.save();
-    await handleNextEditStep(bot, chatId, processId);
-  }
 };
 
 export const handleEditTitle = async (bot, chatId, processId) => {
@@ -261,7 +254,7 @@ export const handleNextEditStep = async (bot, chatId, processId) => {
       return;
     }
 
-    currentStep = process.steps[userState.currentStepIndex];
+    const currentStep = process.steps[userState.currentStepIndex];
     await userState.save(); // Save the updated step index
     console.log(`[DEBUG][HNES4] Moving to next step for processId: "${processId}" and chatId: "${chatId}"`);
     await presentEditStep(bot, chatId, processId, currentStep, userState);
@@ -519,4 +512,13 @@ export const handleEditCategory = async (bot, chatId, processId) => {
     console.error(`[ERROR][HEC4] Failed to fetch categories: ${error.message}`);
     await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
   }
+};
+
+// Function to handle the callback query for editing a process
+export const handleEditProcessCallback = async (bot, callbackQuery) => {
+  const chatId = callbackQuery.message.chat.id;
+  const processId = callbackQuery.data.split('_')[2];
+
+  console.log(`[DEBUG] edit_process callback triggered for process ${processId} by user ${chatId}`);
+  await handleEditProcess(bot, chatId, processId);
 };

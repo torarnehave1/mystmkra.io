@@ -63,7 +63,7 @@ const presentReviewStep = async (bot, chatId, processId, currentStep, userState)
         [{ text: 'Next Step', callback_data: `next_review_step_${processId}` }],
     ];
 
-    await bot.sendMessage(chatId, message, { reply_markup: { inline_keyboard: inlineKeyboard } });
+    await bot.sendMessage(chatId, message, { parse_mode: 'HTML', reply_markup: { inline_keyboard: inlineKeyboard } });
 
 
     bot.removeAllListeners('callback_query'); // Ensure no duplicate listeners
