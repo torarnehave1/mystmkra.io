@@ -1,11 +1,16 @@
-const fs = require('fs');
-const pdf = require('pdf-parse');
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
+import pdf from 'pdf-parse';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Function to convert PDF to Markdown
-async function convertPdfToMarkdown(pdfPath, outputPath) {
+async function convertPdfToMarkdown(pdfPath) {
     try {
         // Read the PDF file
-        const dataBuffer = fs.readFileSync(pdfPath);
+        const dataBuffer = readFileSync(pdfPath);
         
         // Parse the PDF
         const data = await pdf(dataBuffer);
@@ -24,16 +29,23 @@ async function convertPdfToMarkdown(pdfPath, outputPath) {
         const markdownContent = `# Document from ${pdfPath.split('/').pop()}\n\n${text}`;
         
         // Write to output file
-        fs.writeFileSync(outputPath, markdownContent);
-        
-        console.log(`Successfully converted ${pdfPath} to ${outputPath}`);
+
+        const outputPath = path.join(__dirname, '..', 'public', 'telegram_files');
+
+        if (!existsSync(outputPath)) {
+            console.log('[DEBUG ALT 4] Creating download directory');
+            mkdirSync(outputPath, { recursive: true });
+        }
+
+        const outputFilePath = path.join(outputPath, `${path.basename(pdfPath, '.pdf')}.md`);
+        writeFileSync(outputFilePath, markdownContent);
+
+        console.log(`Successfully converted ${pdfPath} to ${outputFilePath}`);
+        return outputFilePath;
     } catch (error) {
         console.error('Error converting PDF to Markdown:', error);
+        throw error;
     }
 }
 
-// Example usage
-const pdfPath = 'input.pdf';      // Replace with your PDF file path
-const outputPath = 'output.md';   // Output Markdown file
-
-convertPdfToMarkdown(pdfPath, outputPath);
+export { convertPdfToMarkdown };

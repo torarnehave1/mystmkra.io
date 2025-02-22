@@ -1,0 +1,19 @@
+
+
+Innbetaling
+Side 1/1
+Konto:50100571576 NOK
+Trans.nrTrans.typeBokført dato
+Valuteringsdato
+BetalerRef.nummerBeløp
+1IN1009
+1009
+Heine Aspen Kolltveit
+97135855360
+Faktura 11043(30 875,00 NOK)30 875,00
+2IN1009
+1009
+Heine Aspen Kolltveit
+97135855360
+Fakltura 11042(84 000,00 NOK)84 000,00
+Totalt114 875,00

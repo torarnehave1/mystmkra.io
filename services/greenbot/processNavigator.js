@@ -2,6 +2,8 @@ import dotenv from 'dotenv';
 import Process from '../../models/process.js';
 import handleChoiceStep from './steps/choiceProcess.js'; // Dedicated module for 'choice' steps
 import handleFileProcessStep from './steps/fileProcess.js'; // Dedicated module for 'file_process' steps
+import handleTextProcessStep from './steps/textProcess.js'; // Dedicated module for 'text_process' steps
+import handleYesNoProcessStep from './steps/yesNoProcess.js'; // Dedicated module for 'yes_no_process' steps
 
 dotenv.config();
 
@@ -66,6 +68,10 @@ export async function showCurrentStep(bot, chatId, userState) {
   console.log(`${debugPrefix} Displaying step ${step.stepSequenceNumber}: ${step.prompt}`);
 
   // Dispatch presentation based on step type.
+
+  // Add a case for each step type that requires special handling.
+
+
   switch (step.type) {
     case 'choice':
       await handleChoiceStep(bot, chatId, userState, step);
@@ -73,7 +79,22 @@ export async function showCurrentStep(bot, chatId, userState) {
     case 'file_process':
       await handleFileProcessStep(bot, chatId, userState, step);
       break;
-    // Add additional cases for other step types as needed.
+
+case 'text_process':
+     await handleTextProcessStep(bot, chatId, userState, step);
+    break;
+
+   
+
+    case 'yes_no_process':
+      await handleYesNoProcessStep(bot, chatId, userState, step);
+      break;
+
+    case 'final': 
+      await defaultStepPresentation(bot, chatId, userState, step);
+      break;
+
+
     default:
       await defaultStepPresentation(bot, chatId, userState, step);
       break;

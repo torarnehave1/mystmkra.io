@@ -4,45 +4,19 @@ import dotenv from 'dotenv';
 import fetch from 'node-fetch'; // Ensure you have node-fetch installed (or use global fetch in newer Node versions)
 import config from '../../../config/config.js'; // Adjust the path as necessary
 import { saveAnswer } from '../answerService.js';
-// import pdftomarkdown from '../helpers/pdftomarkdown.js';
-import { convertPdfToMarkdown } from '../helpers/pdftomarkdown.js';
-
+import { convertPdfToMarkdown } from '../../helpers/pdftomarkdown.js';
 
 dotenv.config();
-/**
- * Inline function to validate file type.
- * It extracts the file extension from msg.document.file_name and checks
- * it against the allowedTypes array defined in the step's validation.
- *
- * @param {Object} file - The document object from Telegram.
- * @param {Array} allowedTypes - Array of allowed file type extensions (e.g., ['doc', 'docx', 'pdf']).
- * @returns {Boolean} - Returns true if the file's extension is allowed.
- */
+
 function isValidFileType(file, allowedTypes) {
   const fileName = file.file_name || '';
   const extension = fileName.split('.').pop().toLowerCase();
   return allowedTypes.includes(extension);
 }
 
-/**
- * Module: fileProcess.js
- * Function: handleFileProcessStep
- *
- * Presents a file upload step to the user. It sends a prompt, waits for a document,
- * validates the file type using an inline function, dynamically constructs the download URL
- * using the configuration (ensuring no double slashes), fetches file details from the endpoint,
- * and then saves the answer and advances the process.
- *
- * Parameters:
- *   bot       - The Telegram bot instance.
- *   chatId    - The Telegram chat ID.
- *   userState - The current user's state (includes processId and currentStepIndex).
- *   step      - The current step object (includes prompt, description, validation, etc.).
- */
 export default async function handleFileProcessStep(bot, chatId, userState, step) {
   const debugPrefix = '[DEBUG fileProcess handleFileProcessStep]';
   
-  // Construct the prompt message.
   let message = `<b>Step ${step.stepSequenceNumber} (File Upload):</b> ${step.prompt}`;
   if (step.description) {
     message += `\n\n<i>${step.description}</i>`;
@@ -58,14 +32,7 @@ export default async function handleFileProcessStep(bot, chatId, userState, step
   inlineKeyboard.inline_keyboard.push(navRow);
   
   console.log(`${debugPrefix} Presenting file upload for processId: ${userState.processId}`);
-  
-  // Send the file upload prompt.
-  //Send the message in parse mode HTML
-
-
-
-
-await bot.sendMessage(chatId, message, { parse_mode: 'HTML', reply_markup: inlineKeyboard });
+  await bot.sendMessage(chatId, message, { parse_mode: 'HTML', reply_markup: inlineKeyboard });
   
   // Listen for a document upload.
   bot.once('document', async (msg) => {
@@ -83,9 +50,7 @@ await bot.sendMessage(chatId, message, { parse_mode: 'HTML', reply_markup: inlin
       try {
         const response = await fetch(downloadUrl, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ fileId: msg.document.file_id }),
         });
         if (!response.ok) {
@@ -94,10 +59,10 @@ await bot.sendMessage(chatId, message, { parse_mode: 'HTML', reply_markup: inlin
         const data = await response.json();
         console.log(`${debugPrefix} Received data from download endpoint: ${JSON.stringify(data)}`);
         
+        // Convert the downloaded PDF to Markdown
+        const markdownFilePath = await convertPdfToMarkdown(data.filePath);
+        
         // Save the answer (data.fileName) and update progress via answerService.
-//Sende the file url to the user
-        await bot.sendMessage(chatId, `File uploaded successfully: ${data.fileName}`);
-
         await saveAnswer({
           bot,
           chatId,
@@ -108,6 +73,29 @@ await bot.sendMessage(chatId, message, { parse_mode: 'HTML', reply_markup: inlin
           stepPrompt: step.prompt,
           stepDescription: step.description,
         });
+        
+        // Send a new message with a "Confirm Upload" button.
+        const confirmKeyboard = {
+          inline_keyboard: [
+            [{ text: "Confirm Upload", callback_data: "confirm_upload" }]
+          ]
+        };
+        await bot.sendMessage(chatId, 'File uploaded successfully. Please confirm upload.', {
+          reply_markup: confirmKeyboard
+        });
+        
+        // Listen for the confirm upload callback.
+        bot.once('callback_query', async (callbackQuery) => {
+          // Ensure the callback is from the same chat.
+          if (callbackQuery.message.chat.id !== chatId) return;
+          if (callbackQuery.data === 'confirm_upload') {
+            await bot.answerCallbackQuery(callbackQuery.id, { text: 'Upload confirmed' });
+            console.log(`${debugPrefix} Upload confirmed by user.`);
+            // Optionally, you can also send a confirmation message:
+            await bot.sendMessage(chatId, 'Your file upload has been confirmed.');
+          }
+        });
+        
       } catch (error) {
         console.error(`${debugPrefix} ERROR: Failed to fetch file: ${error.message}`);
         console.error(`${debugPrefix} ERROR Details: ${error.stack}`);
