@@ -4,9 +4,11 @@ import dotenv from 'dotenv';
 import fetch from 'node-fetch'; // Ensure you have node-fetch installed (or use global fetch in newer Node versions)
 import config from '../../../config/config.js'; // Adjust the path as necessary
 import { saveAnswer } from '../answerService.js';
+// import pdftomarkdown from '../helpers/pdftomarkdown.js';
+import { convertPdfToMarkdown } from '../helpers/pdftomarkdown.js';
+
 
 dotenv.config();
-
 /**
  * Inline function to validate file type.
  * It extracts the file extension from msg.document.file_name and checks
