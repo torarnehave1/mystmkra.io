@@ -125,8 +125,10 @@ export const saveAnswerAndNextStep = async ({ bot, chatId, processId, stepIndex,
       return;
     }
 
-    //await handleNextReviewStep(bot, chatId, processId);
-    
+    // Present the next step using the functionality in answerservice
+    const nextStep = process.steps[userState.currentStepIndex];
+    await presentStep(bot, chatId, processId, nextStep, userState);
+
   } catch (error) {
     console.error(`[ERROR][answerservice][SANS-5] Failed to save answer and progress to the next step: ${error.message}`);
     await bot.sendMessage(chatId, 'An error occurred while saving your answer. Please try again.');
@@ -278,7 +280,7 @@ export const presentStep = async (bot, chatId, processId, currentStep, userState
         reply_markup: {
           inline_keyboard: [
             [{ text: 'Confirm', callback_data: `confirm_${processId}` }],
-            ...inlineKeyboard,
+            [{ text: 'Previous Step', callback_data: `previous_review_step_${processId}` }]
           ],
         },
       });
@@ -288,6 +290,10 @@ export const presentStep = async (bot, chatId, processId, currentStep, userState
         if (callbackQuery.data === `confirm_${processId}`) {
           await bot.sendMessage(chatId, 'Your application has been confirmed. Thank you!');
           await handleNextStep(bot, chatId, processId);
+        } else if (callbackQuery.data === `previous_review_step_${processId}`) {
+          userState.currentStepIndex -= 1;
+          await userState.save();
+          await presentStep(bot, chatId, processId, process.steps[userState.currentStepIndex], userState);
         }
       };
 
@@ -301,13 +307,7 @@ export const presentStep = async (bot, chatId, processId, currentStep, userState
           ],
         },
       });
-      await saveAnswerAndNextStep({
-        bot,
-        chatId,
-        processId,
-        stepIndex,
-        answer: null,
-      });
+      // Do not automatically save and go to the next step
     } else {
       console.error(`[ERROR] Unknown step type: ${currentStep.type}`);
       await bot.sendMessage(chatId, `Unknown step type: ${currentStep.type}. Skipping step.`);
@@ -346,6 +346,37 @@ export const presentCategorySelection = async (bot, chatId) => {
 
     await bot.sendMessage(chatId, 'Please select a category for the process:', {
       reply_markup: { inline_keyboard: categoryButtons },
+    });
+
+    bot.once('callback_query', async (callbackQuery) => {
+      if (callbackQuery.message.chat.id !== chatId) return; // Ignore callback from other chats
+      const categoryId = callbackQuery.data.split('_')[2];
+      const selectedCategory = await ProcessCategories.findById(categoryId);
+      if (!selectedCategory) {
+        await bot.sendMessage(chatId, 'Selected category not found. Please try again.');
+        return;
+      }
+
+      // Start the answering process
+      const process = await Process.findOne({ category: categoryId });
+      if (!process) {
+        await bot.sendMessage(chatId, 'No process found for the selected category. Please try again.');
+        return;
+      }
+
+      // Initialize user state
+      let userState = await UserState.findOne({ userId: chatId });
+      if (!userState) {
+        userState = new UserState({ userId: chatId, currentStepIndex: 0 });
+        await userState.save();
+      } else {
+        userState.currentStepIndex = 0;
+        await userState.save();
+      }
+
+      // Present the first step
+      const firstStep = process.steps[0];
+      await presentStep(bot, chatId, process._id, firstStep, userState);
     });
   } catch (error) {
     console.error(`[ERROR] Failed to present category selection: ${error.message}`);

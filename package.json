@@ -35,6 +35,7 @@
     "nodemailer": "^6.9.14",
     "openai": "^4.56.0",
     "path": "^0.12.7",
+    "pdf-parse": "^1.1.1",
     "sanitize-html": "^2.13.0",
     "sharp": "^0.33.5",
     "tiktoken": "^1.0.18",

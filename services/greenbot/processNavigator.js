@@ -1,0 +1,160 @@
+import dotenv from 'dotenv';
+import Process from '../../models/process.js';
+import handleChoiceStep from './steps/choiceProcess.js'; // Dedicated module for 'choice' steps
+import handleFileProcessStep from './steps/fileProcess.js'; // Dedicated module for 'file_process' steps
+
+dotenv.config();
+
+/**
+ * Module: processNavigator.js
+ *
+ * This module provides functions to navigate through a process step-by-step.
+ * It uses the UserState to track progress and the Process model to fetch the process document.
+ * The function showCurrentStep dispatches step presentation based on the step type.
+ *
+ * Functions:
+ *  - goToFirstStep(bot, chatId, userState)
+ *  - showCurrentStep(bot, chatId, userState)
+ *  - handleNextStep(bot, chatId, userState)
+ *  - handlePreviousStep(bot, chatId, userState)
+ *  - updateUserState(userState)
+ */
+
+export async function goToFirstStep(bot, chatId, userState) {
+  const debugPrefix = '[DEBUG processNavigator goToFirstStep]';
+  if (!userState.processId) {
+    console.error(`${debugPrefix} ERROR: processId not set in UserState.`);
+    await bot.sendMessage(chatId, "Process not set. Please start a process.");
+    return;
+  }
+  // Set internal index to 0 (first step).
+  userState.currentStepIndex = 0;
+  await updateUserState(userState, debugPrefix);
+  console.log(`${debugPrefix} Set currentStepIndex to 0 (first step).`);
+  await showCurrentStep(bot, chatId, userState);
+}
+
+export async function showCurrentStep(bot, chatId, userState) {
+  const debugPrefix = '[DEBUG processNavigator showCurrentStep]';
+  if (!userState || !userState.processId) {
+    console.error(`${debugPrefix} ERROR: UserState is missing or processId not set.`);
+    await bot.sendMessage(chatId, "Process not set. Please start a process.");
+    return;
+  }
+  let process;
+  try {
+    process = await Process.findById(userState.processId);
+  } catch (error) {
+    console.error(`${debugPrefix} ERROR: Failed to fetch process: ${error.message}`);
+    await bot.sendMessage(chatId, "Error fetching process.");
+    return;
+  }
+  if (!process) {
+    console.error(`${debugPrefix} ERROR: Process not found for ID: ${userState.processId}`);
+    await bot.sendMessage(chatId, "Process not found.");
+    return;
+  }
+  // Sort steps by stepSequenceNumber.
+  const sortedSteps = process.steps.sort((a, b) => a.stepSequenceNumber - b.stepSequenceNumber);
+  const currentIndex = userState.currentStepIndex;
+  if (currentIndex < 0 || currentIndex >= sortedSteps.length) {
+    console.error(`${debugPrefix} ERROR: currentStepIndex (${currentIndex}) is out of bounds.`);
+    await bot.sendMessage(chatId, "Invalid step index.");
+    return;
+  }
+  const step = sortedSteps[currentIndex];
+  console.log(`${debugPrefix} Displaying step ${step.stepSequenceNumber}: ${step.prompt}`);
+
+  // Dispatch presentation based on step type.
+  switch (step.type) {
+    case 'choice':
+      await handleChoiceStep(bot, chatId, userState, step);
+      break;
+    case 'file_process':
+      await handleFileProcessStep(bot, chatId, userState, step);
+      break;
+    // Add additional cases for other step types as needed.
+    default:
+      await defaultStepPresentation(bot, chatId, userState, step);
+      break;
+  }
+}
+
+export async function handleNextStep(bot, chatId, userState) {
+  const debugPrefix = '[DEBUG processNavigator handleNextStep]';
+  let process;
+  try {
+    process = await Process.findById(userState.processId);
+  } catch (error) {
+    console.error(`${debugPrefix} ERROR: Failed to fetch process: ${error.message}`);
+    await bot.sendMessage(chatId, "Error fetching process.");
+    return;
+  }
+  if (!process) {
+    console.error(`${debugPrefix} ERROR: Process not found.`);
+    await bot.sendMessage(chatId, "Process not found.");
+    return;
+  }
+  const sortedSteps = process.steps.sort((a, b) => a.stepSequenceNumber - b.stepSequenceNumber);
+  if (userState.currentStepIndex >= sortedSteps.length - 1) {
+    console.log(`${debugPrefix} Already at final step.`);
+    await bot.sendMessage(chatId, "You are already at the final step.");
+    return;
+  }
+  userState.currentStepIndex++;
+  await updateUserState(userState, debugPrefix);
+  console.log(`${debugPrefix} Moved to next step, index: ${userState.currentStepIndex}`);
+  await showCurrentStep(bot, chatId, userState);
+}
+
+export async function handlePreviousStep(bot, chatId, userState) {
+  const debugPrefix = '[DEBUG processNavigator handlePreviousStep]';
+  if (userState.currentStepIndex <= 0) {
+    console.log(`${debugPrefix} Already at the first step.`);
+    await bot.sendMessage(chatId, "You are at the first step, cannot go back further.");
+    return;
+  }
+  userState.currentStepIndex--;
+  await updateUserState(userState, debugPrefix);
+  console.log(`${debugPrefix} Moved to previous step, index: ${userState.currentStepIndex}`);
+  await showCurrentStep(bot, chatId, userState);
+}
+
+/**
+ * Helper function to persist the updated UserState.
+ */
+async function updateUserState(userState, debugPrefix = '[DEBUG processNavigator updateUserState]') {
+  try {
+    await userState.save();
+    console.log(`${debugPrefix} UserState updated successfully.`);
+  } catch (error) {
+    console.error(`${debugPrefix} ERROR: Failed to update UserState: ${error.message}`);
+  }
+}
+
+/**
+ * Default presentation for step types that do not have a dedicated handler.
+ */
+async function defaultStepPresentation(bot, chatId, userState, step) {
+  const debugPrefix = '[DEBUG processNavigator defaultStepPresentation]';
+  let caption = `<b>Step ${step.stepSequenceNumber}:</b> ${step.prompt}`;
+  if (step.description) {
+    caption += `\n\n<i>${step.description}</i>`;
+  }
+  const inlineKeyboard = { inline_keyboard: [] };
+  const navRow = [];
+  if (userState.currentStepIndex > 0) {
+    navRow.push({ text: "Previous", callback_data: "previous_step" });
+  }
+  if (step.type === 'final') {
+    navRow.push({ text: "Exit", callback_data: "/reset" });
+  } else {
+    navRow.push({ text: "Next", callback_data: "next_step" });
+  }
+  inlineKeyboard.inline_keyboard.push(navRow);
+  console.log(`${debugPrefix} Sending step with caption: ${caption}`);
+  await bot.sendMessage(chatId, caption, {
+    parse_mode: "HTML",
+    reply_markup: inlineKeyboard,
+  });
+}

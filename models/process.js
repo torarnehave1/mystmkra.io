@@ -21,6 +21,7 @@ const stepSchema = new Schema({
   metadata: {
     numQuestions: { type: Number, default: 3 }, // Specific to 'generate_questions', number of questions to generate
   },
+  stepSequenceNumber: { type: Number }, // Sequence number of the step
 });
 
 // Process Schema: Defines the overall workflow

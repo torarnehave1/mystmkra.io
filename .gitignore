@@ -6,3 +6,4 @@ sendemail.py
 public/pdf_video_transcrips/*
 modules/midjourney/*
 package(2).json
+scripts/.env
