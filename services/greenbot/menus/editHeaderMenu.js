@@ -1,9 +1,11 @@
 import Process from '../../../models/process.js';
+import { archiveProcess, publishProcess } from '../helpers/processArchPublish.js';
 
 /**
  * Displays the header edit interface for a given process.
  * Shows the current header details (with an "(EDIT MODE)" indicator)
- * along with inline buttons for editing the title, description, replacing the image, or exiting edit mode.
+ * along with inline buttons for editing the title, description, replacing the image,
+ * publishing, archiving, or exiting edit mode.
  *
  * @param {Number} chatId - The Telegram chat ID.
  * @param {String} processId - The ID of the process to edit.
@@ -21,6 +23,8 @@ export async function displayHeaderEditInterface(chatId, processId, bot) {
         [{ text: "Edit Title", callback_data: `edit_header_title_${processId}` }],
         [{ text: "Edit Description", callback_data: `edit_header_description_${processId}` }],
         [{ text: "Replace Image", callback_data: `edit_header_image_${processId}` }],
+        [{ text: "Publish Process", callback_data: `edit_header_publish_${processId}` }],
+        [{ text: "Archive Process", callback_data: `edit_header_archive_${processId}` }],
         [{ text: "Exit Edit", callback_data: `edit_header_exit_${processId}` }]
       ]
     };
@@ -52,7 +56,7 @@ export async function displayHeaderEditInterface(chatId, processId, bot) {
  * Extracts the action and process ID from the callback data.
  *
  * Expected format: "edit_header_<action>_<processId>"
- * where <action> is title, description, image, or exit,
+ * where <action> is title, description, image, publish, archive, or exit,
  * and <processId> is a 24-character hexadecimal string.
  *
  * @param {String} data - The callback data string.
@@ -75,8 +79,9 @@ function extractActionAndProcessId(data) {
  * Handles the callback queries for editing the process header.
  *
  * If the callback data starts with "edit_header_menu_", it means the user clicked
- * the "Edit Header" button in the edit menu. In that case, the header edit interface is displayed.
+ * the "Edit Header" button in the edit menu, so the header edit interface is displayed.
  *
+ * For the "publish" and "archive" actions, the process is updated immediately.
  * For other non-exit actions, it prompts for new input, updates the process,
  * and then re-displays the header edit interface.
  *
@@ -88,8 +93,7 @@ export function handleHeaderEditCallbacks(bot) {
     const chatId = message.chat.id;
     console.log(`[DEBUG CALLBACK] Callback data received: ${data}`);
 
-    // Option 1: If the callback comes from the edit menu "Edit Header" button,
-    // it should have a prefix "edit_header_menu_".
+    // Check for edit menu header callback.
     if (data.startsWith('edit_header_menu_')) {
       const processId = data.substring('edit_header_menu_'.length);
       console.log(`[DEBUG CALLBACK] Received edit menu header callback for process: ${processId}`);
@@ -98,7 +102,7 @@ export function handleHeaderEditCallbacks(bot) {
       return;
     }
 
-    // Otherwise, extract action and processId using the full callback data.
+    // Extract action and processId from the callback data.
     const extracted = extractActionAndProcessId(data);
     if (!extracted) {
       console.error(`[DEBUG CALLBACK] Failed to extract action and process ID from data: ${data}`);
@@ -114,6 +118,22 @@ export function handleHeaderEditCallbacks(bot) {
       return;
     }
 
+    // Handle publish and archive immediately.
+    if (action === "publish") {
+      console.log(`[DEBUG CALLBACK] Handling publish action for process: ${processId}`);
+      await publishProcess(bot, chatId, processId);
+      await bot.answerCallbackQuery(callbackQuery.id, { text: "Process published successfully." });
+      await displayHeaderEditInterface(chatId, processId, bot);
+      return;
+    } else if (action === "archive") {
+      console.log(`[DEBUG CALLBACK] Handling archive action for process: ${processId}`);
+      await archiveProcess(bot, chatId, processId);
+      await bot.answerCallbackQuery(callbackQuery.id, { text: "Process archived successfully." });
+      await displayHeaderEditInterface(chatId, processId, bot);
+      return;
+    }
+
+    // For editing title, description, or image, prompt for new input.
     await bot.answerCallbackQuery(callbackQuery.id, { text: `Editing ${action}` });
     await bot.sendMessage(chatId, `Please send the new ${action} for process ${processId}:`);
 
@@ -148,7 +168,9 @@ Excalidraw:
 1. Edit Title
 2. Edit Description
 3. Replace Image
-4. Exit Edit
+4. Publish Process
+5. Archive Process
+6. Exit Edit
 
 Usage:
 import { displayHeaderEditInterface, handleHeaderEditCallbacks } from './editHeaderMenu.js';
@@ -160,7 +182,8 @@ handleHeaderEditCallbacks(bot);
 // The `handleHeaderEditCallbacks` function listens for button presses on this interface.
 // If the callback data starts with "edit_header_menu_", it means the user selected "Edit Header" from the edit menu,
 // so the header edit interface is displayed.
-// For other callbacks (like editing title, description, or image), it prompts for new input, updates the process,
-// and refreshes the header edit interface.
+// For the "publish" and "archive" actions, the process is updated immediately without additional input.
+// For other callbacks (like editing title, description, or image), the bot prompts for new input,
+// updates the process, and refreshes the header edit interface.
 // The "Exit Edit" button simply exits the edit mode.
 */

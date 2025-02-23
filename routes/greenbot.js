@@ -14,6 +14,7 @@ import { initializeProcess } from '../services/greenbot/processInitializer.js';
 import { goToFirstStep, handleNextStep, handlePreviousStep } from '../services/greenbot/processNavigator.js';
 import { sendEditMenu } from '../services/greenbot/menus/editMenu.js';
 import {  handleHeaderEditCallbacks } from '../services/greenbot/menus/editHeaderMenu.js';
+import { displayViewMenu, handleViewMenuCallbacks } from '../services/greenbot/menus/viewProcessMenu.js';
 
 const router = express.Router();
 dotenv.config();
@@ -97,33 +98,7 @@ bot.onText(/\/start(?: (.+))?/, async (msg, match) => {
 bot.onText(/\/view/, async (msg) => {
   const chatId = msg.chat.id;
   console.log(`[DEBUG GREENBOT] /view triggered by user ${chatId}`);
-
-  try {
-    const finishedProcesses = await Process.find({ isFinished: true });
-    if (!finishedProcesses.length) {
-      await bot.sendMessage(chatId, 'You have no finished processes.');
-      return;
-    }
-    const uniqueProcesses = [
-      ...new Map(finishedProcesses.map((p) => [p._id.toString(), p])).values(),
-    ];
-    const botUsername = config.botUsername;
-    const processButtons = uniqueProcesses.map((process) => [
-      {
-        text: `${process.title}\n${process.description}`,
-        url: `https://t.me/${botUsername}?start=view_process_${process._id}`,
-      },
-    ]);
-    await bot.sendMessage(chatId, 'Select a finished process to view:', {
-      reply_markup: { inline_keyboard: processButtons },
-    });
-    
-    // Reset the UserState for viewing.
-    await initializeProcess(bot, chatId, 'view_process');
-  } catch (error) {
-    console.error(`[ERROR] Failed to retrieve finished processes: ${error.message}`);
-    await bot.sendMessage(chatId, 'An error occurred. Please try again later.');
-  }
+  await displayViewMenu(bot, chatId);
 });
 
 /**
@@ -222,6 +197,9 @@ bot.on('callback_query', async (callbackQuery) => {
     console.log(`[DEBUG CALLBACK] Reorder Steps selected for process ${processId}`);
     await bot.answerCallbackQuery(callbackQuery.id, { text: "Reordering steps" });
     await bot.sendMessage(chatId, `You selected to reorder steps for process ${processId}. Please send the step ID and direction (up/down) in the format: StepID|up or StepID|down`);
+  }
+  else {
+    await handleViewMenuCallbacks(bot, callbackQuery);
   }
 });
 
