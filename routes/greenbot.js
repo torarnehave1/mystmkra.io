@@ -1,4 +1,3 @@
-
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -13,6 +12,8 @@ import UserState from '../models/UserState.js';
 import { viewProcessHeader } from '../services/greenbot/ViewProcessHeader.js';
 import { initializeProcess } from '../services/greenbot/processInitializer.js';
 import { goToFirstStep, handleNextStep, handlePreviousStep } from '../services/greenbot/processNavigator.js';
+import { sendEditMenu } from '../services/greenbot/menus/editMenu.js';
+import {  handleHeaderEditCallbacks } from '../services/greenbot/menus/editHeaderMenu.js';
 
 const router = express.Router();
 dotenv.config();
@@ -42,7 +43,25 @@ if (!TELEGRAM_BOT_TOKEN) {
   process.exit(1);
 }
 
+// Initialize the bot and handle header edit callbacks
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
+handleHeaderEditCallbacks(bot);
+
+/**
+ * Helper function to display the header edit interface.
+ * Shows current header details with an "(EDIT MODE)" indicator and inline buttons
+ * for editing individual fields and exiting edit mode.
+ */
+
+bot.onText(/\/restart/, async (msg) => {
+  const chatId = msg.chat.id;
+  await bot.sendMessage(chatId, "Restarting bot polling...");
+  bot.stopPolling();
+  // Optionally, wait a moment before restarting polling.
+  setTimeout(() => {
+    bot.startPolling();
+  }, 3000);
+});
 
 /**
  * /start command handler:
@@ -108,10 +127,23 @@ bot.onText(/\/view/, async (msg) => {
 });
 
 /**
- * Callback query handler for navigation buttons:
+ * /edit command handler:
+ * - Displays a full list of processes with inline buttons for each process:
+ *   [Process] [Edit Header] [Edit Steps] [Reorder Steps]
+ */
+bot.onText(/\/edit/, async (msg) => {
+  const chatId = msg.chat.id;
+  console.log(`[DEBUG GREENBOT] /edit triggered by user ${chatId}`);
+  await sendEditMenu(bot, chatId);
+  
+});
+
+/**
+ * Callback query handler for navigation buttons, start, view, and edit commands:
  * - "Start" button (callback data starting with "start_process_") triggers goToFirstStep.
  * - "Next" and "Previous" buttons trigger handleNextStep and handlePreviousStep.
  * - "Exit" (reset) button (callback data "/reset") resets the UserState.
+ * - Edit options: view_process_, edit_steps_, reorder_steps_.
  */
 bot.on('callback_query', async (callbackQuery) => {
   const { data, message } = callbackQuery;
@@ -177,6 +209,20 @@ bot.on('callback_query', async (callbackQuery) => {
     await initializeProcess(bot, chatId, 'reset');
     await bot.sendMessage(chatId, "Process has been reset.");
   }
+  // Remove the edit header logic from here
+  // Edit Steps and Reorder Steps branches (placeholders for further implementation)
+  else if (data.startsWith("edit_steps_")) {
+    const processId = data.replace("edit_steps_", "");
+    console.log(`[DEBUG CALLBACK] Edit Steps selected for process ${processId}`);
+    await bot.answerCallbackQuery(callbackQuery.id, { text: "Editing steps" });
+    await bot.sendMessage(chatId, `You selected to edit a process step for process ${processId}. Please send the step ID and new details in the format: StepID|NewPrompt|NewDescription`);
+  }
+  else if (data.startsWith("reorder_steps_")) {
+    const processId = data.replace("reorder_steps_", "");
+    console.log(`[DEBUG CALLBACK] Reorder Steps selected for process ${processId}`);
+    await bot.answerCallbackQuery(callbackQuery.id, { text: "Reordering steps" });
+    await bot.sendMessage(chatId, `You selected to reorder steps for process ${processId}. Please send the step ID and direction (up/down) in the format: StepID|up or StepID|down`);
+  }
 });
 
 const __filename = fileURLToPath(import.meta.url);
@@ -184,9 +230,6 @@ const __dirname = path.dirname(__filename);
 
 router.post('/download', async (req, res) => {
     console.log('[DEBUG ALT 1] /download endpoint triggered');
-    
-   
-  
     try {
       const { fileId } = req.body;
   
@@ -197,14 +240,12 @@ router.post('/download', async (req, res) => {
   
       console.log(`[DEBUG ALT 3] Received fileId: ${fileId}`);
   
-      // Define the directory where you want to save the downloaded file.
       const downloadDir = path.join(__dirname, '..', 'public', 'telegram_files');
       if (!fs.existsSync(downloadDir)) {
         console.log('[DEBUG ALT 4] Creating download directory');
         fs.mkdirSync(downloadDir, { recursive: true });
       }
   
-      // Step 1: Call Telegram's getFile API to get file info
       const getFileUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getFile?file_id=${fileId}`;
       console.log(`[DEBUG ALT 5] Calling getFile API: ${getFileUrl}`);
       const fileInfoResponse = await axios.get(getFileUrl);
@@ -214,20 +255,16 @@ router.post('/download', async (req, res) => {
       const filePath = fileInfoResponse.data.result.file_path;
       console.log(`[DEBUG ALT 6] Retrieved file_path: ${filePath}`);
   
-      // Step 2: Construct the file download URL.
       const fileUrl = `https://api.telegram.org/file/bot${TELEGRAM_BOT_TOKEN}/${filePath}`;
       console.log(`[DEBUG ALT 7] Constructed file URL: ${fileUrl}`);
   
-      // Step 3: Download the file using axios.
       const response = await axios.get(fileUrl, { responseType: 'arraybuffer' });
       console.log('[DEBUG ALT 8] File downloaded from Telegram');
   
-      // Determine file extension (if any) from filePath.
       const ext = path.extname(filePath) || '.dat';
       const newFileName = `telegram_file_${Date.now()}${ext}`;
       const newFilePath = path.join(downloadDir, newFileName);
   
-      // Save the file to disk.
       fs.writeFileSync(newFilePath, response.data);
       console.log(`[DEBUG ALT 9] File saved to: ${newFilePath}`);
   
@@ -241,8 +278,8 @@ router.post('/download', async (req, res) => {
       console.error('[DEBUG ALT 11] Error details:', error.stack);
       res.status(500).json({ error: 'Failed to download telegram file' });
     }
-  });
-
+});
+  
 // Express route for status check.
 router.get('/status', (req, res) => {
   res.json({ status: 'Running' });
