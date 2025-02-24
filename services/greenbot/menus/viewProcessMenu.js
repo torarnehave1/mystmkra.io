@@ -24,9 +24,13 @@ export async function displayViewMenu(bot, chatId) {
       {
         text: "Archive",
         callback_data: `archive_process_${process._id}`
+      },
+      {
+        text: "Delete",
+        callback_data: `delete_process_${process._id}`
       }
     ]);
-    await bot.sendMessage(chatId, 'Select a finished process to view or archive:', {
+    await bot.sendMessage(chatId, 'Select a finished process to view, archive, or delete:', {
       reply_markup: { inline_keyboard: processButtons },
     });
     
@@ -55,5 +59,23 @@ export async function handleViewMenuCallbacks(bot, callbackQuery) {
     await bot.answerCallbackQuery(callbackQuery.id, { text: "Process archived" });
     // Refresh the view menu to show the updated list
     await displayViewMenu(bot, chatId);
+  } else if (data.startsWith('delete_process_')) {
+    const processId = data.replace('delete_process_', '');
+    console.log(`[DEBUG VIEW MENU] Deleting process ${processId}`);
+    await deleteProcess(bot, chatId, processId);
+    await bot.answerCallbackQuery(callbackQuery.id, { text: "Process deleted" });
+    // Refresh the view menu to show the updated list
+    await displayViewMenu(bot, chatId);
+  }
+}
+
+async function deleteProcess(bot, chatId, processId) {
+  try {
+    await Process.findByIdAndDelete(processId);
+    console.log(`[DEBUG DELETE PROCESS] Process ${processId} deleted successfully`);
+    await bot.sendMessage(chatId, 'Process deleted successfully.');
+  } catch (error) {
+    console.error(`[ERROR] Failed to delete process: ${error.message}`);
+    await bot.sendMessage(chatId, 'An error occurred while deleting the process. Please try again later.');
   }
 }

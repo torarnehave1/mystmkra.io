@@ -7,14 +7,16 @@ import mongoose from 'mongoose';
 import TelegramBot from 'node-telegram-bot-api';
 import express from 'express';
 import config from '../config/config.js';
-import Process from '../models/process.js';
 import UserState from '../models/UserState.js';
 import { viewProcessHeader } from '../services/greenbot/ViewProcessHeader.js';
 import { initializeProcess } from '../services/greenbot/processInitializer.js';
 import { goToFirstStep, handleNextStep, handlePreviousStep } from '../services/greenbot/processNavigator.js';
-import { sendEditMenu } from '../services/greenbot/menus/editMenu.js';
-import {  handleHeaderEditCallbacks } from '../services/greenbot/menus/editHeaderMenu.js';
+//import { sendEditMenu } from '../services/greenbot/menus/editMenu.js';
+import { handleHeaderEditCallbacks } from '../services/greenbot/menus/editHeaderMenu.js';
 import { displayViewMenu, handleViewMenuCallbacks } from '../services/greenbot/menus/viewProcessMenu.js';
+import { displayCreateHeaderProcessMenu, handleCreateHeaderProcessMenu } from '../services/greenbot/menus/createHeaderProcessMenu.js';
+import { sendEditMenu, handleEditStepsCallback } from '../services/greenbot/menus/editMenu.js';
+import { handleAddStep } from '../services/greenbot/addStepService.js';
 
 const router = express.Router();
 dotenv.config();
@@ -47,13 +49,12 @@ if (!TELEGRAM_BOT_TOKEN) {
 // Initialize the bot and handle header edit callbacks
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
 handleHeaderEditCallbacks(bot);
-
+handleEditStepsCallback(bot);
 /**
  * Helper function to display the header edit interface.
  * Shows current header details with an "(EDIT MODE)" indicator and inline buttons
  * for editing individual fields and exiting edit mode.
  */
-
 bot.onText(/\/restart/, async (msg) => {
   const chatId = msg.chat.id;
   await bot.sendMessage(chatId, "Restarting bot polling...");
@@ -63,6 +64,31 @@ bot.onText(/\/restart/, async (msg) => {
     bot.startPolling();
   }, 3000);
 });
+
+// When a user sends the /create command:
+// When a user sends the /create command:
+bot.onText(/\/create/, async (msg) => {
+  const chatId = msg.chat.id;
+  // Reset the user state for creation.
+  await UserState.updateOne(
+    { userId: chatId },
+    {
+      creationMode: null,
+      processId: null,
+      step: null,
+      currentStepIndex: null,
+      isProcessingStep: false
+    },
+    { upsert: true }
+  );
+  await displayCreateHeaderProcessMenu(bot, chatId);
+});
+
+
+// Initialize the creation callback handler (if not already initialized)
+handleCreateHeaderProcessMenu(bot);
+
+
 
 /**
  * /start command handler:
@@ -110,11 +136,10 @@ bot.onText(/\/edit/, async (msg) => {
   const chatId = msg.chat.id;
   console.log(`[DEBUG GREENBOT] /edit triggered by user ${chatId}`);
   await sendEditMenu(bot, chatId);
-  
 });
 
 /**
- * Callback query handler for navigation buttons, start, view, and edit commands:
+ * Callback query handler for navigation buttons, start, view, edit commands:
  * - "Start" button (callback data starting with "start_process_") triggers goToFirstStep.
  * - "Next" and "Previous" buttons trigger handleNextStep and handlePreviousStep.
  * - "Exit" (reset) button (callback data "/reset") resets the UserState.
@@ -123,7 +148,15 @@ bot.onText(/\/edit/, async (msg) => {
 bot.on('callback_query', async (callbackQuery) => {
   const { data, message } = callbackQuery;
   const chatId = message.chat.id;
-  console.log(`[DEBUG CALLBACK] Callback data received: ${data}`);
+  console.log(`[DEBUG CALLBACK] Callback data received: ${data} [UNIQUE_CODE_12345]`);
+  if (data.startsWith('create_header_')) {
+    return;
+  }
+
+  if (data.startsWith('finish_process_')) {
+    await bot.sendMessage(chatId, "Finished process editing.");
+    await sendEditMenu(bot, chatId);
+  }
 
   if (data.startsWith('start_process_')) {
     const processId = extractProcessIdFromCallbackData(data);
@@ -184,7 +217,26 @@ bot.on('callback_query', async (callbackQuery) => {
     await initializeProcess(bot, chatId, 'reset');
     await bot.sendMessage(chatId, "Process has been reset.");
   }
-  // Remove the edit header logic from here
+  // Handle add steps manually
+  else if (data.startsWith("add_steps_manual_")) {
+    const processId = data.replace("add_steps_manual_", "");
+    console.log(`[DEBUG CALLBACK] Add Steps selected for process ${processId}`);
+    await bot.answerCallbackQuery(callbackQuery.id, { text: "Adding steps" });
+    await handleAddStep(bot, chatId, processId);
+  }
+  // Handle edit existing steps
+  else if (data.startsWith("edit_existing_steps_") || data.startsWith("edit_step_")) {
+    await handleEditStepsCallback(bot);
+  }
+  // Handle exit header edit mode
+  else if (data.startsWith("edit_header_exit_")) {
+    console.log(`[DEBUG CALLBACK] Exiting header edit mode for chatId: ${chatId}`);
+    await bot.answerCallbackQuery(callbackQuery.id, { text: "Exiting header edit mode" });
+    await bot.sendMessage(chatId, "Exited header edit mode.");
+    
+await displayViewMenu(bot, chatId) ;
+
+}
   // Edit Steps and Reorder Steps branches (placeholders for further implementation)
   else if (data.startsWith("edit_steps_")) {
     const processId = data.replace("edit_steps_", "");

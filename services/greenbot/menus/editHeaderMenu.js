@@ -91,8 +91,14 @@ export function handleHeaderEditCallbacks(bot) {
   bot.on('callback_query', async (callbackQuery) => {
     const { data, message } = callbackQuery;
     const chatId = message.chat.id;
+    
+    // Only process callbacks that start with "edit_header_"
+    if (!data.startsWith('edit_header_')) {
+      return; // Ignore other callback data (like create_header_manual)
+    }
+    
     console.log(`[DEBUG CALLBACK] Callback data received: ${data}`);
-
+    
     // Check for edit menu header callback.
     if (data.startsWith('edit_header_menu_')) {
       const processId = data.substring('edit_header_menu_'.length);
@@ -101,7 +107,7 @@ export function handleHeaderEditCallbacks(bot) {
       await bot.answerCallbackQuery(callbackQuery.id, { text: "Header edit interface opened." });
       return;
     }
-
+    
     // Extract action and processId from the callback data.
     const extracted = extractActionAndProcessId(data);
     if (!extracted) {
@@ -109,15 +115,15 @@ export function handleHeaderEditCallbacks(bot) {
       await bot.answerCallbackQuery(callbackQuery.id, { text: "Error: Invalid callback data." });
       return;
     }
-
+    
     const { action, processId } = extracted;
-
+    
     if (action === "exit") {
       await bot.answerCallbackQuery(callbackQuery.id, { text: "Exiting header edit mode" });
       await bot.sendMessage(chatId, "Exited header edit mode.");
       return;
     }
-
+    
     // Handle publish and archive immediately.
     if (action === "publish") {
       console.log(`[DEBUG CALLBACK] Handling publish action for process: ${processId}`);
@@ -132,11 +138,11 @@ export function handleHeaderEditCallbacks(bot) {
       await displayHeaderEditInterface(chatId, processId, bot);
       return;
     }
-
+    
     // For editing title, description, or image, prompt for new input.
     await bot.answerCallbackQuery(callbackQuery.id, { text: `Editing ${action}` });
     await bot.sendMessage(chatId, `Please send the new ${action} for process ${processId}:`);
-
+    
     bot.once('message', async (msg) => {
       if (msg.chat.id !== chatId || !msg.text || msg.text.startsWith('/')) return;
       const newValue = msg.text.trim();
@@ -162,6 +168,7 @@ export function handleHeaderEditCallbacks(bot) {
     });
   });
 }
+
 
 /*
 Excalidraw:

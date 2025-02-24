@@ -4,6 +4,7 @@ import handleChoiceStep from './steps/choiceProcess.js'; // Dedicated module for
 import handleFileProcessStep from './steps/fileProcess.js'; // Dedicated module for 'file_process' steps
 import handleTextProcessStep from './steps/textProcess.js'; // Dedicated module for 'text_process' steps
 import handleYesNoProcessStep from './steps/yesNoProcess.js'; // Dedicated module for 'yes_no_process' steps
+import handleSoundProcessStep from './steps/soundProcess.js'; // Dedicated module for 'sound' steps
 
 dotenv.config();
 
@@ -83,7 +84,9 @@ export async function showCurrentStep(bot, chatId, userState) {
 case 'text_process':
      await handleTextProcessStep(bot, chatId, userState, step);
     break;
-
+    case 'sound':
+      await handleSoundProcessStep(bot, chatId, userState, step);
+     break;
    
 
     case 'yes_no_process':

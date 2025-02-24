@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 import UserState from '../../models/UserState.js';
-import { handleCreateProcessManual } from '../greenbot/createProcessManual.js';
-import handleCreateProcessAI from '../greenbot/createProcessAI.js';
+
 import { handleEditProcess } from '../greenbot/editProcessService.js';
 // Optionally, import handleViewProcess if available.
 
@@ -65,7 +64,7 @@ export async function initializeProcess(bot, chatId, processType, processId = nu
   // Handle different process types.
   switch (processType) {
     case 'create_process_manual':
-      await handleCreateProcessManual(bot, chatId);
+      await createManualProcess(bot, chatId);
       break;
     case 'create_process_ai':
       await handleCreateProcessAI(bot, chatId);
