@@ -56,7 +56,8 @@ async function handleManualCreation(bot, chatId) {
         steps: [],
         createdBy: chatId,
         createdAt: Date.now(),
-        isFinished: false
+        isFinished: false,
+        stepSequenceNumber: 1 // Initial sequence number
       });
       const processId = newProcess._id;
       console.log(`[DEBUG CREATE HEADER MENU] Process created with ID: ${processId} for chatId: ${chatId}`);
@@ -72,7 +73,9 @@ async function handleManualCreation(bot, chatId) {
         if (msgDesc.chat.id !== chatId || !msgDesc.text) return;
         const description = msgDesc.text.trim();
         console.log(`[DEBUG CREATE HEADER MENU] Description received: ${description} for processId: ${processId}`);
-        await Process.findByIdAndUpdate(processId, { description });
+        const process = await Process.findById(processId);
+        const stepSequenceNumber = process.steps.length + 1; // +2 to account for title and description steps
+        await Process.findByIdAndUpdate(processId, { description, stepSequenceNumber });
         await UserState.updateOne(
           { userId: chatId },
           { step: 'imageUrl', currentStepIndex: 2 }
@@ -83,7 +86,7 @@ async function handleManualCreation(bot, chatId) {
           if (msgImage.chat.id !== chatId) return;
           const imageUrl = msgImage.text ? msgImage.text.trim() : '';
           console.log(`[DEBUG CREATE HEADER MENU] Image URL received: ${imageUrl} for processId: ${processId}`);
-          await Process.findByIdAndUpdate(processId, { imageUrl: imageUrl || undefined, isFinished: true });
+          await Process.findByIdAndUpdate(processId, { imageUrl: imageUrl || undefined, isFinished: true, stepSequenceNumber: 3 });
           await UserState.updateOne(
             { userId: chatId },
             { step: 'pending', isProcessingStep: false }

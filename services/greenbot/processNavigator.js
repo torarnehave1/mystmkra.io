@@ -5,6 +5,8 @@ import handleFileProcessStep from './steps/fileProcess.js'; // Dedicated module 
 import handleTextProcessStep from './steps/textProcess.js'; // Dedicated module for 'text_process' steps
 import handleYesNoProcessStep from './steps/yesNoProcess.js'; // Dedicated module for 'yes_no_process' steps
 import handleSoundProcessStep from './steps/soundProcess.js'; // Dedicated module for 'sound' steps
+import handleInfoProcessStep from './steps/infoProcess.js'; // Dedicated module for 'info_process' steps
+import handleCallToActionProcessStep from './steps/callToActionProcess.js'; // Dedicated module for 'call_to_action' steps
 
 dotenv.config();
 
@@ -92,7 +94,12 @@ case 'text_process':
     case 'yes_no_process':
       await handleYesNoProcessStep(bot, chatId, userState, step);
       break;
-
+    case 'info_process':
+      await handleInfoProcessStep(bot, chatId, userState, step);
+      break;
+    case 'call_to_action':
+      await handleCallToActionProcessStep(bot, chatId, userState, step);
+      break;
     case 'final': 
       await defaultStepPresentation(bot, chatId, userState, step);
       break;
@@ -120,12 +127,22 @@ export async function handleNextStep(bot, chatId, userState) {
     return;
   }
   const sortedSteps = process.steps.sort((a, b) => a.stepSequenceNumber - b.stepSequenceNumber);
+  console.log(`${debugPrefix} Sorted steps:`, sortedSteps);
+  console.log(`${debugPrefix} Current step index: ${userState.currentStepIndex}`);
   if (userState.currentStepIndex >= sortedSteps.length - 1) {
     console.log(`${debugPrefix} Already at final step.`);
     await bot.sendMessage(chatId, "You are already at the final step.");
     return;
   }
-  userState.currentStepIndex++;
+  // Ensure the step index is incremented correctly
+  const nextStepIndex = userState.currentStepIndex + 1;
+  if (nextStepIndex < sortedSteps.length && sortedSteps[nextStepIndex].stepSequenceNumber === sortedSteps[userState.currentStepIndex].stepSequenceNumber + 1) {
+    userState.currentStepIndex = nextStepIndex;
+  } else {
+    console.error(`${debugPrefix} ERROR: Invalid step sequence.`);
+    await bot.sendMessage(chatId, "Invalid step sequence.");
+    return;
+  }
   await updateUserState(userState, debugPrefix);
   console.log(`${debugPrefix} Moved to next step, index: ${userState.currentStepIndex}`);
   await showCurrentStep(bot, chatId, userState);

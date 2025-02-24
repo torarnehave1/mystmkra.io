@@ -10,7 +10,7 @@ import { saveAnswer } from '../answerService.js';
  *   - step.prompt as the performer (or additional info).
  * 
  * It then builds a navigation inline keyboard (Previous/Next) similar to textProcess.
- * Finally, it saves the audio URL as the user's answer.
+ * Finally, it saves the audio URL as the user's answer, unless in view mode.
  *
  * @param {TelegramBot} bot - The Telegram bot instance.
  * @param {Number} chatId - The chat ID to send the audio to.
@@ -43,19 +43,6 @@ export default async function handleSoundProcessStep(bot, chatId, userState, ste
       performer: performer,
       reply_markup: inlineKeyboard
     });
-    
-    // Save the answer using your answer service. Here we store the audio URL.
-    await saveAnswer({
-      bot,
-      chatId,
-      processId: userState.processId,
-      stepIndex: userState.currentStepIndex,
-      answer: audioUrl,
-      stepType: step.type,
-      stepPrompt: step.prompt,
-      stepDescription: step.description,
-    });
-    console.log(`${debugPrefix} Sound answer saved successfully.`);
   } catch (error) {
     console.error(`${debugPrefix} ERROR sending sound audio: ${error.message}`);
     await bot.sendMessage(chatId, "An error occurred while sending the audio. Please try again.");
