@@ -91,45 +91,61 @@ export const handleAddStep = async (bot, chatId, processId, position = 'end', st
         const stepDescription = msgDesc.text.trim();
         console.log(`[DEBUG] Received step description: "${stepDescription}" for type: "${stepType}"`);
 
-        // Construct the new step object.
-        const newStep = {
-          stepId: `step_${Date.now()}`,
-          type: stepType,
-          prompt: stepPrompt,
-          description: stepDescription,
-          // For choice steps, initialize an empty options array.
-          options: stepType === 'choice' ? [] : undefined,
-          // For file steps, add fileTypes if needed.
-          validation: stepType === 'file_process' ? { required: false, fileTypes: [] } : { required: false },
-          // Metadata for generate_questions_process type.
-          metadata: stepType === 'generate_questions_process' ? { numQuestions: 3 } : {}
-          // Optionally, include a stepSequenceNumber here.
-        };
+        // Step 4: If the step type is 'choice', ask for options.
+        let stepOptions = [];
+        if (stepType === 'choice') {
+          await bot.sendMessage(chatId, 'Please provide options for this choice step, separated by spaces:');
+          bot.once('message', async (msgOptions) => {
+            if (msgOptions.chat.id !== chatId || !msgOptions.text) return;
+            stepOptions = msgOptions.text.split(' ').map(option => option.trim());
+            console.log(`[DEBUG] Received step options: "${stepOptions}" for type: "${stepType}"`);
 
-        try {
-          if (position === 'before' && stepIndex !== null) {
-            process.steps.splice(stepIndex, 0, newStep);
-          } else if (position === 'after' && stepIndex !== null) {
-            process.steps.splice(stepIndex + 1, 0, newStep);
-          } else {
-            process.steps.push(newStep);
-          }
-          await process.save();
-          console.log(`[DEBUG] Step added to processId: "${processId}"`);
-
-          await bot.sendMessage(chatId, 'Step added successfully. What would you like to do next?', {
-            reply_markup: {
-              inline_keyboard: [
-                [{ text: 'Add Another Step', callback_data: `add_steps_manual_${processId}` }],
-                [{ text: 'Finish Process', callback_data: `finish_process_${processId}` }]
-              ]
-            }
+            // Proceed to create the step with options.
+            await createStep(process, stepType, stepPrompt, stepDescription, stepOptions, position, stepIndex, bot, chatId);
           });
-        } catch (error) {
-          console.error(`[ERROR] Failed to add step: ${error.message}`);
-          await bot.sendMessage(chatId, 'An error occurred while adding the step. Please try again later.');
+        } else {
+          // Proceed to create the step without options.
+          await createStep(process, stepType, stepPrompt, stepDescription, stepOptions, position, stepIndex, bot, chatId);
         }
       });
     });
   });
 };
+
+// Helper function to create and save the step.
+async function createStep(process, stepType, stepPrompt, stepDescription, stepOptions, position, stepIndex, bot, chatId) {
+  const newStep = {
+    stepId: `step_${Date.now()}`,
+    type: stepType,
+    prompt: stepPrompt,
+    description: stepDescription,
+    options: stepType === 'choice' ? stepOptions : undefined,
+    validation: stepType === 'file_process' ? { required: false, fileTypes: [] } : { required: false },
+    metadata: stepType === 'generate_questions_process' ? { numQuestions: 3 } : {},
+    stepSequenceNumber: process.steps.length + 1 // Add stepSequenceNumber
+  };
+
+  try {
+    if (position === 'before' && stepIndex !== null) {
+      process.steps.splice(stepIndex, 0, newStep);
+    } else if (position === 'after' && stepIndex !== null) {
+      process.steps.splice(stepIndex + 1, 0, newStep);
+    } else {
+      process.steps.push(newStep);
+    }
+    await process.save();
+    console.log(`[DEBUG] Step added to processId: "${process._id}"`);
+
+    await bot.sendMessage(chatId, 'Step added successfully. What would you like to do next?', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: 'Add Another Step', callback_data: `add_steps_manual_${process._id}` }],
+          [{ text: 'Finish Process', callback_data: `finish_process_${process._id}` }]
+        ]
+      }
+    });
+  } catch (error) {
+    console.error(`[ERROR] Failed to add step: ${error.message}`);
+    await bot.sendMessage(chatId, 'An error occurred while adding the step. Please try again later.');
+  }
+}

@@ -129,13 +129,13 @@ export function handleEditStepsCallback(bot) {
         const step = process.steps[stepIndex];
         await bot.sendMessage(chatId, `Editing Step ${stepIndex + 1}: ${step.prompt}\nPlease enter the new title:`);
         
-        const titleListener = bot.once('message', async (msgTitle) => {
+        bot.once('message', async (msgTitle) => {
           if (msgTitle.chat.id !== chatId || !msgTitle.text) return;
           const newTitle = msgTitle.text.trim();
           console.log(`[DEBUG EDIT MENU] New title received: ${newTitle} for step index: ${stepIndex}`);
           
           await bot.sendMessage(chatId, 'Please enter the new description:');
-          const descListener = bot.once('message', async (msgDesc) => {
+          bot.once('message', async (msgDesc) => {
             if (msgDesc.chat.id !== chatId || !msgDesc.text) return;
             const newDescription = msgDesc.text.trim();
             console.log(`[DEBUG EDIT MENU] New description received: ${newDescription} for step index: ${stepIndex}`);
