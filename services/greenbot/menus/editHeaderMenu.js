@@ -1,5 +1,20 @@
 import Process from '../../../models/process.js';
 import { archiveProcess, publishProcess } from '../helpers/processArchPublish.js';
+import handleCreateProcessAI from '../createProcessAI.js'; // Import the function to handle the creation of steps
+
+/**
+ * Trims the caption to fit within the allowed length for Telegram.
+ *
+ * @param {String} caption - The caption to trim.
+ * @param {Number} maxLength - The maximum allowed length.
+ * @returns {String} The trimmed caption.
+ */
+function trimCaption(caption, maxLength) {
+  if (caption.length > maxLength) {
+    return caption.substring(0, maxLength - 3) + '...';
+  }
+  return caption;
+}
 
 /**
  * Displays the header edit interface for a given process.
@@ -25,6 +40,7 @@ export async function displayHeaderEditInterface(chatId, processId, bot) {
         [{ text: "Replace Image", callback_data: `edit_header_image_${processId}` }],
         [{ text: "Publish Process", callback_data: `edit_header_publish_${processId}` }],
         [{ text: "Archive Process", callback_data: `edit_header_archive_${processId}` }],
+        [{ text: "Create Step by AI", callback_data: `edit_header_create_step_${processId}` }], // Add the new button
         [{ text: "Exit Edit", callback_data: `edit_header_exit_${processId}` }]
       ]
     };
@@ -32,6 +48,7 @@ export async function displayHeaderEditInterface(chatId, processId, bot) {
     let caption;
     if (process.imageUrl) {
       caption = `<b>${process.title} (EDIT MODE)</b>\n\n<i>${process.description || ''}</i>\n\nImage: ${process.imageUrl}\n\n [${processId}]`;
+      caption = trimCaption(caption, 1024); // Trim caption to fit within Telegram's limit
       console.log(`[DEBUG HEADER EDIT] Sending process image with caption: ${caption}`);
       await bot.sendPhoto(chatId, process.imageUrl, {
         caption: caption,
@@ -40,6 +57,7 @@ export async function displayHeaderEditInterface(chatId, processId, bot) {
       });
     } else {
       caption = `<b>${process.title} (EDIT MODE)</b>\n\n<i>${process.description || ''}</i>\n\n [${processId}]`;
+      caption = trimCaption(caption, 1024); // Trim caption to fit within Telegram's limit
       console.log(`[DEBUG HEADER EDIT] Sending process message with caption: ${caption}`);
       await bot.sendMessage(chatId, caption, {
         parse_mode: 'HTML',
@@ -48,6 +66,7 @@ export async function displayHeaderEditInterface(chatId, processId, bot) {
     }
   } catch (error) {
     console.error(`[DEBUG HEADER EDIT] Error displaying header edit interface: ${error.message}`);
+    console.error(`[DEBUG HEADER EDIT] Stack trace: ${error.stack}`);
     await bot.sendMessage(chatId, "Failed to display header edit interface.");
   }
 }
@@ -56,7 +75,7 @@ export async function displayHeaderEditInterface(chatId, processId, bot) {
  * Extracts the action and process ID from the callback data.
  *
  * Expected format: "edit_header_<action>_<processId>"
- * where <action> is title, description, image, publish, archive, or exit,
+ * where <action> is title, description, image, publish, archive, create_step, or exit,
  * and <processId> is a 24-character hexadecimal string.
  *
  * @param {String} data - The callback data string.
@@ -66,8 +85,8 @@ function extractActionAndProcessId(data) {
   console.log(`[DEBUG EXTRACT] Extracting action and process ID from data: ${data}`);
   const parts = data.split("_");
   if (parts.length >= 4 && parts[0] === "edit" && parts[1] === "header") {
-    const action = parts[2];
-    const processId = parts.slice(3).join("_");
+    const action = parts.slice(2, parts.length - 1).join("_");
+    const processId = parts[parts.length - 1];
     console.log(`[DEBUG EXTRACT] Extracted action: ${action}, processId: ${processId}`);
     return { action, processId };
   }
@@ -87,9 +106,21 @@ function extractActionAndProcessId(data) {
  *
  * @param {TelegramBot} bot - The Telegram bot instance.
  */
+async function clearPendingUpdates(bot) {
+  try {
+    const updates = await bot.getUpdates({ offset: -1, limit: 1 });
+    if (updates.length > 0) {
+      const latestUpdateId = updates[0].update_id;
+      await bot.getUpdates({ offset: latestUpdateId + 1 });
+    }
+  } catch (error) {
+    console.error('[DEBUG] Error clearing pending updates:', error.message);
+  }
+}
+
 export function handleHeaderEditCallbacks(bot) {
   bot.on('callback_query', async (callbackQuery) => {
-    const { data, message } = callbackQuery;
+    const { data, message, id: callbackQueryId } = callbackQuery;
     const chatId = message.chat.id;
     
     // Only process callbacks that start with "edit_header_"
@@ -104,7 +135,7 @@ export function handleHeaderEditCallbacks(bot) {
       const processId = data.substring('edit_header_menu_'.length);
       console.log(`[DEBUG CALLBACK] Received edit menu header callback for process: ${processId}`);
       await displayHeaderEditInterface(chatId, processId, bot);
-      await bot.answerCallbackQuery(callbackQuery.id, { text: "Header edit interface opened." });
+      await bot.answerCallbackQuery(callbackQueryId, { text: "Header edit interface opened." });
       return;
     }
     
@@ -112,14 +143,14 @@ export function handleHeaderEditCallbacks(bot) {
     const extracted = extractActionAndProcessId(data);
     if (!extracted) {
       console.error(`[DEBUG CALLBACK] Failed to extract action and process ID from data: ${data}`);
-      await bot.answerCallbackQuery(callbackQuery.id, { text: "Error: Invalid callback data." });
+      await bot.answerCallbackQuery(callbackQueryId, { text: "Error: Invalid callback data." });
       return;
     }
     
     const { action, processId } = extracted;
     
     if (action === "exit") {
-      await bot.answerCallbackQuery(callbackQuery.id, { text: "Exiting header edit mode" });
+      await bot.answerCallbackQuery(callbackQueryId, { text: "Exiting header edit mode" });
       await bot.sendMessage(chatId, "Exited header edit mode.");
       return;
     }
@@ -128,19 +159,39 @@ export function handleHeaderEditCallbacks(bot) {
     if (action === "publish") {
       console.log(`[DEBUG CALLBACK] Handling publish action for process: ${processId}`);
       await publishProcess(bot, chatId, processId);
-      await bot.answerCallbackQuery(callbackQuery.id, { text: "Process published successfully." });
+      await bot.answerCallbackQuery(callbackQueryId, { text: "Process published successfully." });
       await displayHeaderEditInterface(chatId, processId, bot);
       return;
     } else if (action === "archive") {
       console.log(`[DEBUG CALLBACK] Handling archive action for process: ${processId}`);
       await archiveProcess(bot, chatId, processId);
-      await bot.answerCallbackQuery(callbackQuery.id, { text: "Process archived successfully." });
+      await bot.answerCallbackQuery(callbackQueryId, { text: "Process archived successfully." });
       await displayHeaderEditInterface(chatId, processId, bot);
+      return;
+    }
+
+    // Handle create step by AI.
+    if (action === "create_step") {
+      console.log(`[DEBUG CALLBACK] Handling create step by AI action for process: ${processId}`);
+      try {
+        const process = await Process.findById(processId);
+        if (!process) {
+          await bot.sendMessage(chatId, "Process not found.");
+          return;
+        }
+        await handleCreateProcessAI(processId, process.title, process.description);
+        await clearPendingUpdates(bot);
+        await bot.answerCallbackQuery(callbackQueryId, { text: "Steps created successfully by AI." });
+        await displayHeaderEditInterface(chatId, processId, bot);
+      } catch (error) {
+        console.error(`[DEBUG CALLBACK] Error creating steps by AI: ${error.message}`);
+        await bot.sendMessage(chatId, `Failed to create steps by AI: ${error.message}`);
+      }
       return;
     }
     
     // For editing title, description, or image, prompt for new input.
-    await bot.answerCallbackQuery(callbackQuery.id, { text: `Editing ${action}` });
+    await bot.answerCallbackQuery(callbackQueryId, { text: `Editing ${action}` });
     await bot.sendMessage(chatId, `Please send the new ${action} for process ${processId}:`);
     
     bot.once('message', async (msg) => {
@@ -168,7 +219,6 @@ export function handleHeaderEditCallbacks(bot) {
     });
   });
 }
-
 
 /*
 Excalidraw:

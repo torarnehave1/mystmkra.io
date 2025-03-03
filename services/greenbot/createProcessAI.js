@@ -6,8 +6,6 @@ const openai = new OpenAI({
   apiKey: config.openaiApiKey,
 });
 
-//Test the OpenAI API
-
 /**
  * Generates structured steps dynamically based on a process title and description.
  * @param {String} processId - The MongoDB document ID of the process.
@@ -41,7 +39,8 @@ async function handleCreateProcessAI(processId, title, description) {
         },
         "metadata": {
           "numQuestions": Number
-        }
+        },
+        "stepSequenceNumber": Number
       }
     ]
   }
@@ -53,9 +52,10 @@ async function handleCreateProcessAI(processId, title, description) {
   - "file_process": Requires file upload (e.g., "Upload your business plan").
   - "generate_questions_process": AI-generated follow-up questions.
   - "final": Marks the last step in the process.
-  - "info_process": Provides information to the user without requiring input. // Added 'info_process'
+  - "info_process": Provides information to the user without requiring input.
+  - "sound": Requires sound URL or a file upload input.
+  - "call_to_action": Prompts the user to take a specific action.
   - Feel free to mix and match these types to create a comprehensive process.
-  
   
   **Now generate a structured list of steps for the process below:**
   Title: "${title}"
@@ -73,10 +73,21 @@ async function handleCreateProcessAI(processId, title, description) {
       max_tokens: 1500,
     });
 
-    const steps = JSON.parse(response.choices[0].message.content).steps.map(step => ({
-      ...step,
-      stepId: `step_${Date.now()}_${Math.floor(Math.random() * 1000)}` // Ensures long, unique step IDs
-    }));
+    let stepsData;
+    try {
+      stepsData = JSON.parse(response.choices[0].message.content);
+    } catch (parseError) {
+      console.error(`[ERROR] Failed to parse AI response JSON: ${parseError.message}`);
+      throw new Error('Invalid JSON format returned by AI.');
+    }
+
+    const steps = Array.isArray(stepsData.steps)
+      ? stepsData.steps.map((step, index) => ({
+          ...step,
+          stepId: `step_${Date.now()}_${Math.floor(Math.random() * 1000)}`, // Generates a unique step ID
+          stepSequenceNumber: index + 1,
+        }))
+      : [];
 
     if (!steps.length) {
       throw new Error('AI response did not contain valid steps.');

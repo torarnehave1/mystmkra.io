@@ -35,7 +35,8 @@ export const handleAddStep = async (bot, chatId, processId, position = 'end', st
         [{ text: 'Email', callback_data: `step_type_email_process_${processId}` }],
         [{ text: 'Info', callback_data: `step_type_info_process_${processId}` }],
         [{ text: 'Sound', callback_data: `step_type_sound_${processId}` }],
-        [{ text: 'Call to Action', callback_data: `step_type_call_to_action_${processId}` }] // Add 'Call to Action' to the inline
+        [{ text: 'Call to Action', callback_data: `step_type_call_to_action_${processId}` }], // Add 'Call to Action' to the inline
+        [{ text: 'Connect', callback_data: `step_type_connect_${processId}` }] // Add 'Connect' to the inline keyboard
       ]
     }
   });
@@ -68,7 +69,8 @@ export const handleAddStep = async (bot, chatId, processId, position = 'end', st
       'email_process',
       'info_process',
       'sound', // Add 'sound' to the allowed step types
-      'call_to_action' // Add 'call_to_action' to the allowed step types
+      'call_to_action', // Add 'call_to_action' to the allowed step types
+      'connect' // Add 'connect' to the allowed step types
     ];
     if (!allowedStepTypes.includes(stepType)) {
       console.error(`[ERROR] Invalid step type: "${stepType}"`);

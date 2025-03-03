@@ -72,18 +72,17 @@ export async function viewProcessHeader(bot, chatId, processId) {
 
   // Check if process has an imageUrl and send the appropriate message.
   if (process.imageUrl) {
-    const caption = `<b>${process.title}</b>\n\n<i>${process.description}</i>\n\n<b>Made in Mystmkra.io</b> - by AlivenessLAβ\n\n [${processId}]`;
+    const caption = `${process.title}\n\n${process.description}\n\n Made in Mystmkra.io - by AlivenessLAβ\n\n [${processId}]`;
     console.log(`${debugPrefix} Sending process image with caption: ${caption}`);
     await bot.sendPhoto(chatId, process.imageUrl, {
       caption: truncateCaption(caption),
-      parse_mode: "HTML",
       reply_markup: inlineKeyboard,
     });
   } else {
-    const caption = `<b>${process.title}</b>\n\n<b>Made in Mystmkra.io</b> - by AlivenessLAβ\n\n [${processId}]`;
+    const caption = `${process.title}\n\n<b>Made in Mystmkra.io - by AlivenessLAβ\n\n [${processId}]`;
     console.log(`${debugPrefix} Sending process message with caption: ${caption}`);
     await bot.sendMessage(chatId, truncateCaption(caption), {
-      parse_mode: 'HTML',
+     // parse_mode: 'HTML',
       reply_markup: inlineKeyboard,
     });
   }

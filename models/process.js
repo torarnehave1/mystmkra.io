@@ -7,7 +7,7 @@ const stepSchema = new Schema({
   stepId: { type: String, required: true }, // Unique identifier for the step
   type: {
     type: String,
-    enum: ['text_process', 'yes_no_process', 'file_process', 'choice', 'generate_questions_process', 'final', 'info_process', 'sound', 'call_to_action'], // Added 'call_to_action'
+    enum: ['text_process', 'yes_no_process', 'file_process', 'choice', 'generate_questions_process', 'final', 'info_process', 'sound', 'call_to_action', 'connect'], // Added 'connect'
     required: true,
   }, // Type of step
   prompt: { type: String, required: true }, // Question or instruction text for the user

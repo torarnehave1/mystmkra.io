@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import UserState from '../../models/UserState.js';
 
 import { handleEditProcess } from '../greenbot/editProcessService.js';
-// Optionally, import handleViewProcess if available.
+import { presentProcessList } from '../greenbot/viewProcessService.js'; // Import the new function to present process list
 
 dotenv.config();
 
@@ -81,8 +81,8 @@ export async function initializeProcess(bot, chatId, processType, processId = nu
       break;
     case 'view_process':
       if (!processId) {
-        console.error(`${debugPrefix} ERROR: processId is required for viewing process.`);
-        await bot.sendMessage(chatId, "Please select a process to view.");
+        console.log(`${debugPrefix} Presenting process list for user to select.`);
+        await presentProcessList(bot, chatId); // Present the list of processes for the user to select
         return;
       }
       userState.processId = processId;
@@ -133,5 +133,4 @@ export async function initializeProcess(bot, chatId, processType, processId = nu
 //
 // This code snippet is part of the GreenBot project.
 // Learn more at
-//
 //

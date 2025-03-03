@@ -46,10 +46,23 @@ removeEditStepsCallback(bot); // Ensure cleanup
 handleEditStepsCallback(bot); // Register once
 removeEditStepCallback(bot);
 
+async function clearPendingUpdates(bot) {
+  try {
+    const updates = await bot.getUpdates({ offset: -1, limit: 1 });
+    if (updates.length > 0) {
+      const latestUpdateId = updates[0].update_id;
+      await bot.getUpdates({ offset: latestUpdateId + 1 });
+    }
+  } catch (error) {
+    console.error('[DEBUG] Error clearing pending updates:', error.message);
+  }
+}
+
 bot.onText(/\/restart/, async (msg) => {
   const chatId = msg.chat.id;
   await bot.sendMessage(chatId, "Restarting bot polling...");
   bot.stopPolling();
+  await clearPendingUpdates(bot);
   setTimeout(() => bot.startPolling(), 3000);
 });
 
