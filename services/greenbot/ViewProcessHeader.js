@@ -17,18 +17,12 @@
 
 import dotenv from 'dotenv';
 import Process from '../../models/process.js';
-import {generateDeepLink} from './deeplink.js';
-import config from '../../config/config.js';
-
 
 // Load environment variables from .env file
 dotenv.config();
 
 export async function viewProcessHeader(bot, chatId, processId) {
   const debugPrefix = '[DEBUG viewProcessHeader viewProcessHeader]';
-  const botUsername = config.botUsername;
-  const url = generateDeepLink(botUsername, processId);
-  console.log(`${debugPrefix} Generated deep link: ${url}`);
 
   console.log(`${debugPrefix} Displaying process header for processId: ${processId}`);
 

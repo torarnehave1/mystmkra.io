@@ -2,6 +2,7 @@ import Process from '../../../models/process.js';
 import { initializeProcess } from '../processInitializer.js';
 import config from '../../../config/config.js';
 import { archiveProcess } from '../helpers/processArchPublish.js';
+import { viewProcessHeader } from '../ViewProcessHeader.js';
 
 export async function displayViewMenu(bot, chatId) {
   console.log(`[DEBUG VIEW MENU] Displaying view menu for user ${chatId}`);
@@ -15,11 +16,10 @@ export async function displayViewMenu(bot, chatId) {
     const uniqueProcesses = [
       ...new Map(finishedProcesses.map((p) => [p._id.toString(), p])).values(),
     ];
-    const botUsername = config.botUsername;
     const processButtons = uniqueProcesses.map((process) => [
       {
         text: `${process.title}\n${process.description}`,
-        url: `https://t.me/${botUsername}?start=view_process_${process._id}`,
+        callback_data: `view_process_${process._id}`,
       },
       {
         text: "Archive",
@@ -49,9 +49,8 @@ export async function handleViewMenuCallbacks(bot, callbackQuery) {
   if (data.startsWith('view_process_')) {
     const processId = data.replace('view_process_', '');
     console.log(`[DEBUG VIEW MENU] Viewing process ${processId}`);
-    // Implement the logic to handle viewing the process
     await bot.answerCallbackQuery(callbackQuery.id, { text: "Viewing process" });
-    // Add your logic here to display the process details
+    await viewProcessHeader(bot, chatId, processId);
   } else if (data.startsWith('archive_process_')) {
     const processId = data.replace('archive_process_', '');
     console.log(`[DEBUG VIEW MENU] Archiving process ${processId}`);
