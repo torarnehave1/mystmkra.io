@@ -16,7 +16,7 @@
  */
 
 import dotenv from 'dotenv';
-import Process from '../greenbot/models/Process.js';
+import Process from '../greenbot/models/process.js';
 
 // Load environment variables from .env file
 dotenv.config();
