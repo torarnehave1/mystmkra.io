@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import Process from '../greenbot/models/Process.js';
+import Process from '../greenbot/models/process.js';
 import handleChoiceStep from './steps/choiceProcess.js'; // Dedicated module for 'choice' steps
 import handleFileProcessStep from './steps/fileProcess.js'; // Dedicated module for 'file_process' steps
 import handleTextProcessStep from './steps/textProcess.js'; // Dedicated module for 'text_process' steps
