@@ -1,20 +1,11 @@
 import Process from '../../models/process.js';
 
-/**
- * Function: presentProcessList
- *
- * Presents a list of processes for the user to select from.
- *
- * Parameters:
- *   bot    - The Telegram bot instance.
- *   chatId - The Telegram chat ID (user identifier).
- */
 export async function presentProcessList(bot, chatId) {
   const debugPrefix = '[DEBUG viewProcessService presentProcessList]';
   try {
     const processes = await Process.find({ userId: chatId });
     if (processes.length === 0) {
-     // await bot.sendMessage(chatId, "No processes found.");
+      // await bot.sendMessage(chatId, "No processes found.");
       return;
     }
 
