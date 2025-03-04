@@ -16,7 +16,7 @@ import assistants from './routes/assistants.js';
 import config from './config/config.js';
 import imgroutes from './routes/images.js';
 import telegramRouter1 from './routes/bluebot.js';
-import telegramRouter2 from './routes/greenbot.js';
+import telegramRouter2 from './modules/greenbot/router/greenbot.js';
 import telegramRouter3 from './routes/Kruthbot.js';
 import telegramRouter4 from './routes/MystmkraBot.js';
 import assmongdb from './routes/assistantsmongodb.js';

@@ -963,7 +963,122 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
 });
 
 
+router.get('/chatgpt/:userFolder/:filename', async (req, res) => {
+  const userFolder = req.params.userFolder;
+  let filename = req.params.filename;
 
+  // Check if the request is for .html and map it to .md
+  if (filename.endsWith('.html')) {
+      filename = filename.replace('.html', '.md');
+  }
+
+  const filePath = `/mystmkra/${userFolder}/${filename}`;
+
+  const dbx = new Dropbox({
+      accessToken: accessToken,
+      fetch: fetch,
+  });
+
+  try {
+      const response = await dbx.filesDownload({ path: filePath });
+      const fileContent = response.result.fileBinary.toString('utf-8');
+
+      // Extract the first title from the markdown content (o:tittel)
+      const titleRegex = /^#\s+(.*)$/m;
+      const titleMatch = fileContent.match(titleRegex);
+      const title = titleMatch ? titleMatch[1].trim() : 'Default Title';
+
+      // Extract the first paragraph after the title (o:description)
+      const descriptionRegex = /(?:^#\s+.*$)\s+([\s\S]+?)(?:\n\s*\n|\n$)/m;
+      const descriptionMatch = fileContent.match(descriptionRegex);
+      let description = descriptionMatch ? descriptionMatch[1].trim() : 'Default Description';
+
+      // Limit the description to 100 characters
+      if (description.length > 100) {
+          description = description.substring(0, 100) + '...';
+      }
+
+      // Extract image URL from the markdown content (if any)
+      const imageRegex = /!\[.*?\]\((.*?)\)/;
+      const imageMatch = fileContent.match(imageRegex);
+      let imageUrlFromMarkdown = imageMatch ? imageMatch[1] : '';
+
+      // Remove the image markdown to get content without image for rendering
+      const contentWithoutImage = fileContent.replace(imageRegex, '');
+
+      // Use the base URL from the configuration
+      const baseUrl = ENVconfig.BASE_URL;
+
+      // Ensure image URL is correctly set for production
+      if (process.env.NODE_ENV === 'production') {
+          if (imageUrlFromMarkdown.includes('localhost')) {
+              imageUrlFromMarkdown = imageUrlFromMarkdown.replace('http://localhost:3001', baseUrl);
+          }
+      }
+
+      // Construct the full image URL
+      const fullImageUrl = imageUrlFromMarkdown.startsWith('http')
+          ? imageUrlFromMarkdown
+          : `${baseUrl}${imageUrlFromMarkdown}`;
+
+      // Construct the full URL of the blog post
+      const fullUrl = `${baseUrl}${req.originalUrl}`;
+
+      const html = `
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <!-- Facebook Open Graph Meta Tags -->
+              <meta property="og:title" content="${title}" />
+              <meta property="og:description" content="${description}" />
+              <meta property="og:image" content="${fullImageUrl}" />
+              <meta property="og:url" content="${fullUrl}" />
+              <meta property="og:type" content="article" />
+              <meta property="og:site_name" content="MystMkra.io" />
+              <meta property="fb:app_id" content="303190016195319" /> <!-- Replace with your actual Facebook App ID -->
+              
+              <title>${title}</title>
+              <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+              <link rel="stylesheet" href="/markdown.css">
+          </head>
+          <body>
+          
+          <div id="menu-container"></div> 
+          <div style="text-align: center;">
+              <img src="${fullImageUrl}" alt="${filename}" class="img-fluid header-image">
+          </div>
+          <div class="container">
+              ${marked(contentWithoutImage)}
+
+              <!-- Facebook Share Button -->
+              <div style="text-align: center; margin-top: 20px;">
+                  <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fullUrl)}" target="_blank" class="btn btn-primary">
+                      Share on Facebook
+                  </a>
+              </div>
+          </div>
+          
+          <!-- Footer -->
+          <footer style="text-align: center; margin-top: 20px;">
+              <a href="http://mystmkra.io" target="_blank">
+                  <img src="https://cdn.midjourney.com/3fa18eeb-2dd5-4e1d-b801-c71f3b0648e0/0_2.png" alt="Footer Image" class="img-fluid footer-image" style="max-width: 100%; height: auto;">
+              </a>
+          </footer>
+
+          </body>
+          
+          </html>
+      `;
+
+      res.send(html);
+  } catch (error) {
+      console.error('Error fetching file from Dropbox:', error);
+      res.status(500).json({
+          message: 'Error fetching file from Dropbox',
+          error: error.error ? error.error.error_summary : error.message
+      });
+  }
+});
 
 
 
