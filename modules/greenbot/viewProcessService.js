@@ -4,7 +4,8 @@
  * @module viewProcessService
  * @description
  * This module contains functions for presenting a list of processes to the user.
- */
+ *
+*/
 
 
 import Process from '../greenbot/models/process.js';
