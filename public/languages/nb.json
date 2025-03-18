@@ -7,6 +7,16 @@
         "welcome": {
             "subject": "Velkommen til vår tjeneste",
             "body": "Hei, \n\nVi er glade for å ha deg med oss. La oss komme i gang! \n\nVennlig hilsen, \nDitt Team"
+        },
+
+        "emailvegvisrorg": {
+        "verification": {
+            "subject": "Bekreft din e-postadresse",
+            "body": "Hei, \n\nTakk for at du registrerte deg hos oss. Vennligst klikk på lenken nedenfor for å bekrefte din e-postadresse: \n\n{verificationLink} \n\nHvis du ikke har bedt om denne e-posten, kan du trygt ignorere den. \n\nVennlig hilsen, \nDitt Team"
+        },
+        "welcome": {
+            "subject": "Velkommen til vår tjeneste",
+            "body": "Hei, \n\nVi er glade for å ha deg med oss. La oss komme i gang! \n\nVennlig hilsen, \nDitt Team"
         }
        
     },

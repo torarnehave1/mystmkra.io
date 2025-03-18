@@ -430,7 +430,7 @@ router.post('/register', async (req, res) => {
 });
 
 
-router.post('/reg-user', async (req, res) => {
+router.post('/reg-user-vegvisr', async (req, res) => {
     const { email, token } = req.body;
     //console.log(req.body);
 
@@ -438,10 +438,10 @@ router.post('/reg-user', async (req, res) => {
     if (token !== process.env.VEGVISR_API_TOKEN) {
         return res.status(401).send('Unauthorized');
     }
-    
+
 
     const emailVerificationToken = crypto.randomBytes(20).toString('hex');
-    const emailVerificationTokenExpires = Date.now() + 3600000;
+   // const emailVerificationTokenExpires = Date.now() + 3600000;
 
     const transporter = nodemailer.createTransport({
         service: 'Gmail',
@@ -454,8 +454,8 @@ router.post('/reg-user', async (req, res) => {
     const mailOptions = {
         from: 'slowyou.net@gmail.com',
         to: email,
-        subject: emailTemplates.email.verification.subject,
-        text: emailTemplates.email.verification.body.replace('{verificationLink}', `https://slowyou.net/a/verify-email?token=${emailVerificationToken}`)
+        subject: emailTemplates.emailvegvisrorg.verification.subject,
+        text: emailTemplates.emailvegvisrorg.verification.body.replace('{verificationLink}', `https://slowyou.net/a/verify-email?token=${emailVerificationToken}`)
     };
 
     try {
