@@ -451,7 +451,7 @@ router.post('/reg-user-vegvisr', async (req, res) => {
     });
 
     const mailOptions = {
-        from: 'slowyou.net@gmail.com',
+        from: 'vegvisr.org@gmail.com',
         to: email,
         subject: emailTemplates.emailvegvisrorg.verification.subject,
         text: emailTemplates.emailvegvisrorg.verification.body.replace('{verificationLink}', `https://slowyou.net/a/verify-email?token=${emailVerificationToken}`)
