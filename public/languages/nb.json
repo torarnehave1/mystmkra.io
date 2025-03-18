@@ -10,14 +10,15 @@
         }
     },
     "emailvegvisrorg": {
-        "verification": {
-            "subject": "Bekreft din e-postadresse",
-            "body": "Hei,\n\nTakk for at du registrerte deg hos oss. Vennligst klikk på lenken nedenfor for å bekrefte din e-postadresse:\n\n{verificationLink}\n\nHvis du ikke har bedt om denne e-posten, kan du trygt ignorere den.\n\nVennlig hilsen,\nDitt Team"
-        },
-        "welcome": {
-            "subject": "Velkommen til vår tjeneste",
-            "body": "Hei,\n\nVi er glade for å ha deg med oss. La oss komme i gang!\n\nVennlig hilsen,\nDitt Team"
-        }
+    "verification": {
+        "subject": "Bekreft din reise med Vegvisr.org",
+        "body": "Hei,\n\nVelkommen til Vegvisr.org! Du har tatt det første steget på en vei av utforskning, visdom og fellesskap. For å bekrefte din e-postadresse og aktivere din konto, vennligst klikk på lenken nedenfor:\n\n{verificationLink}\n\nHvis du ikke har bedt om denne e-posten, kan du trygt ignorere den.\n\nMed retning og klarhet,\nVegvisr.org-teamet"
+    },
+    "welcome": {
+        "subject": "Velkommen til Vegvisr.org – Naviger din vei",
+        "body": "Hei,\n\nVi ønsker deg velkommen til Vegvisr.org! Her utforsker vi sammen hvordan visdom, retning og fellesskap kan veilede oss på vår reise.\n\nFor å komme i gang, kan du:\n🔹 Utforske vårt kunnskapssenter og filosofiske prinsipper.\n🔹 Delta i diskusjoner og dele dine innsikter.\n🔹 Praktisere mantraer, bevegelse og esoteriske metoder i fellesskap.\n\nLa oss sammen navigere mot innsikt og transformasjon!\n\nMed styrke og balanse,\nVegvisr.org-teamet"
+    }
+    
     },
     "pageTitle": "SlowYou Kunngjøringer",
     "emailLabel": "E-post:",
