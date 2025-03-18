@@ -433,50 +433,34 @@ router.post('/register', async (req, res) => {
 router.post('/reg-user', async (req, res) => {
     const { email } = req.body;
     //console.log(req.body);
-  
+
     const emailVerificationToken = crypto.randomBytes(20).toString('hex');
     const emailVerificationTokenExpires = Date.now() + 3600000;
-  
-    
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-        //console.log('New Hashed Password:', hashedPassword);
-  
-        // Compare the plain text password with the hashed password to ensure correctness
-        
-  
-       
-  
-        
-        //console.log('User saved successfully');
-  
-        const transporter = nodemailer.createTransport({
-            service: 'Gmail',
-            auth: {
-              user: process.env.EMAIL_USERNAME,
-              pass: process.env.EMAIL_PASSWORD,
-            },
-        });
-  
-        const mailOptions = {
-            from: 'slowyou.net@gmail.com',
-            to: email,
-            subject: emailTemplates.email.verification.subject,
-            text: emailTemplates.email.verification.body.replace('{verificationLink}', `https://slowyou.net/a/verify-email?token=${emailVerificationToken}`)
-        };
-  
-        try {
-            const info = await transporter.sendMail(mailOptions);
-            //console.log('Email sent: ' + info.response);
-        } catch (mailError) {
-            //console.error('Error sending email:', mailError);
-        }
-  
-   
-   
-  
-  
-  });
+
+    const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: process.env.EMAIL_USERNAME,
+            pass: process.env.EMAIL_PASSWORD,
+        },
+    });
+
+    const mailOptions = {
+        from: 'slowyou.net@gmail.com',
+        to: email,
+        subject: emailTemplates.email.verification.subject,
+        text: emailTemplates.email.verification.body.replace('{verificationLink}', `https://slowyou.net/a/verify-email?token=${emailVerificationToken}`)
+    };
+
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        //console.log('Email sent: ' + info.response);
+        res.status(200).send({ message: 'Verification email sent successfully.' });
+    } catch (mailError) {
+        //console.error('Error sending email:', mailError);
+        res.status(500).send({ message: 'Error sending verification email.' });
+    }
+});
 
 
 router.get("/verify-email", async (req, res) => {
