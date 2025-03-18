@@ -431,8 +431,14 @@ router.post('/register', async (req, res) => {
 
 
 router.post('/reg-user', async (req, res) => {
-    const { email } = req.body;
+    const { email, token } = req.body;
     //console.log(req.body);
+
+    //add a Check for the toke that is sent to the endpoing with the process token VEGVISR_API_TOKEN in the .env file
+    if (token !== process.env.VEGVISR_API_TOKEN) {
+        return res.status(401).send('Unauthorized');
+    }
+    
 
     const emailVerificationToken = crypto.randomBytes(20).toString('hex');
     const emailVerificationTokenExpires = Date.now() + 3600000;
