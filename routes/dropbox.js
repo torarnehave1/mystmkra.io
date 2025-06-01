@@ -1763,15 +1763,13 @@ router.post('/save-markdown', isAuthenticated, ensureValidToken, async (req, res
     console.log('Document saved successfully with ID:', fileDoc._id);
     res.json({
       success: true,
-      documentId: fileDoc._id,  // Make documentId more prominent
-      data: {
-        fileUrl: fullURL,
-        filePath: filePath,
-        title: fileDoc.title,
-        tags: fileDoc.tags,
-        createdAt: fileDoc.createdAt,
-        updatedAt: fileDoc.updatedAt
-      }
+      documentId: fileDoc._id,
+      fileUrl: fullURL,
+      filePath: filePath,
+      title: fileDoc.title,
+      tags: fileDoc.tags,
+      createdAt: fileDoc.createdAt,
+      updatedAt: fileDoc.updatedAt
     });
   } catch (error) {
     console.error('Error saving file to Dropbox or MongoDB:', error);
