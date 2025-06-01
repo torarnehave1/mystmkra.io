@@ -1759,12 +1759,19 @@ router.post('/save-markdown', isAuthenticated, ensureValidToken, async (req, res
 
     console.log('Embeddings generated and saved to document');
 
-    res.status(200).json({
-      message: 'File saved successfully',
-      id: fileDoc._id,
-      filePath: filePath,  // Ensure this variable is correctly passed
-      url: fullURL,        // Return the full URL in the response
-      embeddings: embeddings // Return the embeddings in the response
+    // Return success response
+    console.log('Document saved successfully with ID:', fileDoc._id);
+    res.json({
+      success: true,
+      documentId: fileDoc._id,  // Make documentId more prominent
+      data: {
+        fileUrl: fullURL,
+        filePath: filePath,
+        title: fileDoc.title,
+        tags: fileDoc.tags,
+        createdAt: fileDoc.createdAt,
+        updatedAt: fileDoc.updatedAt
+      }
     });
   } catch (error) {
     console.error('Error saving file to Dropbox or MongoDB:', error);
