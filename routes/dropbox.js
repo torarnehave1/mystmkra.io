@@ -1746,12 +1746,12 @@ router.post('/save-markdown', isAuthenticated, ensureValidToken, async (req, res
     console.log('File uploaded successfully to Dropbox');
 
     // Generate embeddings
-    const response = await openai.embeddings.create({
+    const embeddingsResponse = await openai.embeddings.create({
       model: 'text-embedding-3-small',
       input: [content], // Single document embedding
     });
 
-    const embeddings = response.data[0].embedding;
+    const embeddings = embeddingsResponse.data[0].embedding;
 
     // Update the document with the new embeddings
     fileDoc.embeddings = embeddings;
@@ -1761,7 +1761,7 @@ router.post('/save-markdown', isAuthenticated, ensureValidToken, async (req, res
 
     // Return success response
     console.log('Document saved successfully with ID:', fileDoc._id);
-    const response = {
+    const apiResponse = {
       success: true,
       documentId: fileDoc._id,
       fileUrl: fullURL,
@@ -1771,7 +1771,7 @@ router.post('/save-markdown', isAuthenticated, ensureValidToken, async (req, res
       createdAt: fileDoc.createdAt,
       updatedAt: fileDoc.updatedAt
     };
-    res.json(response);
+    res.json(apiResponse);
 
   } catch (error) {
     console.error('Error saving document:', error);
