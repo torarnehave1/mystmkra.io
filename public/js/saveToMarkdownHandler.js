@@ -17,7 +17,7 @@ export function initializeSaveToMarkdownHandler() {
         const tagsElement = document.getElementById('tags');
         const tags = tagsElement ? tagsElement.value.split(' ').filter(tag => tag.startsWith('#')) : [];
         const userId = localStorage.getItem('userId');
-        let currentDocumentId = getCookie('currentDocumentId'); // Get currentDocumentId from cookie
+        const currentDocumentId = getCookie('currentDocumentId'); // Get currentDocumentId from cookie
 
         if (!userId) {
             alert('User ID not found. Please log in again.');
@@ -35,23 +35,29 @@ export function initializeSaveToMarkdownHandler() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ content, tags, userId, documentId: currentDocumentId }) // Include tags and documentId in the request body
+                body: JSON.stringify({ 
+                    content, 
+                    tags, 
+                    userId, 
+                    documentId: currentDocumentId,
+                    isUpdate: true // Add flag to indicate this is an update
+                })
             });
+            
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(`Failed to save document: ${errorData.error}`);
             }
-            const data = await response.json();
-            // Set the returnFileURL correctly
-            const returnFileURL = document.getElementById('returnFileURL');
-            returnFileURL.href = data.fileUrl;
-            returnFileURL.value = data.fileUrl;
-            returnFileURL.setAttribute('data-url', data.fileUrl);
             
-            // Ensure the currentDocumentId is not overwritten or set to null/empty
-            if (data.id) {
-                currentDocumentId = data.id;
-                setCookie('currentDocumentId', currentDocumentId, 7);
+            const data = await response.json();
+            
+            // Update the returnFileURL with the existing document's URL
+            const returnFileURL = document.getElementById('returnFileURL');
+            if (returnFileURL) {
+                const fileUrl = `https://mystmkra.io/dropbox/blog/${userId}/${currentDocumentId}.md`;
+                returnFileURL.href = fileUrl;
+                returnFileURL.textContent = fileUrl;
+                returnFileURL.setAttribute('data-url', fileUrl);
             }
 
             // Store document content, title, and tags in local storage

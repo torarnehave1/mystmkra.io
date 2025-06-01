@@ -39,10 +39,14 @@ export async function openContent(id, textareaId, returnFileURLClass) {
             // Construct the file URL with the user ID
             const fileUrl = `https://mystmkra.io/dropbox/blog/${userId}/${window.currentDocumentId}.md`;
 
-            const returnfileURL = document.getElementById('returnFileURL');
-            returnfileURL.href = fileUrl;
-            returnfileURL.text = fileUrl;
-            returnfileURL.setAttribute('data-url', fileUrl);
+            // Update the return file URL element
+            const returnFileURL = document.getElementById('returnFileURL');
+            if (returnFileURL) {
+                returnFileURL.href = fileUrl;
+                returnFileURL.textContent = fileUrl;
+                returnFileURL.setAttribute('data-url', fileUrl);
+            }
+            
             window.isChanged = true;
 
             // Store the file URL in a cookie

@@ -44,13 +44,29 @@ document.addEventListener('DOMContentLoaded', () => {
     // Attach click event to the search results container
     const searchResults = document.getElementById('searchResults');
     if (searchResults) {
-        searchResults.addEventListener('click', (event) => {
-            const target = event.target;
-            if (target.classList.contains('list-group-item')) {
-                const documentId = target.getAttribute('data-id');
-                setCurrentDocumentId(documentId); // Set currentDocumentId when a document is selected
-                console.log('Selected document ID:', documentId); // Log the currentDocumentId to the console
-                // ...existing code to handle document selection...
+        searchResults.addEventListener('click', async (event) => {
+            if (event.target.classList.contains('list-group-item')) {
+                const id = event.target.getAttribute('data-id');
+                if (id) {
+                    // Get the user ID from local storage
+                    const userId = localStorage.getItem('userId');
+                    if (!userId) {
+                        alert('User ID not found. Please log in again.');
+                        return;
+                    }
+
+                    // Update the document URL immediately
+                    const fileUrl = `https://mystmkra.io/dropbox/blog/${userId}/${id}.md`;
+                    const returnFileURL = document.getElementById('returnFileURL');
+                    if (returnFileURL) {
+                        returnFileURL.href = fileUrl;
+                        returnFileURL.textContent = fileUrl;
+                        returnFileURL.setAttribute('data-url', fileUrl);
+                    }
+
+                    // Load the document content
+                    await loadDocumentContent(id);
+                }
             }
         });
     } else {
