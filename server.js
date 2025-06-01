@@ -103,6 +103,9 @@ app.use('/projects', projectRouter); // Add the project router
 app.use('/system', systemEndpointsRouter); // Add the system endpoints router
 app.use('/test', testSearchAndCompileRouter); // Add the test search and compile router
 
+// API routes
+app.use('/api', dropboxfilesroutes);  // Add this line to mount the API routes
+
 // Support page
 app.get('/support', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'support.html'));
