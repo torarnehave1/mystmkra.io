@@ -2123,9 +2123,23 @@ router.post('/api/markdown/save', validateApiToken, async (req, res) => {
     fileDoc.URL = fullURL;
     await fileDoc.save();
 
-    // Upload to Dropbox
+    // Refresh Dropbox access token
+    const params = new URLSearchParams();
+    params.append('grant_type', 'refresh_token');
+    params.append('refresh_token', process.env.DROPBOX_REFRESH_TOKEN);
+
+    const tokenResponse = await axios.post('https://api.dropboxapi.com/oauth2/token', params, {
+      auth: {
+        username: process.env.DROPBOX_APP_KEY,
+        password: process.env.DROPBOX_APP_SECRET,
+      },
+    });
+
+    const newAccessToken = tokenResponse.data.access_token;
+
+    // Upload to Dropbox with new access token
     const dbx = new Dropbox({
-      accessToken: process.env.DROPBOX_ACCESS_TOKEN,
+      accessToken: newAccessToken,
       fetch: fetch
     });
 
