@@ -2056,4 +2056,103 @@ router.get('/createfolderws', isAuthenticated, ensureValidToken, async (req, res
 
 
 
+// API endpoint for saving markdown documents
+router.post('/api/markdown/save', isAuthenticated, ensureValidToken, async (req, res) => {
+  console.log('API Request received to save markdown');
+
+  const { content, documentId, title, tags } = req.body;
+  const userid = req.user.id;
+
+  if (!content) {
+    return res.status(400).json({
+      success: false,
+      error: 'Content is required to save the file'
+    });
+  }
+
+  try {
+    // Get the current user from the database
+    const user = await User.findById(userid).select('username');
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found'
+      });
+    }
+
+    let fileDoc;
+
+    if (documentId) {
+      // If a document ID is provided, find the document and update it
+      fileDoc = await MDfile.findById(documentId);
+      if (!fileDoc) {
+        return res.status(404).json({
+          success: false,
+          error: 'Document not found'
+        });
+      }
+      fileDoc.content = content;
+      fileDoc.title = title || fileDoc.title;
+      if (tags) fileDoc.tags = tags;
+    } else {
+      // If no document ID is provided, create a new document
+      fileDoc = new MDfile({
+        _id: new mongoose.Types.ObjectId(),
+        content: content,
+        User_id: userid,
+        title: title || 'Untitled Document',
+        tags: tags || []
+      });
+    }
+
+    // Save to MongoDB
+    await fileDoc.save();
+
+    // Construct the full URL
+    const fullURL = `https://mystmkra.io/dropbox/blog/${userid}/${fileDoc._id}.md`;
+
+    // Update the document with the full URL
+    fileDoc.URL = fullURL;
+    await fileDoc.save();
+
+    // Upload to Dropbox
+    const dbx = new Dropbox({
+      accessToken: process.env.DROPBOX_ACCESS_TOKEN,
+      fetch: fetch
+    });
+
+    const filePath = `/mystmkra/${userid}/${fileDoc._id}.md`;
+    await dbx.filesUpload({
+      path: filePath,
+      contents: content,
+      mode: 'overwrite'
+    });
+
+    // Return success response
+    res.json({
+      success: true,
+      data: {
+        documentId: fileDoc._id,
+        fileUrl: fullURL,
+        filePath: filePath,
+        title: fileDoc.title,
+        tags: fileDoc.tags,
+        createdAt: fileDoc.createdAt,
+        updatedAt: fileDoc.updatedAt
+      }
+    });
+
+  } catch (error) {
+    console.error('Error saving document:', error);
+    res.status(500).json({
+      success: false,
+      error: 'An error occurred while saving the document',
+      details: error.message
+    });
+  }
+});
+
+
+
 export default router;
