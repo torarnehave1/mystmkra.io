@@ -25,6 +25,7 @@ import config from '../config/config.js';
 import {isAuthenticated} from '../auth/auth.js';
 import OpenAI from 'openai';
 import fetch from 'node-fetch';
+import { validateApiToken } from '../auth/apiAuth.js';
 
 console.log(`The application is running in ${config.NODE_ENV} mode.`);
 console.log(`REDIR = ${config.REDIRECT_URI}`)
@@ -2057,11 +2058,10 @@ router.get('/createfolderws', isAuthenticated, ensureValidToken, async (req, res
 
 
 // API endpoint for saving markdown documents
-router.post('/api/markdown/save', isAuthenticated, ensureValidToken, async (req, res) => {
+router.post('/api/markdown/save', validateApiToken, ensureValidToken, async (req, res) => {
   console.log('API Request received to save markdown');
 
-  const { content, documentId, title, tags } = req.body;
-  const userid = req.user.id;
+  const { content, documentId, title, tags, userId } = req.body; // Add userId to request body
 
   if (!content) {
     return res.status(400).json({
@@ -2070,9 +2070,16 @@ router.post('/api/markdown/save', isAuthenticated, ensureValidToken, async (req,
     });
   }
 
+  if (!userId) {
+    return res.status(400).json({
+      success: false,
+      error: 'User ID is required'
+    });
+  }
+
   try {
-    // Get the current user from the database
-    const user = await User.findById(userid).select('username');
+    // Get the user from the database
+    const user = await User.findById(userId).select('username');
 
     if (!user) {
       return res.status(404).json({
@@ -2100,7 +2107,7 @@ router.post('/api/markdown/save', isAuthenticated, ensureValidToken, async (req,
       fileDoc = new MDfile({
         _id: new mongoose.Types.ObjectId(),
         content: content,
-        User_id: userid,
+        User_id: userId,
         title: title || 'Untitled Document',
         tags: tags || []
       });
@@ -2110,7 +2117,7 @@ router.post('/api/markdown/save', isAuthenticated, ensureValidToken, async (req,
     await fileDoc.save();
 
     // Construct the full URL
-    const fullURL = `https://mystmkra.io/dropbox/blog/${userid}/${fileDoc._id}.md`;
+    const fullURL = `https://mystmkra.io/dropbox/blog/${userId}/${fileDoc._id}.md`;
 
     // Update the document with the full URL
     fileDoc.URL = fullURL;
@@ -2122,7 +2129,7 @@ router.post('/api/markdown/save', isAuthenticated, ensureValidToken, async (req,
       fetch: fetch
     });
 
-    const filePath = `/mystmkra/${userid}/${fileDoc._id}.md`;
+    const filePath = `/mystmkra/${userId}/${fileDoc._id}.md`;
     await dbx.filesUpload({
       path: filePath,
       contents: content,
