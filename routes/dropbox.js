@@ -2058,10 +2058,10 @@ router.get('/createfolderws', isAuthenticated, ensureValidToken, async (req, res
 
 
 // API endpoint for saving markdown documents
-router.post('/api/markdown/save', validateApiToken, ensureValidToken, async (req, res) => {
+router.post('/api/markdown/save', validateApiToken, async (req, res) => {
   console.log('API Request received to save markdown');
 
-  const { content, documentId, title, tags, userId } = req.body; // Add userId to request body
+  const { content, documentId, title, tags, userId } = req.body;
 
   if (!content) {
     return res.status(400).json({
