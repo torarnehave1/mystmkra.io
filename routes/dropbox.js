@@ -1761,7 +1761,7 @@ router.post('/save-markdown', isAuthenticated, ensureValidToken, async (req, res
 
     // Return success response
     console.log('Document saved successfully with ID:', fileDoc._id);
-    res.json({
+    const response = {
       success: true,
       documentId: fileDoc._id,
       fileUrl: fullURL,
@@ -1770,12 +1770,15 @@ router.post('/save-markdown', isAuthenticated, ensureValidToken, async (req, res
       tags: fileDoc.tags,
       createdAt: fileDoc.createdAt,
       updatedAt: fileDoc.updatedAt
-    });
+    };
+    res.json(response);
+
   } catch (error) {
-    console.error('Error saving file to Dropbox or MongoDB:', error);
+    console.error('Error saving document:', error);
     res.status(500).json({
-      message: 'Error saving file',
-      error: error.message
+      success: false,
+      error: 'An error occurred while saving the document',
+      details: error.message
     });
   }
 });
