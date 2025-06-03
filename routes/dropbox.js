@@ -1026,12 +1026,11 @@ router.get(
         return markdown;
       }
 
-      // ... existing code ...
-      // In the blog endpoint, before calling marked:
+      // Preprocess the markdown before rendering
       const preprocessedMarkdown = preprocessCustomBlocks(contentWithoutImage);
-      const htmlContent = marked(preprocessedMarkdown);
 
-      // Remove the [SECTION], [QUOTE], [WNOTE], [FANCY], [YOUTUBE] logic from the custom renderer, keep only the paragraph object text extraction.
+      // Minimal custom renderer for paragraph object handling
+      const renderer = new marked.Renderer();
       renderer.paragraph = function (text) {
         if (typeof text === 'object' && text.text) {
           text = text.text;
@@ -1041,7 +1040,16 @@ router.get(
         }
         return `<p>${text}</p>`;
       };
-      // ... existing code ...
+
+      marked.setOptions({
+        renderer,
+        gfm: true,
+        breaks: true,
+        sanitize: false,
+      });
+
+      // Render the HTML
+      const htmlContent = marked(preprocessedMarkdown);
 
       const html = `
             <!DOCTYPE html>
