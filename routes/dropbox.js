@@ -972,100 +972,76 @@ router.get(
       // Construct the full URL of the blog post
       const fullUrl = `${baseUrl}${req.originalUrl}`;
 
-      // Configure marked with custom renderer for your special elements
-      const renderer = new marked.Renderer();
-
-      // Handle [SECTION] elements
-      renderer.paragraph = function (text) {
-        // Extract text from object if needed
-        if (typeof text === 'object' && text.text) {
-          text = text.text;
-        }
-        
-        if (typeof text !== 'string') {
-          return `<p>${text}</p>`;
-        }
-
-        // Check for [SECTION] elements
-        const sectionRegex = /\[SECTION\s*\|([^\]]+)\]([\s\S]*?)\[END SECTION\]/g;
-        let processedText = text;
-
-        processedText = processedText.replace(sectionRegex, (match, style, content) => {
-          // Convert style string to inline CSS
+      // Preprocess custom blocks before markdown rendering
+      function preprocessCustomBlocks(markdown) {
+        // [SECTION]
+        markdown = markdown.replace(/\[SECTION\s*\|([^\]]+)\]([\s\S]*?)\[END SECTION\]/g, (match, style, content) => {
           const css = style
-            .split(";")
+            .split(';')
             .map((s) => s.trim())
             .filter(Boolean)
             .map((s) => {
               const [k, v] = s
-                .split(":")
-                .map((x) => x.trim().replace(/^['"]|['"]$/g, ""));
-              return k && v ? `${k}:${v}` : "";
+                .split(':')
+                .map((x) => x.trim().replace(/^['"]|['"]$/g, ''));
+              return k && v ? `${k}:${v}` : '';
             })
-            .join(";");
-
-          // Process the content through marked first to handle any markdown inside the section
+            .join(';');
           const processedContent = marked.parse(content.trim());
           return `<div class="section" style="${css}; padding: 15px; border-radius: 8px; margin: 15px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">${processedContent}</div>`;
         });
-
-        // Check for [QUOTE] elements
-        const quoteRegex = /\[QUOTE\s*\|([^\]]+)\]([\s\S]*?)\[END QUOTE\]/g;
-        processedText = processedText.replace(quoteRegex, (match, style, content) => {
+        // [QUOTE]
+        markdown = markdown.replace(/\[QUOTE\s*\|([^\]]+)\]([\s\S]*?)\[END QUOTE\]/g, (match, style, content) => {
           const processedContent = marked.parse(content.trim());
           return `<div class="quote" style="font-style: italic; background-color: #f9f9f9; border-left: 5px solid #ccc; padding: 1em; margin: 1em 0; color: #333;">${processedContent}</div>`;
         });
-
-        // Check for [WNOTE] elements
-        const wnoteRegex = /\[WNOTE\s*\|([^\]]+)\]([\s\S]*?)\[END WNOTE\]/g;
-        processedText = processedText.replace(wnoteRegex, (match, style, content) => {
+        // [WNOTE]
+        markdown = markdown.replace(/\[WNOTE\s*\|([^\]]+)\]([\s\S]*?)\[END WNOTE\]/g, (match, style, content) => {
           const processedContent = marked.parse(content.trim());
           return `<div class="work-note" style="background-color: #ffd580; color: #333; font-size: 14px; font-family: 'Courier New', Courier, monospace; font-weight: bold; padding: 10px; margin: 10px 0; border-left: 5px solid #ccc; border-radius: 4px;">${processedContent}</div>`;
         });
-
-        // Check for [FANCY] elements
-        const fancyRegex = /\[FANCY\s*\|([^\]]+)\]([\s\S]*?)\[END FANCY\]/g;
-        processedText = processedText.replace(fancyRegex, (match, style, content) => {
-          // Convert style string to inline CSS
+        // [FANCY]
+        markdown = markdown.replace(/\[FANCY\s*\|([^\]]+)\]([\s\S]*?)\[END FANCY\]/g, (match, style, content) => {
           const css = style
-            .split(";")
+            .split(';')
             .map((s) => s.trim())
             .filter(Boolean)
             .map((s) => {
               const [k, v] = s
-                .split(":")
-                .map((x) => x.trim().replace(/^['"]|['"]$/g, ""));
-              return k && v ? `${k}:${v}` : "";
+                .split(':')
+                .map((x) => x.trim().replace(/^['"]|['"]$/g, ''));
+              return k && v ? `${k}:${v}` : '';
             })
-            .join(";");
-
+            .join(';');
           const processedContent = marked.parse(content.trim());
           return `<div class="fancy-title" style="${css}; font-family: Arial, Helvetica, sans-serif; background-color: #f9f9f9; padding: 0.5em; margin: 0.5em 0; border-radius: 4px; box-sizing: border-box; font-weight: bold; text-align: center; background-size: cover; background-position: center;">${processedContent}</div>`;
         });
-
-        // Check for [YOUTUBE] elements
-        const youtubeRegex = /!\[YOUTUBE src=(.+?)\](.+?)\[END YOUTUBE\]/g;
-        processedText = processedText.replace(youtubeRegex, (match, src, title) => {
+        // [YOUTUBE]
+        markdown = markdown.replace(/!\[YOUTUBE src=(.+?)\](.+?)\[END YOUTUBE\]/g, (match, src, title) => {
           return `<div class="youtube-section" style="margin: 20px 0; text-align: center; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background-color: #fff;">
             <h3 class="youtube-title" style="margin: 0 0 10px; font-size: 1.25rem; color: #333; font-weight: bold;">${title}</h3>
             <iframe src="${src}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen class="youtube-iframe" style="width: 100%; max-width: 560px; height: 315px; border: none; border-radius: 8px; margin-bottom: 10px;"></iframe>
           </div>`;
         });
+        return markdown;
+      }
 
-        // Handle regular paragraphs
-        return `<p>${processedText}</p>`;
+      // ... existing code ...
+      // In the blog endpoint, before calling marked:
+      const preprocessedMarkdown = preprocessCustomBlocks(contentWithoutImage);
+      const htmlContent = marked(preprocessedMarkdown);
+
+      // Remove the [SECTION], [QUOTE], [WNOTE], [FANCY], [YOUTUBE] logic from the custom renderer, keep only the paragraph object text extraction.
+      renderer.paragraph = function (text) {
+        if (typeof text === 'object' && text.text) {
+          text = text.text;
+        }
+        if (typeof text !== 'string') {
+          return `<p>${text}</p>`;
+        }
+        return `<p>${text}</p>`;
       };
-
-      // Configure marked with our custom renderer
-      marked.setOptions({
-        renderer: renderer,
-        gfm: true,
-        breaks: true,
-        sanitize: false,
-      });
-
-      // Process the content with our custom renderer
-      const htmlContent = marked(contentWithoutImage);
+      // ... existing code ...
 
       const html = `
             <!DOCTYPE html>
