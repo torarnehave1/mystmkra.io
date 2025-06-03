@@ -977,9 +977,9 @@ router.get(
 
       // Handle [SECTION] elements
       renderer.paragraph = function (text) {
-        // Convert object to string if needed
-        if (typeof text === 'object') {
-          text = JSON.stringify(text, null, 2);
+        // Extract text from object if needed
+        if (typeof text === 'object' && text.text) {
+          text = text.text;
         }
         
         if (typeof text !== 'string') {
